@@ -1,19 +1,20 @@
-from flask import Flask, jsonify, request
+from flask import jsonify, request,Blueprint
 from common.mysql_operate import db
 from common.redis_operate import redis_db
 from common.md5_operate import get_md5
 import re, time
 
-app = Flask(__name__)
-app.config["JSON_AS_ASCII"] = False  # jsonify返回的中文正常显示
+# app = Flask(__name__)
+# app.config["JSON_AS_ASCII"] = False  # jsonify返回的中文正常显示
 
+user=Blueprint('user',__name__)
 
-@app.route('/')
+@user.route('/')
 def hello_world():
-    return 'Hello World!'
+    return 'Hello user!'
 
 
-@app.route("/users", methods=["GET"])
+@user.route("/users", methods=["GET"])
 def get_all_users():
     """获取所有用户信息"""
     sql = "SELECT * FROM user"
@@ -22,7 +23,7 @@ def get_all_users():
     return jsonify({"code": 0, "data": data, "msg": "查询成功"})
 
 
-@app.route("/users/<string:username>", methods=["GET"])
+@user.route("/users/<string:username>", methods=["GET"])
 def get_user(username):
     """获取某个用户信息"""
     sql = "SELECT * FROM user WHERE username = '{}'".format(username)
@@ -33,7 +34,7 @@ def get_user(username):
     return jsonify({"code": "1004", "msg": "查不到相关用户的信息"})
 
 
-@app.route("/register", methods=['POST'])
+@user.route("/register", methods=['POST'])
 def user_register():
     """注册用户"""
     username = request.json.get("username", "").strip()  # 用户名
@@ -67,7 +68,7 @@ def user_register():
         return jsonify({"code": 2001, "msg": "用户名/密码/手机号不能为空，请检查！！！"})
 
 
-@app.route("/login", methods=['POST'])
+@user.route("/login", methods=['POST'])
 def user_login():
     """登录用户"""
     username = request.values.get("username", "").strip()
@@ -98,7 +99,7 @@ def user_login():
     else:
         return jsonify({"code": 1001, "msg": "用户名或密码不能为空！！！"})
 
-@app.route("/update/user/<int:id>", methods=['PUT'])
+@user.route("/update/user/<int:id>", methods=['PUT'])
 def user_update(id): # id为准备修改的用户ID
     """修改用户信息"""
     admin_user = request.json.get("admin_user", "").strip() # 当前登录的管理员用户
@@ -152,7 +153,7 @@ def user_update(id): # id为准备修改的用户ID
     else:
         return jsonify({"code": 4001, "msg": "管理员用户/token口令/密码/手机号不能为空，请检查！！！"})
 
-@app.route("/delete/user/<string:username>", methods=['POST'])
+@user.route("/delete/user/<string:username>", methods=['POST'])
 def user_delete(username):
     admin_user = request.json.get("admin_user", "").strip()  # 当前登录的管理员用户
     token = request.json.get("token", "").strip()  # token口令

@@ -22,34 +22,34 @@ def mycutimg(img_input):
     os.mkdir('要清空的文件夹名')
     '''
 
-    if (len(os.listdir('static/images_GLCM_bitwise/images_camouflage/mix/20m')) != 0):
+    if (len(os.listdir('algorithm/cutimg/static/images_GLCM_bitwise/images_camouflage/mix/20m')) != 0):
         # 掩膜存储路径
-        shutil.rmtree('static/images_GLCM_bitwise/images_camouflage/mix/20m')
-        os.mkdir('static/images_GLCM_bitwise/images_camouflage/mix/20m')
+        shutil.rmtree('algorithm/cutimg/static/images_GLCM_bitwise/images_camouflage/mix/20m')
+        os.mkdir('algorithm/cutimg/static/images_GLCM_bitwise/images_camouflage/mix/20m')
         # 分割之后图像存储路径
-        shutil.rmtree('static/images_GLCM/images_camouflage/mix/20m')
-        os.mkdir('static/images_GLCM/images_camouflage/mix/20m')
+        shutil.rmtree('algorithm/cutimg/static/images_GLCM/images_camouflage/mix/20m')
+        os.mkdir('algorithm/cutimg/static/images_GLCM/images_camouflage/mix/20m')
         # 灰度直方图存储路径
-        shutil.rmtree('static/images_save/gray_histogram')
-        os.mkdir('static/images_save/gray_histogram')
+        shutil.rmtree('algorithm/cutimg/static/images_save/gray_histogram')
+        os.mkdir('algorithm/cutimg/static/images_save/gray_histogram')
         # 边缘图像存储路径
-        shutil.rmtree('static/images_GLCM_edge')
-        os.mkdir('static/images_GLCM_edge')
+        shutil.rmtree('algorithm/cutimg/static/images_GLCM_edge')
+        os.mkdir('algorithm/cutimg/static/images_GLCM_edge')
         # 边缘方向直方图存储路径
-        shutil.rmtree('static/images_GLCM_edge_hist')
-        os.mkdir('static/images_GLCM_edge_hist')
+        shutil.rmtree('algorithm/cutimg/static/images_GLCM_edge_hist')
+        os.mkdir('algorithm/cutimg/static/images_GLCM_edge_hist')
         # 角点存储文件夹
-        shutil.rmtree('static/images_save/coner')
-        os.mkdir('static/images_save/coner')
+        shutil.rmtree('algorithm/cutimg/static/images_save/coner')
+        os.mkdir('algorithm/cutimg/static/images_save/coner')
         # 斑块图像存储路径
-        shutil.rmtree('static/images_save/blob_hist')
-        os.mkdir('static/images_save/blob_hist')
+        shutil.rmtree('algorithm/cutimg/static/images_save/blob_hist')
+        os.mkdir('algorithm/cutimg/static/images_save/blob_hist')
 
 
     img = img_input
     # path1 =
-    path2 = 'static/images_GLCM_bitwise/images_camouflage/mix/20m/'
-    path3 = 'static/images_GLCM/images_camouflage/mix/20m/'
+    path2 = 'algorithm/cutimg/static/images_GLCM_bitwise/images_camouflage/mix/20m/'
+    path3 = 'algorithm/cutimg/static/images_GLCM/images_camouflage/mix/20m/'
     # img = cv2.imread(path1 + str(number) + '.JPG')
     # main
     plt.imshow(img[:,:,::-1])

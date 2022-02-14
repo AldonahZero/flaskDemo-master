@@ -2,14 +2,14 @@ import os, sys
 from config.setting import SERVER_PORT
 from flask import Blueprint,Flask
 from api.user import user
-from api.cutting import cutting
+from api.cutimg import cutimg
 
 
 app = Flask(__name__)
 
 # 注册蓝图
 app.register_blueprint(user,url_prefix='/user')
-app.register_blueprint(cutting,url_prefix='/cutting')
+app.register_blueprint(cutimg,url_prefix='/cutimg')
 
 app.config["JSON_AS_ASCII"] = False  # jsonify返回的中文正常显示
 # 项目根路径

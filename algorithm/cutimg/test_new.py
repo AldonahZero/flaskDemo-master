@@ -31,7 +31,7 @@ img_input 格式为图片
 path2：掩膜图像存储路径
 path3：分割图像存储路径
 '''
-# mycutimg(img_input)
+mycutimg(img_input)
 
 
 # # gray_histogram_differential.py 获取灰度直方图及其相关性

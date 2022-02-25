@@ -3,6 +3,9 @@ from common.mysql_operate import db
 from common.redis_operate import redis_db
 from common.md5_operate import get_md5
 import re, time
+import cv2
+
+from algorithm.cutimg.cutimg import mycutimg
 
 fea = Blueprint('fea',__name__)
 
@@ -14,10 +17,10 @@ def hello_world():
 @fea.route("/targetBackgroundRegionSegmentation", methods=["GET"])
 def targetBackgroundRegionSegmentation():
     """目标背景区域分割"""
-    sql = "SELECT * FROM user"
-    data = db.select_db(sql)
-    print("获取所有用户信息 == >> {}".format(data))
-    return jsonify({"code": 0, "data": data, "msg": "查询成功"})
+    img_input = cv2.imread('../algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/1.JPG')  # 红外 灰色
+    # 输出为path2掩膜图像存储路径，path3分割之后图像的存储路径
+    path2 , path3 = mycutimg(img_input)
+    return jsonify({"code": 0, "path2": path2,"path3": path3, "msg": "查询成功"})
 
 
 @fea.route("/users/<string:username>", methods=["GET"])

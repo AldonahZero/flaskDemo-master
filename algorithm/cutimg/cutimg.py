@@ -54,7 +54,7 @@ def mycutimg(img_input):
     # main
     plt.imshow(img[:,:,::-1])
     output = plt.ginput(0, 100)
-    # print(output)
+    print(output)
     # plt.show()
     # cv2.waitKey(0)
     # print('output = ', output)
@@ -166,6 +166,7 @@ def mycutimg(img_input):
 
             # cv2.imshow('temp', temp)
             # cv2.waitKey(0)
+    print(path2,path3)
     return path2, path3
 
 # mycutimg(number=1)

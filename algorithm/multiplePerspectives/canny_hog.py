@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import xlwt
 import skimage
 import math
-#from skimage.feature import greycomatrix, greycoprops
-#from skimage import io, color, img_as_ubyte
 from skimage.feature import hog
 
 

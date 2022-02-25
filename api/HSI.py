@@ -1,5 +1,5 @@
 from flask import jsonify, request,Blueprint, render_template, redirect
-from common.mysql_operate import db
+from common.mysql_operate import db_session
 from common.redis_operate import redis_db
 from common.md5_operate import get_md5
 import re, time

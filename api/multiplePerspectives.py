@@ -3,13 +3,13 @@
 from flask import jsonify, request,Blueprint, render_template, redirect
 # import os
 # import redis
-# from os.path import isfile, join
-# from os import listdir
+from os.path import isfile, join
+from os import listdir
 # import json
 #
 # from util import unzip_file
 # from A import grey_compare
-# from model import db_session, Pic
+from common.mysql_operate import db_session, Pic
 # from MyEncoder import MyEncoder
 
 from algorithm.multiplePerspectives.A import *

@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
-from canny_hog import canny_distance
-from histogram_ou_distance import grey_distance
-from lbp import lbp_distance
-from kaze import kaze_distance
+from algorithm.multiplePerspectives.canny_hog import canny_distance
+from algorithm.multiplePerspectives.histogram_ou_distance import grey_distance
+from algorithm.multiplePerspectives.lbp import lbp_distance
+from algorithm.multiplePerspectives.kaze import kaze_distance
 
 def grey_compare(pics):  #灰度特征
     list1 = []

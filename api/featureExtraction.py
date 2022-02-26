@@ -6,34 +6,23 @@ from common.md5_operate import get_md5
 import re, time
 import cv2
 import json
-from config.setting import API_VERSION
 
 from algorithm.cutimg.cutimg import mycutimg
 
-fea_v1 = Blueprint('fea', __name__, url_prefix=API_VERSION)
-
-api = Api(
-    fea_v1,
-    version='1.0',
-    title='平台 API',
-    description='平台 API'
-)
+fea_ns = Namespace('fea', description='featureExtraction 特征提取')
 
 
-ns = Namespace('fea', description='fea')
-
-
-@ns.route("/", strict_slashes=False)  # 实际访问地址 /api/v1/fea
+@fea_ns.route("/hello", strict_slashes=False)  # 实际访问地址 /api/v1/fea/hello
 class TestHandler(Resource):
-    @ns.doc('获取数据')
-    @ns.param('id', 'The task identifier')
+    @fea_ns.doc('获取数据')
+    @fea_ns.param('id', 'The task identifier')
     def get(self):
         # 如果使用模板的块，需要使用 make_response
         # return make_response(render_template('index.html', data=res), 200)
 
         # 使用 jsonify 是为了返回json数据的同时，相比于 json.dumps() 其会自动修改 content-type 为 application/json
         # 另外，如果使用 jsonify()的同时，还想自定义返回状态码，可以使用 make_response(jsonify(data=data), 201)
-        return jsonify("Hello World!")
+        return jsonify("hello")
 
     def post(self):
         pass
@@ -45,12 +34,12 @@ class TestHandler(Resource):
         pass
 
 
-@ns.route("/targetBackgroundRegionSegmentation", methods=["GET"])
-def targetBackgroundRegionSegmentation():
-    img_input = cv2.imread('/algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/1.JPG')  # 红外 灰色
-    # 输出为path2掩膜图像存储路径，path3分割之后图像的存储路径
-    path2 , path3 = mycutimg(img_input)
-    return jsonify({"code": 0, "path2": path2,"path3": path3, "msg": "查询成功"})
+# @fea_ns.route("/targetBackgroundRegionSegmentation", methods=["GET"])
+# def targetBackgroundRegionSegmentation():
+#     img_input = cv2.imread('/algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/1.JPG')  # 红外 灰色
+#     # 输出为path2掩膜图像存储路径，path3分割之后图像的存储路径
+#     path2 , path3 = mycutimg(img_input)
+#     return jsonify({"code": 0, "path2": path2,"path3": path3, "msg": "查询成功"})
 
 #
 # @fea.route("/users/<string:username>", methods=["GET"])

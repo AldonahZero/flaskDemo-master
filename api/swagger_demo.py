@@ -6,8 +6,11 @@ from flask_restx import Namespace, Resource, fields
 swag_ns = Namespace('swaggerUI_demo', description='swaggerUI 演示')
 
 
+# 路由地址
 @swag_ns.route("/hello", strict_slashes=False)  # 实际访问地址 /api/v1/swaggerUI_demo/hello
+
 class TestHandler(Resource):
+    # 描述你的这个方法的作用
     @swag_ns.doc('获取数据')
     @swag_ns.param('id', 'The task identifier')
     def get(self):

@@ -6,7 +6,7 @@ from flask_restx import Namespace, Resource, fields
 from config.setting import API_VERSION
 
 from api.swagger_demo import swag_ns
-# from api.featureExtraction import ns as fea_ns
+from api.featureExtraction import fea_ns
 # api1: 该模块路由
 api_v1 = Blueprint('api1', __name__, url_prefix=API_VERSION)
 
@@ -18,4 +18,4 @@ api = Api(
 )
 
 api.add_namespace(swag_ns)
-# api.add_namespace(fea_ns)
+api.add_namespace(fea_ns)

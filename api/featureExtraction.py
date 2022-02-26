@@ -1,23 +1,34 @@
-from flask import jsonify, request,Blueprint, render_template, redirect
+from flask import jsonify, request,Blueprint, render_template, redirect,make_response
+from flask_restx import Api, Resource, fields,Namespace
 from common.mysql_operate import db_session
 from common.redis_operate import redis_db
 from common.md5_operate import get_md5
 import re, time
 import cv2
+import json
 
 from algorithm.cutimg.cutimg import mycutimg
 
-fea = Blueprint('fea',__name__)
+fea_v1 = Blueprint('fea', __name__, url_prefix='/api')
 
-@fea.route('/fea')
+api = Api(
+    fea_v1,
+    version='1.0',
+    title='平台 API',
+    description='平台 API'
+)
+
+
+ns = Namespace('fea', description='fea')
+
+@ns.route('/')
 def hello_world():
     return 'Hello World!'
 
 
-@fea.route("/targetBackgroundRegionSegmentation", methods=["GET"])
+@ns.route("/targetBackgroundRegionSegmentation", methods=["GET"])
 def targetBackgroundRegionSegmentation():
-    """目标背景区域分割"""
-    img_input = cv2.imread('../algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/1.JPG')  # 红外 灰色
+    img_input = cv2.imread('/algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/1.JPG')  # 红外 灰色
     # 输出为path2掩膜图像存储路径，path3分割之后图像的存储路径
     path2 , path3 = mycutimg(img_input)
     return jsonify({"code": 0, "path2": path2,"path3": path3, "msg": "查询成功"})

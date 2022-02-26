@@ -1,7 +1,7 @@
 # coding:utf-8
 # from flask import Flask, request, jsonify
 from flask import jsonify, request,Blueprint, render_template, redirect
-# import os
+import os
 # import redis
 from os.path import isfile, join
 from os import listdir
@@ -10,9 +10,10 @@ from os import listdir
 # from util import unzip_file
 # from A import grey_compare
 from common.mysql_operate import db_session, Pic
+from common.file_tools import unzip_file
 # from MyEncoder import MyEncoder
 
-from algorithm.multiplePerspectives.A import *
+from algorithm.multiplePerspectives.A import grey_compare, canny_compare
 
 mul = Blueprint('mul',__name__)
 
@@ -29,7 +30,8 @@ def upload():
     file.save(path)
 
     # 解压缩
-    # unzip_file(path,UPLOAD_PATH)
+
+    unzip_file(path,UPLOAD_PATH)
 
     # 前端路径
     loadpath = ('static/images/%s' % file.filename)[0:-4]+"/"

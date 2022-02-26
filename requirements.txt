@@ -1,8 +1,9 @@
 PyMySQL==0.9.3
 SQLAlchemy==1.4.11
 Flask==1.0.3
+flask_restx
 redis==3.4.1
-
+pyyaml
 matplotlib
 numpy==1.19.5
 opencv_contrib_python

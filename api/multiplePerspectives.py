@@ -20,6 +20,7 @@ mul_ns = Namespace('mul', description='multiplePerspectives 多视角')
 
 
 UPLOAD_PATH = os.path.join(os.path.dirname(__file__), 'static')
+print(UPLOAD_PATH)
 @mul_ns.route("/zipfile", strict_slashes=False)  # 实际访问地址 /api/v1/mul/zipfile
 class UploadHandler(Resource):
     @mul_ns.doc('查看所以解压图片')
@@ -38,7 +39,7 @@ class UploadHandler(Resource):
 
     @mul_ns.doc('上传图片压缩包')
     @mul_ns.doc(response={403: '上传失败'})
-    @mul_ns.param('id', 'The task identifier')
+    @mul_ns.param('file', '文件')
     def post(self):
         # 普通参数获取
         # 获取pichead文件对象
@@ -52,7 +53,7 @@ class UploadHandler(Resource):
         unzip_file(path, UPLOAD_PATH)
 
         # 前端路径
-        loadpath = ('static/images/%s' % file.filename)[0:-4] + "/"
+        loadpath = ('/static/images/%s' % file.filename)[0:-4] + "/"
         filenames = [f for f in listdir(loadpath) if isfile(join(loadpath, f))]
 
         session = db_session()

@@ -19,4 +19,4 @@ EXPIRE_TIME = 600
 MD5_SALT = "test2020#%*"
 
 # url配置
-API_V1 = "/api/v1"
+API_VERSION = "/api/v1"

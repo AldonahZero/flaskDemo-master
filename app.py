@@ -1,6 +1,6 @@
 import os, sys
 from flask import Flask,request,render_template,Blueprint
-from config.setting import SERVER_PORT, API_V1
+from config.setting import SERVER_PORT
 from flask_apidoc.commands import GenerateApiDoc
 from flask_script import Manager
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -15,13 +15,18 @@ def create_app():
     app.config["JSON_AS_ASCII"] = False  # jsonify返回的中文正常显示
 
     # 注册蓝图
-    from api.swagger_demo import api_v1
-    from api.featureExtraction import fea_v1
+    from api.__init__ import api_v1
+    app.url_map.strict_slashes = False
+
+    app.register_blueprint(api_v1)
+    # from api.swagger_demo import api_v1
+    # from api.featureExtraction import fea_v1
     # from api.HSI import hsi
 
     # from api.multiplePerspectives import mul
-    app.register_blueprint(fea_v1)
-    app.register_blueprint(api_v1)
+    # app.register_blueprint(api_v1)
+    # app.register_blueprint(fea_v1)
+
     # app.register_blueprint(hsi, url_prefix=API_V1 + '/hsi')
     # app.register_blueprint(mul, url_prefix=API_V1 + '/mul')
     return app

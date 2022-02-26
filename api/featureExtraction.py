@@ -6,10 +6,11 @@ from common.md5_operate import get_md5
 import re, time
 import cv2
 import json
+from config.setting import API_VERSION
 
 from algorithm.cutimg.cutimg import mycutimg
 
-fea_v1 = Blueprint('fea', __name__, url_prefix='/api')
+fea_v1 = Blueprint('fea', __name__, url_prefix=API_VERSION)
 
 api = Api(
     fea_v1,
@@ -21,9 +22,27 @@ api = Api(
 
 ns = Namespace('fea', description='fea')
 
-@ns.route('/')
-def hello_world():
-    return 'Hello World!'
+
+@ns.route("/", strict_slashes=False)  # 实际访问地址 /api/v1/fea
+class TestHandler(Resource):
+    @ns.doc('获取数据')
+    @ns.param('id', 'The task identifier')
+    def get(self):
+        # 如果使用模板的块，需要使用 make_response
+        # return make_response(render_template('index.html', data=res), 200)
+
+        # 使用 jsonify 是为了返回json数据的同时，相比于 json.dumps() 其会自动修改 content-type 为 application/json
+        # 另外，如果使用 jsonify()的同时，还想自定义返回状态码，可以使用 make_response(jsonify(data=data), 201)
+        return jsonify("Hello World!")
+
+    def post(self):
+        pass
+
+    def put(self):
+        pass
+
+    def delete(self):
+        pass
 
 
 @ns.route("/targetBackgroundRegionSegmentation", methods=["GET"])

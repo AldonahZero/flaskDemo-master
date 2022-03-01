@@ -54,7 +54,7 @@ class showPseudoColor(Resource):
             filename = str(uuid.uuid1()) + '.' + file.filename.rsplit('.', 1)[1]
             save_path = os.path.join(UPLOAD_FOLDER + '/hsi', filename)
             file.save(save_path)
-            rel_out_path = os.path.join(RESULT_FOLDER + '\\hsi', str(uuid.uuid1()) + '.jpg')
+            rel_out_path = os.path.join(RESULT_FOLDER + '/hsi', str(uuid.uuid1()) + '.jpg')
             abs_out_path = os.path.abspath(rel_out_path)
             try:
                 show_image(save_path, abs_out_path)

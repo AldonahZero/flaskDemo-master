@@ -20,3 +20,10 @@ MD5_SALT = "test2020#%*"
 
 # url配置
 API_VERSION = "/api/v1"
+
+# 文件上传位置
+UPLOAD_FOLDER = 'static/uploads'
+# 文件上传位置
+RESULT_FOLDER = 'static\\result'
+# session secret_key
+SECRET_KEY = 'back_dev_flask'

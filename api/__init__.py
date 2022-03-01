@@ -15,11 +15,12 @@ api = Api(
     description='平台 API'
 )
 
-
-
 from api.swagger_demo import swag_ns
 from api.featureExtraction import fea_ns
 from api.multiplePerspectives import mul_ns
+from api.HSI import hsi_ns
+
 api.add_namespace(swag_ns)
 api.add_namespace(fea_ns)
 api.add_namespace(mul_ns)
+api.add_namespace(hsi_ns)

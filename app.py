@@ -1,8 +1,9 @@
 import os, sys
-from flask import Flask,request,render_template,Blueprint
+from flask import Flask, request, render_template, Blueprint
 from config.setting import SERVER_PORT
-from flask_apidoc.commands import GenerateApiDoc
-from flask_script import Manager
+from config.setting import SECRET_KEY
+# from flask_apidoc.commands import GenerateApiDoc
+# from flask_script import Manager
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 def create_app():
@@ -11,6 +12,7 @@ def create_app():
     BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, BASE_PATH)  # 将项目根路径临时加入环境变量，程序退出后失效
     app = Flask(__name__)
+    app.secret_key = SECRET_KEY
     # app.wsgi_app = ProxyFix(app.wsgi_app)
     app.config["JSON_AS_ASCII"] = False  # jsonify返回的中文正常显示
 

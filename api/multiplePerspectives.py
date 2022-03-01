@@ -19,11 +19,12 @@ from algorithm.multiplePerspectives.A import grey_compare, canny_compare
 mul_ns = Namespace('mul', description='multiplePerspectives 多视角')
 
 
-UPLOAD_PATH = os.path.join(os.path.dirname(__file__), 'static')
+UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '../static')
 print(UPLOAD_PATH)
-@mul_ns.route("/zipfile", strict_slashes=False)  # 实际访问地址 /api/v1/mul/zipfile
+@mul_ns.route("/zipfile", strict_slashes=False,doc={"description": "type in here"})  # 实际访问地址 /api/v1/mul/zipfile
 class UploadHandler(Resource):
     @mul_ns.doc('查看所以解压图片')
+    @mul_ns.doc(params={"id": "An ID", "description": "My resource"})
     @mul_ns.doc(response={403: '查看失败'})
     def get(self):
         # 普通参数获取
@@ -64,7 +65,7 @@ class UploadHandler(Resource):
         session.close()
         return '上传压缩包成功', 201
 
-    UPLOAD_PATH = os.path.join(os.path.dirname(__file__), 'static/images')
+    UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '../static/images')
 
     @mul_ns.doc('根据图片调用算法')
     def put(self):

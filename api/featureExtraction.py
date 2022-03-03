@@ -1,10 +1,10 @@
-from flask import jsonify, request,Blueprint, render_template, redirect,make_response
-from flask_restx import Api, Resource, fields,Namespace
+from flask import jsonify, request, Blueprint, render_template, redirect, make_response
+from flask_restx import Api, Resource, fields, Namespace
 from common.mysql_operate import db_session, Pic
 from common.md5_operate import get_md5
 import re, time
 import cv2
-import json,os
+import json, os
 from common.file_tools import unzip_file
 
 from algorithm.cutimg.cutimg import mycutimg
@@ -12,6 +12,8 @@ from algorithm.cutimg.cutimg import mycutimg
 fea_ns = Namespace('fea', description='featureExtraction 特征提取')
 
 UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '../static')
+
+
 @fea_ns.route("/upload", strict_slashes=False)  # 实际访问地址 /api/v1/fea/upload
 class PicHandel(Resource):
     @fea_ns.param('file', '文件')
@@ -59,8 +61,6 @@ class PicHandel(Resource):
         return jsonify({'code': 1, 'message': '查找成功', 'data': sendpicUrls})
 
     pass
-
-
 
 # # yong suanfa
 # @app.route('/dsj/shuju')

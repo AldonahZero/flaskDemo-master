@@ -2,16 +2,10 @@
 from flask import jsonify, request,Blueprint, render_template, redirect,make_response
 from flask_restx import Api, Resource, fields,Namespace
 import os
-# import redis
 from os.path import isfile, join
 from os import listdir
-# import json
-#
-# from util import unzip_file
-# from A import grey_compare
 from common.mysql_operate import db_session, Pic
 from common.file_tools import unzip_file
-# from MyEncoder import MyEncoder
 
 from algorithm.multiplePerspectives.A import grey_compare, canny_compare
 

@@ -1,37 +1,87 @@
 from flask import jsonify, request,Blueprint, render_template, redirect,make_response
 from flask_restx import Api, Resource, fields,Namespace
-from common.mysql_operate import db_session
-from common.redis_operate import redis_db
+from common.mysql_operate import db_session, Pic
 from common.md5_operate import get_md5
 import re, time
 import cv2
-import json
+import json,os
+from common.file_tools import unzip_file
 
 from algorithm.cutimg.cutimg import mycutimg
 
 fea_ns = Namespace('fea', description='featureExtraction 特征提取')
 
-
-@fea_ns.route("/hello", strict_slashes=False)  # 实际访问地址 /api/v1/fea/hello
-class TestHandler(Resource):
-    @fea_ns.doc('获取数据')
-    @fea_ns.param('id', 'The task identifier')
-    def get(self):
-        # 如果使用模板的块，需要使用 make_response
-        # return make_response(render_template('index.html', data=res), 200)
-
-        # 使用 jsonify 是为了返回json数据的同时，相比于 json.dumps() 其会自动修改 content-type 为 application/json
-        # 另外，如果使用 jsonify()的同时，还想自定义返回状态码，可以使用 make_response(jsonify(data=data), 201)
-        return jsonify("hello")
-
+UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '../static')
+@fea_ns.route("/upload", strict_slashes=False)  # 实际访问地址 /api/v1/fea/upload
+class PicHandel(Resource):
+    @fea_ns.param('file', '文件')
     def post(self):
+        # 普通参数获取
+        # desc = request.form.get('desc')
+        # 获取pichead文件对象
+        file = request.files.get('file')
+        path = os.path.join(UPLOAD_PATH, file.filename)
+        print(path)
+        file.save(path)
+
+        # 解压缩
+        unzip_file(path, UPLOAD_PATH)
+
+        # 前端路径
+        loadpath = ('static/images/%s' % file.filename)[0:-4] + "/"
+
+        print(loadpath)
+        session = db_session()
+        new_file = Pic(path=loadpath, pictureLabels="RGB", dataType="jpg")
+        session.add(new_file)
+        session.commit()
+        session.close()
+        return jsonify({'code': 1, 'message': '上传成功'})
         pass
 
-    def put(self):
-        pass
+    def get(self):
+        session = db_session()
+        pics = session.query(Pic).all()
+        paths = []
 
-    def delete(self):
-        pass
+        picUrls = []
+        sendpicUrls = []
+        for i in pics:
+            paths.append(i.path)
+        # print(paths)
+        for i in range(len(paths)):
+            dirs = os.listdir(paths[i])
+            for dir in dirs:
+                if (dir.endswith('jpg') or dir.endswith('JPG')):
+                    picUrls.append('http://127.0.0.1:5000/' + paths[i] + dir)
+            sendpicUrls.append(picUrls)
+        # print(jsonify({'code': 1, 'message': '查找成功','data':picUrls}))
+        return jsonify({'code': 1, 'message': '查找成功', 'data': sendpicUrls})
+
+    pass
+
+
+
+# # yong suanfa
+# @app.route('/dsj/shuju')
+# def get_image():
+#     # params
+#     uid = redis_store.get('token:%s' % uid)
+#     user = User.query.filter_by(uid=uid).first()
+#     task = Task.query.all(uid=uid)
+#     suanfatype = request.files.get('suanfatype')
+#
+#     # suanfa
+#     data = suanfa(suanfatype)
+#     # 写入数据
+#     session = db_session()
+#     new_file = PictureFile(path=suanfatype, pictureLabels="RGB", dataType="jpg")
+#     session.add(new_file)
+#     session.commit()
+#     session.close()
+#
+#     # 包装数据
+#     return jsonify({'code': 1, 'message': '查找成功','data':data})
 
 
 # @fea_ns.route("/targetBackgroundRegionSegmentation", methods=["GET"])

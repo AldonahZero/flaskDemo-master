@@ -47,6 +47,3 @@ class TestHandler(Resource):
 
     def put(self):
         pass
-
-    def delete(self):
-        pass

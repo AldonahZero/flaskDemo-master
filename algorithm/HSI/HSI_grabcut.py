@@ -2,13 +2,14 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import algorithm.HSI as hsi
+from config.setting import RESULT_FOLDER
 
 
 # 图像分割程序   输入为高光谱图像原始数据  返回值为结果保存目录   结果自动保存为该目录下的  target.jpg  back.jpg文件
 # 修改输出路径  直接改 out_path 即可
 def Hsi_grabcut_f(image_path):
     # 读取原图像
-    out_path = '../image_result/'
+    out_path = RESULT_FOLDER + '/hsi' + image_path[image_path.rindex('/'):image_path.rindex('.')]
 
     img_raw = hsi.load_data(image_path)
     # os.mkdir(out_path)   # 创建文件夹的作用  如果已经有所有的对应文件夹后  注释掉  如果没有  加上

@@ -25,7 +25,7 @@ def gauss_edge_f(image_path, k_num):
     return out_path
 
 
-def canny_edge_f(image_path, k_num):
+def canny_edge_f(image_path, k_num, out_path):
     image = hsi.load_data(image_path)
     img = image[:, :, k_num]
     img = image_normalize(img)
@@ -36,7 +36,7 @@ def canny_edge_f(image_path, k_num):
     canny_image = cv2.Canny(blurred, 50, 150)
 
     #  输出路径
-    out_path = "../image_result/edge_canny_result.jpg"
+    # out_path = "../image_result/edge_canny_result.jpg"
     cv2.imwrite(out_path, canny_image)
     return out_path
 

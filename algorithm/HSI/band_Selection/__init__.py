@@ -1,6 +1,6 @@
 import numpy as np
 import math
-import flaskProjectDemo.HSI as hsi
+import algorithm.HSI as hsi
 
 
 # 输入 是图片路径 和 所选择波段的数量  输出是对应的整数数组

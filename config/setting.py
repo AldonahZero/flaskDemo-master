@@ -27,3 +27,6 @@ UPLOAD_FOLDER = 'static/uploads'
 RESULT_FOLDER = 'static/result'
 # session secret_key
 SECRET_KEY = 'back_dev_flask'
+
+# 上传文件最大大小
+MAX_FILE_SIZE = 1024 * 1024 * 50

@@ -1,22 +1,30 @@
 # coding:utf-8
 from flask import jsonify, request, Blueprint, render_template, redirect, make_response
-from flask_restx import Api, Resource, fields, Namespace,reqparse
+from flask_restx import Api, Resource, fields, Namespace
+from flask_restx.reqparse import RequestParser
 import os
 from os.path import isfile, join
 from os import listdir
+import uuid
+
 from common.mysql_operate import db_session, Pic
 from common.file_tools import unzip_file
 from common.getUploadLocation import get_upload_location
+from common.remove_file_dir import remove_file_dir
+
 from algorithm.multiplePerspectives.A import grey_compare, canny_compare
 from werkzeug.datastructures import FileStorage
 
-# mul = Blueprint('mul',__name__)
+# from models.mul_model import MulModel
+
+mul = Blueprint('mul',__name__)
 mul_ns = Namespace('mul', description='multiplePerspectives 多视角')
 
-parser: reqparse.RequestParser = mul_ns.parser()
+# # 文件上传🚫
+parser: RequestParser = mul_ns.parser()
 parser.add_argument('file', location='files',
                     type=FileStorage, required=True)
-
+# 上传图片路径
 UPLOAD_PATH = get_upload_location("/multiplePerspectives/static/images")
 # print(UPLOAD_PATH)
 
@@ -38,25 +46,27 @@ class UploadHandler(Resource):
         return jsonify({'code': 201, 'message': '查找成功', 'data': data})
 
     @mul_ns.doc(description="上传图片压缩包")
-    @mul_ns.doc(params={"file": "压缩包文件"})
     @mul_ns.doc(response={403: '上传失败'})
     @mul_ns.expect(parser, validate=True)
-    @mul_ns.param('file', '文件')
     def post(self):
         # 普通参数获取
         # 获取pichead文件对象
         file = request.files.get('file')
+        save_filename = str(uuid.uuid1())
         path = os.path.join(UPLOAD_PATH, file.filename)
-        # print(path)
         file.save(path)
-
         # 解压缩
 
         unzip_file(path, UPLOAD_PATH)
+        unzip_file_loaction =os.path.join(UPLOAD_PATH,  file.filename) [0:-4]
+        unzip_file_uid_loaction = os.path.join(UPLOAD_PATH,  save_filename)
+        os.rename(unzip_file_loaction,unzip_file_uid_loaction)
+        remove_file_dir(path)
 
         # 前端路径
-        proLoadPath = os.path.join('algorithm/multiplePerspectives/static/images', file.filename)[0:-4] + "/"
-        realProLoadPath = os.path.join(UPLOAD_PATH, file.filename)[0:-4] + "/"
+        proLoadPath = os.path.join('algorithm/multiplePerspectives/static/images', save_filename) + "/"
+        realProLoadPath = os.path.join(UPLOAD_PATH, save_filename)+ "/"
+        print(realProLoadPath)
         filenames = [f for f in listdir(realProLoadPath) if isfile(join(proLoadPath, f))]
 
         session = db_session()

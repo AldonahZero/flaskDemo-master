@@ -1,8 +1,8 @@
 import cv2
-import flaskProjectDemo.HSI as hsi
+import algorithm.HSI as hsi
 import numpy as np
 import matplotlib.pyplot as plt
-import flaskProjectDemo.HSI.HSI_grabcut as grabcut_my
+import algorithm.HSI.HSI_grabcut as grabcut_my
 from skimage import filters
 
 
@@ -290,12 +290,12 @@ def gray_histogram_dif_f(image_path):
 
 #  归一化水体指数  用来衡量该像素点对应的地物与水体的接近程序（ 镜面反射 以及 水汽的含量 都会导致其接近水体）
 #  返回一个二维矩阵  大小为 -1 到 1（ 可以直接显示  不用考虑负数）
-def HSI_NDWI_f(image_path):
+def HSI_NDWI_f(image_path, out_path):
     image = hsi.load_data(image_path)
     result = (image[:, :, 46] - image[:, :, 167]) / (image[:, :, 46] + image[:, :, 167])
     # cv2.imshow("RESULT", result)
     # cv2.waitKey(0)
-    out_path = "../image_result/NDWI_result.jpg"
+    # out_path = "../image_result/NDWI_result.jpg"
     result = result * 255
     cv2.imwrite(out_path, result)
     return out_path
@@ -303,12 +303,12 @@ def HSI_NDWI_f(image_path):
 
 #  归一化植被指数  用来衡量该像素点对应的地物与植被的接近程序（叶绿素含量）
 #  返回一个路径  其实不用返回  固定在当前HSI包下面的image_result文件夹中
-def HSI_NDVI_f(image_path):
+def HSI_NDVI_f(image_path, out_path):
     image = hsi.load_data(image_path)
     result = (image[:, :, 167] - image[:, :, 76]) / (image[:, :, 167] + image[:, :, 76])
     # cv2.imshow("RESULT", result)
     # cv2.waitKey(0)
-    out_path = "../image_result/NDVI_result.jpg"
+    # out_path = "../image_result/NDVI_result.jpg"
     result = result * 255
     cv2.imwrite(out_path, result)
     return out_path
@@ -391,7 +391,7 @@ def HSI_SAM_grabcut_f(img_raw):
 # 角点检测显示程序
 # 输入为高光谱原始数据 输出为一幅图像 返回值为图像默认保存路径
 
-def Harris_points_f(image_path):
+def Harris_points_f(image_path, out_path):
     image = hsi.load_data(image_path)
     red_band = 76
     blue_band = 15
@@ -410,7 +410,7 @@ def Harris_points_f(image_path):
     dst = cv2.cornerHarris(img, 2, 3, 0, 0.4)
     dst = cv2.dilate(dst, None)  # 角点原来是个小叉叉（××） 膨胀角点
     pseudo_image[dst > 0.01 * dst.max()] = [0, 0, 255]
-    out_path = "../image_result/points_Harris.jpg"
+    #out_path = "../image_result/points_Harris.jpg"
     cv2.imwrite(out_path, pseudo_image)
     return out_path
 

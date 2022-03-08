@@ -19,7 +19,7 @@ def grey_compare(pics):  #灰度特征
             dis = grey_distance(list1[i], list1[i + interval])
             sum = sum + dis
         average = sum / (len(list1) // 2)
-        average = round(average, 4)
+        average = np.round(average, 4)
         list2.append(np.float(average[0]))
     return list2  # 返回一个浮点数列表
 
@@ -37,7 +37,7 @@ def canny_compare(pics):  #边缘特征
             dis = canny_distance(list1[i], list1[i + interval])
             sum = sum + dis
         average = sum / (len(list1) // 2)
-        average = round(average, 4)
+        average = np.round(average, 4)
         list2.append(np.float(average))
     return list2  # 返回一个浮点数列表
 
@@ -55,7 +55,7 @@ def lbp_compare(pics):  #lbp纹理特征
             dis = lbp_distance(list1[i], list1[i + interval])
             sum = sum + dis
         average = sum / (len(list1) // 2)
-        average = round(average, 4)
+        average = np.round(average, 4)
         list2.append(np.float(average))
     return list2  # 返回一个浮点数列表
 
@@ -73,6 +73,6 @@ def kaze_compare(pics):  #kaze角点特征
             dis = kaze_distance(list1[i], list1[i + interval])
             sum = sum + dis
         average = sum / (len(list1) // 2)
-        average = round(average, 1)
+        average = np.round(average, 1)
         list2.append(np.float(average))
     return list2  # 返回一个浮点数列表

@@ -9,6 +9,7 @@ import xlwt
 from skimage import io
 from sklearn.cluster import KMeans
 import utils
+import shutil
 from PIL import ImageFont, ImageDraw, Image
 
 '''

@@ -1,5 +1,5 @@
 # coding:utf-8
-from flask import jsonify, request, Blueprint, render_template, redirect, make_response
+from flask import jsonify, request, Blueprint, render_template, redirect, make_response, current_app
 from flask_restx import Api, Resource, fields, Namespace
 from flask_restx.reqparse import RequestParser
 import os
@@ -98,7 +98,7 @@ class rt_grey_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             grey_compare_data = grey_compare(pics)
         except BaseException as e:
-            jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': grey_compare_data})
 
@@ -115,7 +115,8 @@ class rt_canny_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             canny_compare_data = canny_compare(pics)
         except BaseException as e:
-            jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+            current_app.logger.error(str(e))
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': canny_compare_data})
 
@@ -132,7 +133,7 @@ class rt_lbp_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             lbp_compare_data = lbp_compare(pics)
         except BaseException as e:
-            jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': lbp_compare_data})
 
@@ -149,6 +150,6 @@ class rt_kaze_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             kaze_compare_data = kaze_compare(pics)
         except BaseException as e:
-            jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': kaze_compare_data})

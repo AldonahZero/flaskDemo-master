@@ -9,6 +9,7 @@ from skimage import data
 from math import floor, ceil
 from skimage.feature import greycomatrix, greycoprops
 import os
+import shutil
 
 '''
 输入：

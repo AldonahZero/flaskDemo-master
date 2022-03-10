@@ -1,4 +1,6 @@
 import os, sys
+import logging
+import logging.config
 from flask import Flask, request, render_template, Blueprint,Response
 from config.setting import SERVER_PORT
 from config.setting import SECRET_KEY
@@ -18,6 +20,42 @@ from api.__init__ import api_v1, cors_headers
 app.url_map.strict_slashes = False
 
 app.register_blueprint(api_v1)
+
+
+logger_conf ={
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+}
+
+handler = logging.FileHandler(filename="test.log", encoding='utf-8')
+handler.setLevel("DEBUG")
+format_ ="%(asctime)s[%(name)s][%(levelname)s] :%(levelno)s: %(message)s"
+formatter = logging.Formatter(format_)
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+
+# debug : 打印全部的日志,详细的信息,通常只出现在诊断问题上
+# info : 打印info,warning,error,critical级别的日志,确认一切按预期运行
+# warning : 打印warning,error,critical级别的日志,一个迹象表明,一些意想不到的事情发生了,或表明一些问题在不久的将来(例如。磁盘空间低”),这个软件还能按预期工作
+# error : 打印error,critical级别的日志,更严重的问题,软件没能执行一些功能
+# critical : 打印critical级别,一个严重的错误,这表明程序本身可能无法继续运行
+# 日志级别：CRITICAL >ERROR> WARNING > INFO> DEBUG> NOTSET
+# current_app.logger.info("this is info")
+# current_app.logger.debug("this is debug")
+# current_app.logger.warning("this is warning")
+# current_app.logger.error("this is error")
+# current_app.logger.critical("this is critical")
 
 @app.after_request
 def after_request(response: Response):

@@ -1,6 +1,7 @@
 import cv2
 
-def kaze_distance(img1, img2): # 计算两幅图kaze特征距离
+
+def kaze_distance(img1, img2):  # 计算两幅图kaze特征距离
     kaze = cv2.KAZE_create()
     brief = cv2.xfeatures2d.BriefDescriptorExtractor_create()
     kp1 = kaze.detect(img1, None)
@@ -37,12 +38,13 @@ def kaze_distance(img1, img2): # 计算两幅图kaze特征距离
                 Max = a
             if a < Min:
                 Min = a
-    
+
     return count
 
+
 if __name__ == '__main__':  # 测试kaze特征
-    path1 = './static/images/lhy/001.jpg'
-    path2 = './static/images/lhy/002.jpg'
+    path1 = '.\\static\\images\\lhy\\01.jpg'
+    path2 = '.\\static\\images\\lhy\\02.jpg'
     img1 = cv2.imread(path1)
     img2 = cv2.imread(path2)
     res = kaze_distance(img1, img2)

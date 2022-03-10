@@ -50,6 +50,11 @@ def mycutimg(img_input):
     # path1 =
     path2 = 'static/images_GLCM_bitwise/images_camouflage/mix/20m/'
     path3 = 'static/images_GLCM/images_camouflage/mix/20m/'
+    # 快速定位专用 实际不执行
+    if False:
+        os.mkdir('static/images_GLCM_bitwise/images_camouflage/mix/20m/')
+        os.mkdir('static/images_GLCM/images_camouflage/mix/20m/')
+
     # img = cv2.imread(path1 + str(number) + '.JPG')
     # main
     plt.imshow(img[:,:,::-1])

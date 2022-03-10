@@ -31,7 +31,7 @@ img_input 格式为图片
 path2：掩膜图像存储路径
 path3：分割图像存储路径
 '''
-mycutimg(img_input)
+# mycutimg(img_input)
 
 
 # # gray_histogram_differential.py 获取灰度直方图及其相关性
@@ -41,7 +41,7 @@ mycutimg(img_input)
 输出：
 直方图存储路径 path_mid
 '''
-# main_gray_hist_differential()
+main_gray_hist_differential()
 
 
 # # main_color_demo.py 获取彩色图像的主要颜色（在运行过程中会用到utils.py文件 而不是自带的utils包）

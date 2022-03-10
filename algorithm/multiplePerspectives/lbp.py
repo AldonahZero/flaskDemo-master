@@ -74,8 +74,8 @@ def lbp_distance(img1, img2):  # 计算两幅图lbp特征距离
     return corr
 
 if __name__ == '__main__':  # 测试lbp特征
-    path1 = './static/images/lhy/001.jpg'
-    path2 = './static/images/lhy/002.jpg'
+    path1 = '.\\static\\images\\lhy\\001.jpg'
+    path2 = '.\\static\\images\\lhy\\002.jpg'
     img1 = cv2.imread(path1)
     img2 = cv2.imread(path2)
     res = lbp_distance(img1, img2)

@@ -42,6 +42,7 @@ class UploadHandler(Resource):
             for pic in pics:
                 data.append(pic.to_json())
         except BaseException as e:
+            current_app.logger.error(str(e))
             return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
@@ -80,6 +81,7 @@ class UploadHandler(Resource):
                 session.commit()
             session.close()
         except BaseException as e:
+            current_app.logger.error(str(e))
             return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '上传压缩包成功'})
@@ -98,6 +100,7 @@ class rt_grey_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             grey_compare_data = grey_compare(pics)
         except BaseException as e:
+            current_app.logger.error(str(e))
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': grey_compare_data})
@@ -107,13 +110,21 @@ class rt_grey_compare(Resource):
 class rt_canny_compare(Resource):
     def get(self, pids):
         '''边缘特征'''
+        pidss = list(map(int, pids.split(',')))
+        session = db_session()
+        pics = Pic.query.filter(Pic.pid.in_(pidss)).all()
+        current_app.logger.info(str(pics))
+        # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
+        canny_compare_data = canny_compare(pics)
         # pids=31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60
         try:
-            pidss = list(map(int, pids.split(',')))
-            session = db_session()
-            pics = Pic.query.filter(Pic.pid.in_(pidss)).all()
-            # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
-            canny_compare_data = canny_compare(pics)
+            print()
+            # pidss = list(map(int, pids.split(',')))
+            # session = db_session()
+            # pics = Pic.query.filter(Pic.pid.in_(pidss)).all()
+            # current_app.logger.info(str(pics))
+            # # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
+            # canny_compare_data = canny_compare(pics)
         except BaseException as e:
             current_app.logger.error(str(e))
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -133,6 +144,7 @@ class rt_lbp_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             lbp_compare_data = lbp_compare(pics)
         except BaseException as e:
+            current_app.logger.error(str(e))
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': lbp_compare_data})
@@ -150,6 +162,7 @@ class rt_kaze_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             kaze_compare_data = kaze_compare(pics)
         except BaseException as e:
+            current_app.logger.error(str(e))
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': kaze_compare_data})

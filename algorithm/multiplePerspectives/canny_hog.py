@@ -34,9 +34,9 @@ def canny_distance(img1, img2):
     column = column//max
 
     fd1, hist1 = hog(img1, orientations=9, pixels_per_cell=(row, column),
-                        cells_per_block=(1, 1), feature_vector=False, visualize=True, channel_axis=False)
+                        cells_per_block=(1, 1), feature_vector=False, visualize=True, multichannel=False)
     fd2, hist2 = hog(img2, orientations=9, pixels_per_cell=(row, column),
-                        cells_per_block=(1, 1), feature_vector=False, visualize=True, channel_axis=False)
+                        cells_per_block=(1, 1), feature_vector=False, visualize=True, multichannel=False)
 
     #fd1 = fd1.reshape(10, 10, -1)
     fd1 = fd1.squeeze()

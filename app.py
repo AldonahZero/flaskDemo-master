@@ -9,7 +9,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_PATH)  # 将项目根路径临时加入环境变量，程序退出后失效
-app = Flask(__name__)
+# 修改默认存储路径
+app = Flask(__name__,static_folder="algorithm", static_url_path="/algorithm")
 app.secret_key = SECRET_KEY
 # app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config["JSON_AS_ASCII"] = False  # jsonify返回的中文正常显示
@@ -22,29 +23,12 @@ app.url_map.strict_slashes = False
 app.register_blueprint(api_v1)
 
 
-logger_conf ={
-    'version': 1,
-    'formatters': {'default': {
-        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-    }},
-    'handlers': {'wsgi': {
-        'class': 'logging.StreamHandler',
-        'stream': 'ext://flask.logging.wsgi_errors_stream',
-        'formatter': 'default'
-    }},
-    'root': {
-        'level': 'INFO',
-        'handlers': ['wsgi']
-    }
-}
-
 handler = logging.FileHandler(filename="test.log", encoding='utf-8')
 handler.setLevel("DEBUG")
 format_ ="%(asctime)s[%(name)s][%(levelname)s] :%(levelno)s: %(message)s"
 formatter = logging.Formatter(format_)
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
-
 # debug : 打印全部的日志,详细的信息,通常只出现在诊断问题上
 # info : 打印info,warning,error,critical级别的日志,确认一切按预期运行
 # warning : 打印warning,error,critical级别的日志,一个迹象表明,一些意想不到的事情发生了,或表明一些问题在不久的将来(例如。磁盘空间低”),这个软件还能按预期工作

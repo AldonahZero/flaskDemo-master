@@ -65,13 +65,13 @@ def hist_square(hist_1, hist_2):
     p = cov / (pow(dx, 0.5) * pow(dy, 0.5))
     return ex, ey, exy, dx, dy, cov, p, skewness
 
-def main_gray_hist_differential():
+def main_gray_hist_differential(path,path_bitwise,path_gray_histogram_save):
 
     q = 0
 
-    path = 'static/images_GLCM_original'
-    path_bitwise = 'static/images_GLCM_bitwise'
-    path_gray_histogram_save = 'static/images_save/gray_histogram/'
+    # path = 'static/images_GLCM_original'
+    # path_bitwise = 'static/images_GLCM_bitwise'
+    # path_gray_histogram_save = 'static/images_save/gray_histogram/'
 
     # path = path_input + '_original'
     # path_bitwise = path_input + '_bitwise'

@@ -74,5 +74,5 @@ def kaze_compare(pics):  #kaze角点特征
             sum = sum + dis
         average = sum / (len(list1) // 2)
         average = np.round(average, 1)
-        list2.append(np.float(average))
+        list2.append(np.float(average   ))
     return list2  # 返回一个浮点数列表

@@ -8,7 +8,7 @@ import numpy as np
 import xlwt
 from skimage import io
 from sklearn.cluster import KMeans
-import utils
+import algorithm.cutimg.utils as cutimg_utils
 import shutil
 from PIL import ImageFont, ImageDraw, Image
 
@@ -130,15 +130,15 @@ def plot_colors(hist, centroids):
         color_1.append(color)
         nums = nums + 1
 
-    fontpath = "font/simsun.ttc"
-    font = ImageFont.truetype(fontpath, 15)
+    # fontpath = "font/simsun.ttc"
+    # font = ImageFont.truetype(fontpath, 15)
     img_pil = Image.fromarray(bar)
     draw = ImageDraw.Draw(img_pil)
-    draw.text((0, 0), "%.2f%%" % (hist[0] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 20), "%.2f%%" % (hist[1] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 40), "%.2f%%" % (hist[2] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 60), "%.2f%%" % (hist[3] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 80), "%.2f%%" % (hist[4] * 100), font=font, fill=(0, 0, 0))
+    draw.text((0, 0), "%.2f%%" % (hist[0] * 100),  fill=(0, 0, 0))
+    draw.text((0, 20), "%.2f%%" % (hist[1] * 100), fill=(0, 0, 0))
+    draw.text((0, 40), "%.2f%%" % (hist[2] * 100), fill=(0, 0, 0))
+    draw.text((0, 60), "%.2f%%" % (hist[3] * 100), fill=(0, 0, 0))
+    draw.text((0, 80), "%.2f%%" % (hist[4] * 100), fill=(0, 0, 0))
     # return the bar chart
     bar = np.array(img_pil)
     return bar, percent_1, color_1
@@ -170,24 +170,27 @@ def c_main(img, k, num, path2):
     plt.subplot(1, 2, 1)
     plt.imshow(image_output[:, :, [2, 1, 0]])
 
-    hist = utils.centroid_histogram(clt)
+    hist = cutimg_utils.centroid_histogram(clt)
     bar, per, color = plot_colors(hist, clt.cluster_centers_)
 
     plt.subplot(1, 2, 2)
     plt.imshow(bar[:, :, [2, 1, 0]])
     # plt.savefig('static\\images_save\\main_color\\' + 'main_color' + str(num) + '.JPG')
     plt.savefig(path2 + 'main_color' + str(num) + '.JPG')
-    plt.show()
+    # plt.show()
     return bar, per, color
 
 
-def mymain_color(img_input):
-    if (len(os.listdir('static/images_save/main_color')) != 0):
+def mymain_color(img_input_url):
+    mymain_color_real_path_prex = os.path.dirname(os.path.realpath(__file__))
+    mymain_color_real_path = os.path.join(mymain_color_real_path_prex,'static/images_save/main_color')
+    if (len(os.listdir(mymain_color_real_path)) != 0):
         # 主色提取结果存储路径
-        shutil.rmtree('static/images_save/main_color')
-        os.mkdir('static/images_save/main_color')
+        shutil.rmtree(mymain_color_real_path)
+        os.mkdir(mymain_color_real_path)
     # img_input = cv2.imread('static\\images_GLCM_original\\images_camouflage\\mix\\20m\\' + str(num) +'.JPG')
-    path2 = 'static/images_save/main_color/'
+    img_input = cv2.imread(img_input_url)
+    path2 = mymain_color_real_path + '/'
     c_main(img_input, k=5, num=2, path2=path2)
     return path2
 

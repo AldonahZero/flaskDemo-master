@@ -14,7 +14,7 @@ from common.remove_file_dir import remove_file_dir
 
 from algorithm.multiplePerspectives.A import grey_compare, canny_compare, lbp_compare, kaze_compare
 from werkzeug.datastructures import FileStorage
-
+import traceback
 # from models.mul_model import MulModel
 
 mul = Blueprint('mul', __name__)
@@ -42,7 +42,7 @@ class UploadHandler(Resource):
             for pic in pics:
                 data.append(pic.to_json())
         except BaseException as e:
-            current_app.logger.error(str(e))
+            current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
@@ -81,7 +81,7 @@ class UploadHandler(Resource):
                 session.commit()
             session.close()
         except BaseException as e:
-            current_app.logger.error(str(e))
+            current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '上传压缩包成功'})
@@ -100,7 +100,7 @@ class rt_grey_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             grey_compare_data = grey_compare(pics)
         except BaseException as e:
-            current_app.logger.error(str(e))
+            current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': grey_compare_data})
@@ -126,7 +126,7 @@ class rt_canny_compare(Resource):
             # # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             # canny_compare_data = canny_compare(pics)
         except BaseException as e:
-            current_app.logger.error(str(e))
+            current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': canny_compare_data})
@@ -144,7 +144,7 @@ class rt_lbp_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             lbp_compare_data = lbp_compare(pics)
         except BaseException as e:
-            current_app.logger.error(str(e))
+            current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': lbp_compare_data})
@@ -162,7 +162,7 @@ class rt_kaze_compare(Resource):
             # pics = session.query(Pic).filter(Pic.pid.in_(pids)).all()
             kaze_compare_data = kaze_compare(pics)
         except BaseException as e:
-            current_app.logger.error(str(e))
+            current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': kaze_compare_data})

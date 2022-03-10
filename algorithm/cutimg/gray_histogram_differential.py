@@ -1,6 +1,8 @@
 import os
 import cv2
 import xlwt
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import math
 import numpy as np
@@ -196,9 +198,10 @@ def main_gray_hist_differential(path,path_bitwise,path_gray_histogram_save):
                     '''
                     plt.savefig('static\\images_save\\gray_histogram\\' + original_name)
                     '''
+                    print(path_gray_histogram_save + original_name)
                     plt.savefig(path_gray_histogram_save + original_name)
 
-                    plt.show()
+                    # plt.show()
 
                     # print('cov, p = ', cov1, p1)
 

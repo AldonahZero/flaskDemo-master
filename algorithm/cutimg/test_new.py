@@ -41,7 +41,10 @@ path3：分割图像存储路径
 输出：
 直方图存储路径 path_mid
 '''
-main_gray_hist_differential()
+path = 'static/images_GLCM_original'
+path_bitwise = 'static/images_GLCM_bitwise'
+path_gray_histogram_save = 'static/images_save/gray_histogram/'
+# main_gray_hist_differential(path,path_bitwise,path_gray_histogram_save)
 
 
 # # main_color_demo.py 获取彩色图像的主要颜色（在运行过程中会用到utils.py文件 而不是自带的utils包）
@@ -63,7 +66,7 @@ path3_edge_canny:存储边缘图像的路径
 '''
 # main_edge()
 
-
+# none
 # # edge_hist_batch.py 获取目标背景的边缘方向直方图及其相关性（必须要先运行edge_batch.py里的main_edge() 才能运行此程序）
 '''
 输入：

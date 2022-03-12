@@ -27,7 +27,6 @@ def canny_compare(pics):  #边缘特征
     list1 = []
     list2 = []
     for pic in pics:
-        print()
         img = cv2.imread(pic.url)
         list1.append(img)
 

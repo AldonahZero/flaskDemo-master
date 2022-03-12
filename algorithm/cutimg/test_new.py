@@ -105,4 +105,4 @@ path_save_coner：角点匹配情况图像存储路径
 path_blob_hist_save：生成的斑块图像以及对应直方图存储路径
 arr：result_area , result_length, result_circle, result_rect, result_stretch 几种形状特征的相似性
 '''
-# print(myblobhist())
+print(myblobhist())

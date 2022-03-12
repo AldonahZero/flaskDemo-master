@@ -2,6 +2,8 @@
 # The code is written by Linghui
 
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import cv2
 from PIL import Image
@@ -185,20 +187,23 @@ def calcu_glcm_Auto_correlation(glcm, nbit=64):
     return Auto_correlation
 
 
-def myGLCM_demo(image):
+def myGLCM_demo(image_url):
     main()
+    mymain_color_real_path_prex = os.path.dirname(os.path.realpath(__file__))
+    mymain_color_real_path = os.path.join(mymain_color_real_path_prex,'static/images_save/GLCM_demo')
 
-    if (len(os.listdir('static/images_save/GLCM_demo')) != 0):
+    if (len(os.listdir(mymain_color_real_path)) != 0):
         # GLCM可视化图存储文件夹
-        shutil.rmtree('static/images_save/GLCM_demo')
-        os.mkdir('static/images_save/GLCM_demo')
+        shutil.rmtree(mymain_color_real_path)
+        os.mkdir(mymain_color_real_path)
 
+    image = cv2.imread(image_url)
     number = 1
     window_size = 7
     stride = 2
     angle_get = 0
-    path1 = 'static/images_GLCM_original/images_camouflage/mix/20m/'
-    path2 = 'static/images_save/GLCM_demo/'
+    # path1 = 'static/images_GLCM_original/images_camouflage/mix/20m/'
+    path2 = mymain_color_real_path
 
     # start = time.time()
 
@@ -309,12 +314,12 @@ def myGLCM_demo(image):
 
     plt.tight_layout(pad=0.5)
     # plt.savefig('static\\images_save\\GLCM_demo\\GLCM_Features.png'
-    plt.savefig(path2 + 'GLCM_Features.png'
+    plt.savefig(path2 + '/GLCM_Features.png'
                 , format='png'
                 , bbox_inches='tight'
                 , pad_inches=0
                 , dpi=300)
-    plt.show()
+    # plt.show()
 
     # end = time.time()
     # print('Code run time:', end - start)

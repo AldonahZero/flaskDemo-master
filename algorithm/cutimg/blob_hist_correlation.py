@@ -78,7 +78,7 @@ def hist_square(hist_1, hist_2):
     return ex, ey, exy, dx, dy, cov, p, skewness
 
 
-def myblobhist():
+def myblobhist(path1,path_blob_hist_save):
 
     array_area1 = []
     array_length1 = []
@@ -96,8 +96,8 @@ def myblobhist():
     # path = str(21)
 
     k = 5
-    path1 = 'static/images_GLCM/images_camouflage/mix/20m/'
-    path_blob_hist_save = 'static/images_save/blob_hist/'
+    # path1 = 'static/images_GLCM/images_camouflage/mix/20m/'
+    # path_blob_hist_save = 'static/images_save/blob_hist/'
 
     img_input = cv2.imread(path1 +'14.JPG')
     k2 = np.ones((3, 3), np.uint8)  # 开运算算子

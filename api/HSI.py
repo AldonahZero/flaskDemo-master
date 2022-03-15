@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import datetime
 
 from flask import request, flash, jsonify
 from flask_restx import Resource, Namespace
@@ -12,6 +13,7 @@ from algorithm.HSI.FeatureExtraction import HSI_NDWI_f, HSI_NDVI_f, Harris_point
 from algorithm.HSI.HSI_grabcut import Hsi_grabcut_f
 from algorithm.HSI.FeatureExtraction.gray_feature import gray_mean_dif_f, gray_var_dif_f, gray_histogram_dif_f
 from algorithm.HSI.band_Selection import ECA_f
+from common.mysql_operate import db_session, HSIPictureFile
 
 hsi_ns = Namespace('hsi', description='高光谱部分算法')
 
@@ -52,16 +54,22 @@ def allowed_file(filename):
 @hsi_ns.route('/showPseudoColor/<string:file_path>', doc={"description": "显示伪彩图片：接受文件的服务器存放名称，成功返回图片存放路径"})
 @hsi_ns.param('file_path', '文件上传后返回的文件名称')
 class showPseudoColor(Resource):
-    @hsi_ns.doc('示伪彩图片')
+    @hsi_ns.doc('显示伪彩图片')
     def get(self, file_path):
         '''显示伪彩图片'''
         save_path = HSI_UPLOAD_FOLDER + file_path
-        rel_out_path = HSI_RESULT_FOLDER + str(uuid.uuid1()) + '.jpg'
+        file_name = str(uuid.uuid1())
+        rel_out_path = HSI_RESULT_FOLDER + file_name + '.jpg'
         abs_out_path = os.path.abspath(rel_out_path)
         try:
             show_image(save_path, abs_out_path)
+            session = db_session()
+            pic = HSIPictureFile(pid=file_name, path=rel_out_path, create_time=datetime.now())
+            session.add(pic)
+            session.commit()
+            session.close()
         except BaseException as e:
-            return jsonify({'code': 400, 'message': '查找failed', 'data': str(e)})
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': 'success', 'url': rel_out_path})
 

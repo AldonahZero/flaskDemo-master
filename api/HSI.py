@@ -3,6 +3,8 @@ import uuid
 
 from flask import request, flash, jsonify
 from flask_restx import Resource, Namespace
+from flask_restx.reqparse import RequestParser
+from werkzeug.datastructures import FileStorage
 
 from algorithm.HSI.showPseudoColor import show_image
 from algorithm.HSI.FeatureExtraction.edge_feature import canny_edge_f
@@ -10,21 +12,23 @@ from algorithm.HSI.FeatureExtraction import HSI_NDWI_f, HSI_NDVI_f, Harris_point
 from algorithm.HSI.HSI_grabcut import Hsi_grabcut_f
 from algorithm.HSI.FeatureExtraction.gray_feature import gray_mean_dif_f, gray_var_dif_f, gray_histogram_dif_f
 from algorithm.HSI.band_Selection import ECA_f
-from config.setting import RESULT_FOLDER
-from config.setting import UPLOAD_FOLDER
 
 hsi_ns = Namespace('hsi', description='高光谱部分算法')
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'raw'}
-HSI_UPLOAD_FOLDER = UPLOAD_FOLDER + '/hsi/'
-HSI_RESULT_FOLDER = RESULT_FOLDER + '/hsi/'
+HSI_UPLOAD_FOLDER = 'algorithm/HSI/static/upload/'
+HSI_RESULT_FOLDER = 'algorithm/HSI/static/result/'
+
+# 文件上传格式
+parser: RequestParser = hsi_ns.parser()
+parser.add_argument('file', location='files', type=FileStorage, required=True)
 
 
-@hsi_ns.route('/upload/')
+@hsi_ns.route('/upload', doc={"description": "上传伪彩图片,成功返回图片存放路径"})
 class Upload(Resource):
-    @hsi_ns.param('file', '文件')
+    @hsi_ns.expect(parser, validate=True)
     def post(self):
-        # check if the post request has the file part
+        '''上传图片'''
         if 'file' not in request.files:
             flash('No file part')
             return {'message': 'No file part'}, 201
@@ -34,10 +38,10 @@ class Upload(Resource):
             return {'message': 'No selected file'}, 201
         if file and allowed_file(file.filename):
             filename = str(uuid.uuid1()) + '.' + file.filename.rsplit('.', 1)[1]
-            save_path = os.path.join(UPLOAD_FOLDER + '/hsi', filename)
+            save_path = HSI_UPLOAD_FOLDER + filename
             file.save(save_path)
-            return {'message': 'success', 'url': save_path}
-        return {'message': "file not allow"}, 201
+            return jsonify({'message': 'success', 'url': save_path})
+        return jsonify({'code': 400, 'message': "file not allow"})
 
 
 def allowed_file(filename):
@@ -52,29 +56,28 @@ class showPseudoColor(Resource):
     def get(self, file_path):
         '''显示伪彩图片'''
         save_path = HSI_UPLOAD_FOLDER + file_path
-        rel_out_path = os.path.join(RESULT_FOLDER + '/hsi', str(uuid.uuid1()) + '.jpg')
+        rel_out_path = HSI_RESULT_FOLDER + str(uuid.uuid1()) + '.jpg'
         abs_out_path = os.path.abspath(rel_out_path)
         try:
             show_image(save_path, abs_out_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': '查找failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'url': rel_out_path}, 201
+            return jsonify({'code': 201, 'message': 'success', 'url': rel_out_path})
 
 
-@hsi_ns.route('/HSI_grabcut/<file_path>')
+@hsi_ns.route('/HSI_grabcut/<file_path>',  doc={"description": "图像分割"})
 @hsi_ns.param('file_path', '上传时返回的文件名称')
 class HSI_grabcut(Resource):
     def get(self, file_path):
-        '''图像分割'''
         save_path = HSI_UPLOAD_FOLDER + file_path
         try:
             out_path = Hsi_grabcut_f(save_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'target_path': out_path + 'target.jpg',
-                    'back_path': out_path + 'back.jpg'}, 201
+            return jsonify({'code': 201, 'message': 'success', 'target_path': out_path + 'target.jpg',
+                            'back_path': out_path + 'back.jpg'})
 
 
 @hsi_ns.route('/gray_mean/<file_path>')
@@ -87,9 +90,9 @@ class gray_mean(Resource):
             result = gray_mean_dif_f(save_path)
             # print(result)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result.tolist()}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist()})
 
 
 @hsi_ns.route('/gray_diff/<file_path>')
@@ -101,9 +104,9 @@ class gray_diff(Resource):
         try:
             result = gray_var_dif_f(save_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result.tolist()}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist()})
 
 
 @hsi_ns.route('/gray_histogram_diff/<file_path>')
@@ -115,9 +118,9 @@ class gray_histogram_dif(Resource):
         try:
             result = gray_histogram_dif_f(save_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result.tolist()}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist()})
 
 
 @hsi_ns.route('/HSI_NDWI/<file_path>')
@@ -130,9 +133,9 @@ class HSI_NDWI(Resource):
         try:
             result = HSI_NDWI_f(save_path, out_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result})
 
 
 @hsi_ns.route('/HSI_NDVI/<file_path>')
@@ -145,9 +148,9 @@ class HSI_NDVI(Resource):
         try:
             result = HSI_NDVI_f(save_path, out_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result})
 
 
 @hsi_ns.route('/HSI_SAM/<file_path>')
@@ -160,13 +163,14 @@ class HSI_SAM(Resource):
         try:
             result = HSI_NDVI_f(save_path, out_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result})
 
 
-@hsi_ns.route('/canny_edge/<file_path>')
+@hsi_ns.route('/canny_edge/<file_path>/<int:index>')
 @hsi_ns.param('file_path', '上传时返回的文件名称')
+@hsi_ns.param('index', '数字所选波段索引')
 class canny_edge(Resource):
     def get(self, file_path, index):
         '''边缘检测'''
@@ -175,23 +179,24 @@ class canny_edge(Resource):
         try:
             result = canny_edge_f(save_path, index, out_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result})
 
 
-@hsi_ns.route('/ECA/<file_path>')
+@hsi_ns.route('/ECA/<file_path>/<int:k_num>')
 @hsi_ns.param('file_path', '上传时返回的文件名称')
+@hsi_ns.param('k_num', '一个整数数字')
 class ECA(Resource):
-    def get(self, file_path, index):
+    def get(self, file_path, k_num):
         '''波段选择算法'''
         save_path = HSI_UPLOAD_FOLDER + file_path
         try:
-            result = ECA_f(save_path, index)
+            result = ECA_f(save_path, k_num)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result.tolist()}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist()})
 
 
 @hsi_ns.route('/Harris_points/<file_path>')
@@ -204,6 +209,6 @@ class Harris_points(Resource):
         try:
             result = Harris_points_f(save_path, out_path)
         except BaseException as e:
-            return {'status': 'failed', 'message': str(e)}, 201
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return {'status': 'success', 'result': result}, 201
+            return jsonify({'code': 201, 'message': 'success', 'result': result})

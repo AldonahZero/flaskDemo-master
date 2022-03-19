@@ -50,6 +50,16 @@ class PictureFile(Base):
     dataType = Column('dataType', String(30), index=True, nullable=True)
     pictureLabels = Column('pictureLabels', String(30))
 
+
+class HSIPictureFile(Base):
+    __tablename__ = 'hsi_picture'
+
+    pid = Column('pid', String(36), primary_key=True)
+    uid = Column('uid', String(36), index=True)
+    path = Column('path', String(128))
+    create_time = Column('create_time', DateTime)
+
+
 class Pic(Base):
     __tablename__ = 'pic'
 

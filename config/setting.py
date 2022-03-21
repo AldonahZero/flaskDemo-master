@@ -2,10 +2,10 @@
 SERVER_PORT = 5001
 
 # MySQL配置
-MYSQL_HOST = "localhost"
+MYSQL_HOST = "47.96.111.114"
 MYSQL_PORT = 3306
 MYSQL_USER = "root"
-MYSQL_PASSWD = "root"
+MYSQL_PASSWD = "980506"
 MYSQL_DB = "flask_demo"
 
 # Redis配置

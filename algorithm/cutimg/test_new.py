@@ -31,7 +31,7 @@ img_input 格式为图片
 path2：掩膜图像存储路径
 path3：分割图像存储路径
 '''
-# mycutimg(img_input)
+mycutimg(img_input)
 
 
 # # gray_histogram_differential.py 获取灰度直方图及其相关性
@@ -54,7 +54,7 @@ img_input:图像
 输出:
 path2:主色提取结果存储路径
 '''
-# mymain_color(img_input2)
+mymain_color(img_input2)
 
 
 # # edge_batch.py 获取目标背景的边缘图像
@@ -84,7 +84,7 @@ image:图像
 输出：
 path2: GLCM可视化图像的存储路径
 '''
-# print(myGLCM_demo(img_input))
+print(myGLCM_demo(img_input))
 
 
 # # coner_demon.py

@@ -2,7 +2,9 @@ import os
 import cv2
 import xlwt
 import matplotlib
-matplotlib.use('Agg')
+from config.setting import MATPLOTLIB_INSHOW
+if not MATPLOTLIB_INSHOW:
+    matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import math
 import numpy as np

@@ -3,7 +3,9 @@
 
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
+from config.setting import MATPLOTLIB_INSHOW
+if not MATPLOTLIB_INSHOW:
+    matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import cv2
 from PIL import Image

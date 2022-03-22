@@ -14,9 +14,10 @@ from common.getUploadLocation import get_upload_location, get_server_location
 from common.remove_file_dir import remove_file_dir
 from common.find_star_end import find_se_com
 
-from algorithm.cutimg import gray_histogram_differential, main_color_demon, edge_batch, GLCM_demo, coner_demon, blob_hist_correlation
+from algorithm.cutimg import gray_histogram_differential, main_color_demon, edge_batch, GLCM_demo, coner_demon, blob_hist_correlation, cutimg
 from werkzeug.datastructures import FileStorage
 import traceback
+import numpy as  np
 
 # from models.mul_model import MulModel
 
@@ -33,6 +34,35 @@ CUTIMG_PATH = get_upload_location("/cutimg/static")
 # 服务器图片路径
 CUTIMG_SERVER_PATH = get_server_location("/cutimg/static")
 #  /algorithm/cutimg/static
+
+@fea_ns.route('/cutimg')
+@fea_ns.param('cutimg_pid', '图片id')
+@fea_ns.param('cutposs', '坐标点位置')
+class rt_cutimg(Resource):
+    def post(self):
+        '''分割处理'''
+        try:
+            cutposs = request.json.get("cutposs")
+            cutimg_pid = request.json.get("cutimg_pid")
+            cutposs_data = eval(cutposs)
+            list_cut = np.asfarray(cutposs_data)
+            pid = int(cutimg_pid)
+            session = db_session()
+            pics = session.query(Pic).filter(Pic.pid == pid).first()
+
+            real_mymain_color_path = find_se_com(CUTIMG_PATH, '/' + pics.url)
+            current_app.logger.info(real_mymain_color_path)
+            real_path2 = os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m/')
+            real_path3 = os.path.join(CUTIMG_PATH, 'images_GLCM/images_camouflage/mix/20m/')
+            path2,path3 = cutimg.mycutimg(real_mymain_color_path,real_path2,real_path3, list_cut)
+            # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
+            # pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/main_color/main_color2.JPG')
+
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': path2, 'data1': path3})
 
 @fea_ns.route('/main_gray_hist_differential')
 class rt_main_gray_hist_differential(Resource):

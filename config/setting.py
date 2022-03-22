@@ -21,6 +21,10 @@ MD5_SALT = "test2020#%*"
 # url配置
 API_VERSION = "/api/v1"
 
+# matplotlib.imshow
+# MATPLOTLIB_INSHOW = True
+MATPLOTLIB_INSHOW = False
+
 # 文件上传位置
 UPLOAD_FOLDER = 'static/uploads'
 # 文件上传位置

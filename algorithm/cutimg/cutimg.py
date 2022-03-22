@@ -1,9 +1,12 @@
 import cv2
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
+from config.setting import MATPLOTLIB_INSHOW
+if not MATPLOTLIB_INSHOW:
+    matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
+from common.getUploadLocation import get_upload_location, get_server_location
 
 import shutil
 '''
@@ -12,56 +15,67 @@ number: images_GLCM_original 中对应的原始图像序号 测试采用 number=
 path1: 图像输入的路径
 path2: 掩膜图像存储路径
 path3: 分割之后的目标背景图像存储路径
-
+output: 
+[(319.49999999999994, 205.7683982683982), (329.19696969696963, 207.84632034632028), (345.1277056277056, 192.60822510822504), (370.06277056277054, 192.60822510822504), (394.99783549783547, 193.9935064935064), (426.8593073593073, 202.9978354978354), (426.8593073593073, 226.54761904761898), (422.7034632034631, 253.560606060606), (415.0844155844155, 279.1883116883116), (395.69047619047615, 281.9588744588744), (373.525974025974, 278.49567099567093), (356.20995670995666, 270.1839826839826), (346.51298701298697, 270.1839826839826), (326.4264069264069, 258.4090909090908), (324.3484848484848, 243.17099567099558), (320.88528138528136, 239.01515151515144), (295.95021645021643, 234.8593073593073)]
+<class 'list'>
+<class 'tuple'>
+<class 'numpy.float64'>
+ 
 输出:
 一张掩膜图像存储于path2
 多张图像存储于path3(1-9张)
 '''
-
-def mycutimg(img_input):
+# 上传图片路径
+CUTIMG_PATH = get_upload_location("/cutimg/static")
+# /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static
+def mycutimg(img_input,path2, path3, output):
     '''
     shutil.rmtree('要清空的文件夹名')
     os.mkdir('要清空的文件夹名')
     '''
-
-    if (len(os.listdir('static/images_GLCM_bitwise/images_camouflage/mix/20m')) != 0):
+    # print(CUTIMG_PATH)
+    # print(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))
+    if (len(os.listdir(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))) != 0):
         # 掩膜存储路径
-        shutil.rmtree('static/images_GLCM_bitwise/images_camouflage/mix/20m')
-        os.mkdir('static/images_GLCM_bitwise/images_camouflage/mix/20m')
+        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))
+        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))
         # 分割之后图像存储路径
-        shutil.rmtree('static/images_GLCM/images_camouflage/mix/20m')
-        os.mkdir('static/images_GLCM/images_camouflage/mix/20m')
+        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM/images_camouflage/mix/20m'))
+        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM/images_camouflage/mix/20m'))
         # 灰度直方图存储路径
-        shutil.rmtree('static/images_save/gray_histogram')
-        os.mkdir('static/images_save/gray_histogram')
+        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_save/gray_histogram'))
+        os.mkdir(os.path.join(CUTIMG_PATH,'images_save/gray_histogram'))
         # 边缘图像存储路径
-        shutil.rmtree('static/images_GLCM_edge')
-        os.mkdir('static/images_GLCM_edge')
+        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM_edge'))
+        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM_edge'))
         # 边缘方向直方图存储路径
-        shutil.rmtree('static/images_GLCM_edge_hist')
-        os.mkdir('static/images_GLCM_edge_hist')
+        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM_edge_hist'))
+        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM_edge_hist'))
         # 角点存储文件夹
-        shutil.rmtree('static/images_save/coner')
-        os.mkdir('static/images_save/coner')
+        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_save/coner'))
+        os.mkdir(os.path.join(CUTIMG_PATH,'images_save/coner'))
         # 斑块图像存储路径
-        shutil.rmtree('static/images_save/blob_hist')
-        os.mkdir('static/images_save/blob_hist')
+        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_save/blob_hist'))
+        os.mkdir(os.path.join(CUTIMG_PATH,'images_save/blob_hist'))
 
 
-    img = img_input
+    img = cv2.imread(img_input)
     # path1 =
-    path2 = 'static/images_GLCM_bitwise/images_camouflage/mix/20m/'
-    path3 = 'static/images_GLCM/images_camouflage/mix/20m/'
+    # path2 = '/images_GLCM_bitwise/images_camouflage/mix/20m/'
+    # path3 = '/images_GLCM/images_camouflage/mix/20m/'
     # 快速定位专用 实际不执行
     if False:
-        os.mkdir('static/images_GLCM_bitwise/images_camouflage/mix/20m/')
-        os.mkdir('static/images_GLCM/images_camouflage/mix/20m/')
+        os.mkdir('/images_GLCM_bitwise/images_camouflage/mix/20m/')
+        os.mkdir('/images_GLCM/images_camouflage/mix/20m/')
 
     # img = cv2.imread(path1 + str(number) + '.JPG')
     # main
-    plt.imshow(img[:,:,::-1])
-    output = plt.ginput(0, 100)
-    print(output)
+    # plt.imshow(img[:,:,::-1])
+    # output = plt.ginput(0, 100)
+    # print(output)
+    # print(type(output))
+    # print(type(output[0]))
+    # print(type(output[0][0]))
     # plt.show()
     # cv2.waitKey(0)
     # print('output = ', output)
@@ -81,10 +95,10 @@ def mycutimg(img_input):
     mask2 = cv2.fillPoly(mask, [pts], (255, 255, 255))
     ROI = cv2.bitwise_and(mask2, img)
     # cv2.imwrite('D:/202177test/save/' + 'bitwise' + str(hight_name) + '/' + angle_number + '.jpg', mask2)
-    # cv2.imwrite('static\\images_GLCM_bitwise\\images_camouflage\\mix\\20m\\' + str(number)+'.JPG', mask2)
+    # cv2.imwrite('\\images_GLCM_bitwise\\images_camouflage\\mix\\20m\\' + str(number)+'.JPG', mask2)
     number = 1
     cv2.imwrite(path2 + str(number)+'.JPG', mask2)
-    # cv2.imwrite('static/' + path1 + '_bitwise' + '/images_camouflage/mix/20m/' + str(number)+'.JPG', mask2)
+    # cv2.imwrite('/' + path1 + '_bitwise' + '/images_camouflage/mix/20m/' + str(number)+'.JPG', mask2)
 
     # 获取最小外接距 九宫格图像
     rect = cv2.minAreaRect(cnt)
@@ -164,8 +178,8 @@ def mycutimg(img_input):
 
             # cv2.imwrite('D:/202177test/save/' + str(hight_name) + '/' + str(angle_number) + str(i * 3 + j) + '.jpg',
             #             temp)
-            # cv2.imwrite('static/' + path1 + '_process' + '/images_camouflage/mix/20m/' + str(number) + str(i * 3 + j) + '.JPG', temp)
-            # cv2.imwrite('static\\images_GLCM\\images_camouflage\\mix\\20m\\' + str(number) + str(i * 3 + j) + '.JPG', temp)
+            # cv2.imwrite('/' + path1 + '_process' + '/images_camouflage/mix/20m/' + str(number) + str(i * 3 + j) + '.JPG', temp)
+            # cv2.imwrite('\\images_GLCM\\images_camouflage\\mix\\20m\\' + str(number) + str(i * 3 + j) + '.JPG', temp)
             # path3 = ''
             # path_mid = path3 + str(number) + str(i * 3 + j) + '.JPG'
             cv2.imwrite(path3 + str(number) + str(i * 3 + j) + '.JPG', temp)
@@ -173,7 +187,13 @@ def mycutimg(img_input):
 
             # cv2.imshow('temp', temp)
             # cv2.waitKey(0)
-    print(path2,path3)
+    # print(path2,path3)
     return path2, path3
 
 # mycutimg(number=1)
+if __name__ == '__main__':
+    img_input = 'static/images_GLCM_original/images_camouflage/mix/20m/1.JPG'
+    img = cv2.imread(img_input)
+    plt.imshow(img[:, :, ::-1])
+    output = plt.ginput(0, 100)
+    print(output)

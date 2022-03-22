@@ -1,5 +1,8 @@
+import os
+
 import cv2
 
+from common.getUploadLocation import get_upload_location,get_server_location
 from cutimg import mycutimg
 
 from gray_histogram_differential import main_gray_hist_differential
@@ -23,6 +26,17 @@ opencv要求3.4.1以下 新版本的opencv缺少相应的函数来运行coner_de
 img_input = cv2.imread('static/images_GLCM_original/images_camouflage/mix/20m/1.JPG') # 红外 灰色
 img_input2 = cv2.imread('static/images_GLCM_original/images_camouflage/mix/20m/2.JPG') # 红外 伪彩
 
+
+# 上传图片路径
+CUTIMG_PATH = get_upload_location("/cutimg/static")
+# /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static
+# 服务器图片路径
+CUTIMG_SERVER_PATH = get_server_location("/cutimg/static")
+real_path2 = os.path.join(CUTIMG_PATH,'static/images_GLCM_bitwise/images_camouflage/mix/20m/')
+real_path3 = os.path.join(CUTIMG_PATH, 'static/images_GLCM/images_camouflage/mix/20m/')
+
+#  /algorithm/cutimg/static
+
 # # cutimg.py 抠图 （有交互）
 '''
 输入：
@@ -31,7 +45,7 @@ img_input 格式为图片
 path2：掩膜图像存储路径
 path3：分割图像存储路径
 '''
-mycutimg(img_input)
+mycutimg(img_input,real_path2,real_path3)
 
 
 # # gray_histogram_differential.py 获取灰度直方图及其相关性
@@ -54,7 +68,7 @@ img_input:图像
 输出:
 path2:主色提取结果存储路径
 '''
-mymain_color(img_input2)
+# mymain_color(img_input2)
 
 
 # # edge_batch.py 获取目标背景的边缘图像
@@ -84,7 +98,7 @@ image:图像
 输出：
 path2: GLCM可视化图像的存储路径
 '''
-print(myGLCM_demo(img_input))
+# print(myGLCM_demo(img_input))
 
 
 # # coner_demon.py
@@ -105,4 +119,4 @@ path_save_coner：角点匹配情况图像存储路径
 path_blob_hist_save：生成的斑块图像以及对应直方图存储路径
 arr：result_area , result_length, result_circle, result_rect, result_stretch 几种形状特征的相似性
 '''
-print(myblobhist())
+# print(myblobhist())

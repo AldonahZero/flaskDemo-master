@@ -80,12 +80,15 @@ def main_gray_hist_differential(path,path_bitwise,path_gray_histogram_save):
     # path = path_input + '_original'
     # path_bitwise = path_input + '_bitwise'
     for filename1 in os.listdir(path):
+        if filename1.startswith('.'): continue
         path1 = path + '/' + filename1
         path1_bitwise = path_bitwise + '/' + filename1
         for filename2 in os.listdir(path1):
+            if filename2.startswith('.'): continue
             path2 = path1 + '/' + filename2
             path2_bitwise = path1_bitwise + '/' + filename2
             for filename3 in os.listdir(path2):
+                if filename3.startswith('.'): continue
                 path3 = path2 + '/' + filename3
                 # path3_bitwise = path2_bitwise + '/' + 'bitwise' + filename3
                 path3_bitwise = path2_bitwise + '/' + filename3

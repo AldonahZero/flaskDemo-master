@@ -17,12 +17,17 @@ from common.find_star_end import find_se_com
 from algorithm.cutimg import gray_histogram_differential, main_color_demon, edge_batch, GLCM_demo, coner_demon, blob_hist_correlation, cutimg
 from werkzeug.datastructures import FileStorage
 import traceback
-import numpy as  np
+import numpy as np
 
 # from models.mul_model import MulModel
 
 fea = Blueprint('fea', __name__)
 fea_ns = Namespace('fea', description='featureExtraction 特征提取')
+
+# json body
+CutImgDataParser: RequestParser = fea_ns.parser()
+CutImgDataParser.add_argument('cutposs',type=str, required=True,location="json" )
+CutImgDataParser.add_argument('cutimg_pid',type=str, required=True,location="json" )
 
 # 文件上传格式
 parser: RequestParser = fea_ns.parser()
@@ -36,14 +41,14 @@ CUTIMG_SERVER_PATH = get_server_location("/cutimg/static")
 #  /algorithm/cutimg/static
 
 @fea_ns.route('/cutimg')
-@fea_ns.param('cutimg_pid', '图片id')
-@fea_ns.param('cutposs', '坐标点位置')
 class rt_cutimg(Resource):
+    @fea_ns.expect(CutImgDataParser)
     def post(self):
         '''分割处理'''
         try:
-            cutposs = request.json.get("cutposs")
-            cutimg_pid = request.json.get("cutimg_pid")
+            params = CutImgDataParser.parse_args()
+            cutposs = params["cutposs"]
+            cutimg_pid = params["cutimg_pid"]
             cutposs_data = eval(cutposs)
             list_cut = np.asfarray(cutposs_data)
             pid = int(cutimg_pid)

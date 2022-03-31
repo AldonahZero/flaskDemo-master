@@ -82,11 +82,13 @@ class rt_main_gray_hist_differential(Resource):
             path_gray_histogram_save = os.path.join(CUTIMG_PATH, 'images_save/gray_histogram/')
             gray_histogram_differential.main_gray_hist_differential(path=path, path_bitwise=path_bitwise, path_gray_histogram_save=path_gray_histogram_save)
             pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/gray_histogram/1.JPG')
+            list = []
+            list.append(pic_url)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': pic_url})
+            return jsonify({'code': 201, 'message': '查找成功', 'data': list})
 
 @fea_ns.route('/mymain_color/<mymain_color_id>')
 @fea_ns.param('mymain_color_id', '图片id')
@@ -105,11 +107,13 @@ class rt_mymain_color(Resource):
             mymain_color_path = main_color_demon.mymain_color(real_mymain_color_path)
             # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
             pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/main_color/main_color2.JPG')
+            list = []
+            list.append(pic_url)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': pic_url})
+            return jsonify({'code': 201, 'message': '查找成功', 'data': list})
 
 @fea_ns.route('/main_edge')
 class rt_main_edge(Resource):
@@ -149,11 +153,13 @@ class rt_myGLCM_demo(Resource):
             current_app.logger.info(mymain_color_path)
             # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
             pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/GLCM_demo/GLCM_Features.png')
+            list = []
+            list.append(pic_url)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': pic_url})
+            return jsonify({'code': 201, 'message': '查找成功', 'data': list})
 
 
 @fea_ns.route('/myconer')
@@ -167,11 +173,13 @@ class rt_myconer(Resource):
             path_save_coner = os.path.join(CUTIMG_PATH, 'images_save/coner')
             coner_demon.myconer(path=path,  path_save_coner=path_save_coner)
             pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/coner/coner.JPG')
+            list = []
+            list.append(pic_url)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': pic_url})
+            return jsonify({'code': 201, 'message': '查找成功', 'data': list})
 
 @fea_ns.route('/myblobhist')
 class rt_myblobhist(Resource):

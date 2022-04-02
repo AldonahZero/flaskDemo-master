@@ -59,6 +59,21 @@ class HSIPictureFile(Base):
     path = Column('path', String(128))
     create_time = Column('create_time', DateTime)
 
+class FEAPictureFile(Base):
+    __tablename__ = 'fea_picture'
+
+    pid = Column('pid', Integer, primary_key=True)
+    url = Column('url', String(128))
+    create_time = Column('create_time', DateTime)
+
+    def to_json(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
+
+    def __repr__(self):
+        return '<FeaPic: %s %s >' % (self.pid, self.url)
 
 class Pic(Base):
     __tablename__ = 'pic'

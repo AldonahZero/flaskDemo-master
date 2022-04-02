@@ -7,8 +7,9 @@ import os
 from os.path import isfile, join
 from os import listdir
 import uuid
+from datetime import datetime
 
-from common.mysql_operate import db_session, Pic
+from common.mysql_operate import db_session, FEAPictureFile
 from common.file_tools import unzip_file
 from common.getUploadLocation import get_upload_location, get_server_location
 from common.remove_file_dir import remove_file_dir
@@ -30,15 +31,70 @@ CutImgDataParser.add_argument('cutposs',type=str, required=True,location="json" 
 CutImgDataParser.add_argument('cutimg_pid',type=str, required=True,location="json" )
 
 # 文件上传格式
-parser: RequestParser = fea_ns.parser()
-parser.add_argument('file', location='files',
+file_parser: RequestParser = fea_ns.parser()
+file_parser.add_argument('file', location='files',
                     type=FileStorage, required=True)
+
 # 上传图片路径
+UPLOAD_PATH = get_upload_location("/cutimg/static/images")
+# 图片路径
 CUTIMG_PATH = get_upload_location("/cutimg/static")
 # /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static
 # 服务器图片路径
 CUTIMG_SERVER_PATH = get_server_location("/cutimg/static")
 #  /algorithm/cutimg/static
+
+# 实际访问地址 /api/v1/fea/fileupload
+@fea_ns.route("/fileupload", doc={"description": "特征提取"})
+class FileUploadHandler(Resource):
+    def get(self):
+        '''查看所有图片'''
+        try:
+            session = db_session()
+            fea_pics = session.query(FEAPictureFile).all()
+            data = []
+            for fea_pic in fea_pics:
+                data.append(fea_pic.to_json())
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+    @fea_ns.expect(file_parser, validate=True)
+    def post(self):
+        '''上传图片'''
+        try:
+            # 普通参数获取
+            # 获取pichead文件对象
+            file = request.files.get('file')
+            # 文件格式
+            last_pix = '.' + file.filename.split('.')[-1]
+            save_filename = str(uuid.uuid1()) + last_pix
+            path = os.path.join(UPLOAD_PATH, save_filename)
+            # 保存压缩包
+            file.save(path)
+
+            # 前端路径
+            proLoadPath = os.path.join('algorithm/cutimg/static/images', save_filename)
+            # realProLoadPath = os.path.join(UPLOAD_PATH, save_filename)
+            # print(realProLoadPath)
+            filename = proLoadPath
+
+            session = db_session()
+            new_file = FEAPictureFile(url=proLoadPath, create_time=datetime.now())
+            session.add(new_file)
+            session.commit()
+
+            fea_pics = session.query(FEAPictureFile).filter(FEAPictureFile.url == proLoadPath).first()
+            session.close()
+            data = fea_pics.to_json()
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '上传图片成功', 'data': data})
+
 
 @fea_ns.route('/cutimg')
 class rt_cutimg(Resource):
@@ -53,13 +109,14 @@ class rt_cutimg(Resource):
             list_cut = np.asfarray(cutposs_data)
             pid = int(cutimg_pid)
             session = db_session()
-            pics = session.query(Pic).filter(Pic.pid == pid).first()
+            pics = session.query(FEAPictureFile).filter(FEAPictureFile.pid == pid).first()
 
             real_mymain_color_path = find_se_com(CUTIMG_PATH, '/' + pics.url)
             current_app.logger.info(real_mymain_color_path)
             real_path2 = os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m/')
             real_path3 = os.path.join(CUTIMG_PATH, 'images_GLCM/images_camouflage/mix/20m/')
             path2,path3 = cutimg.mycutimg(real_mymain_color_path,real_path2,real_path3, list_cut)
+            path2 = 'algorithm/cutimg/static/images_GLCM_bitwise/images_camouflage/mix/20m/1.JPG'
             # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
             # pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/main_color/main_color2.JPG')
 
@@ -79,7 +136,7 @@ class rt_main_gray_hist_differential(Resource):
             # path_gray_histogram_save = 'static/images_save/gray_histogram/'
             path = os.path.join(CUTIMG_PATH,'images_GLCM_original')
             path_bitwise = os.path.join(CUTIMG_PATH, 'images_GLCM_bitwise')
-            path_gray_histogram_save = os.path.join(CUTIMG_PATH, 'images_save/gray_histogram/')
+            path_gray_histogram_save = os.path.join(CUTIMG_PATH, 'images_save/gray_histogram')
             gray_histogram_differential.main_gray_hist_differential(path=path, path_bitwise=path_bitwise, path_gray_histogram_save=path_gray_histogram_save)
             pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/gray_histogram/1.JPG')
             list = []
@@ -99,7 +156,7 @@ class rt_mymain_color(Resource):
             # 61
             pid = int(mymain_color_id)
             session = db_session()
-            pics = session.query(Pic).filter(Pic.pid ==  pid ).first()
+            pics = session.query(FEAPictureFile).filter(FEAPictureFile.pid ==  pid ).first()
 
             real_mymain_color_path = find_se_com(CUTIMG_PATH,'/' + pics.url)
             current_app.logger.info(real_mymain_color_path)
@@ -144,7 +201,7 @@ class rt_myGLCM_demo(Resource):
             # 62
             pid = int(myGLCM_demo_id)
             session = db_session()
-            pics = session.query(Pic).filter(Pic.pid ==  pid ).first()
+            pics = session.query(FEAPictureFile).filter(FEAPictureFile.pid ==  pid ).first()
 
             real_myGLCM_demo_path = find_se_com(CUTIMG_PATH,'/' + pics.url)
             current_app.logger.info(real_myGLCM_demo_path)

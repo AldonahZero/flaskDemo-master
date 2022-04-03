@@ -85,7 +85,7 @@ def main_edge(path, path_edge):
 
                                     # cv2.imshow('edge' + img_name, img_edge_canny)
                                     plt.subplot(3, 3, num)
-                                    plt.imshow(img_edge_canny, cmap='gray')
+                                    # plt.imshow(img_edge_canny, cmap='gray')
                                     plt.title(str(num))
     # cv2.waitKey(0)
     plt.show()

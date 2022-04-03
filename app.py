@@ -6,6 +6,8 @@ from config.setting import SERVER_PORT
 from config.setting import SECRET_KEY
 from werkzeug.datastructures import Headers
 from werkzeug.middleware.proxy_fix import ProxyFix
+from geventwebsocket.handler import WebSocketHandler
+from gevent.pywsgi import WSGIServer
 
 from api.__init__ import api_v1, cors_headers
 
@@ -65,3 +67,6 @@ if __name__ == '__main__':
 
 
     app.run(host="0.0.0.0", port=SERVER_PORT, debug=True)
+
+    # http_server = WSGIServer(('0.0.0.0', 5001), app, handler_class=WebSocketHandler)
+    # http_server.serve_forever()

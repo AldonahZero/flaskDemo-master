@@ -9,9 +9,11 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 import datetime
 
 # 数据库url
-#'数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'
-#MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWD, MYSQL_DB
-engine = create_engine("mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(MYSQL_USER,MYSQL_PASSWD,MYSQL_HOST,MYSQL_PORT,MYSQL_DB), pool_recycle=7200)
+# '数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'
+# MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWD, MYSQL_DB
+engine = create_engine(
+    "mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8".format(MYSQL_USER, MYSQL_PASSWD, MYSQL_HOST, MYSQL_PORT, MYSQL_DB),
+    pool_recycle=7200)
 
 Base = declarative_base()
 
@@ -75,6 +77,38 @@ class FEAPictureFile(Base):
     def __repr__(self):
         return '<FeaPic: %s %s >' % (self.pid, self.url)
 
+class MOSPictureFolder(Base):
+    __tablename__ = 'mos_picture_folder'
+
+    fid = Column('fid', String(36), primary_key=True)
+    path = Column('path', String(128))
+    create_time = Column('create_time', DateTime)
+
+    def to_json(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
+
+
+class MOSPictureFile(Base):
+    __tablename__ = 'mos_picture_file'
+
+    pid = Column('pid', String(36), primary_key=True)
+    fid = Column('fid', String(36))
+    path = Column('path', String(128))
+    create_time = Column('create_time', DateTime)
+
+
+class MOSResult(Base):
+    __tablename__ = 'mos_result'
+
+    pid = Column('pid', String(36), primary_key=True)
+    fid = Column('fid', String(36))
+    path = Column('path', String(128))
+    create_time = Column('create_time', DateTime)
+
+
 class Pic(Base):
     __tablename__ = 'pic'
 
@@ -90,9 +124,9 @@ class Pic(Base):
     def __repr__(self):
         return '<Pic: %s %s >' % (self.pid, self.url)
 
+
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-
 
 # class MysqlDb():
 #

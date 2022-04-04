@@ -31,11 +31,13 @@ from api.swagger_demo import swag_ns
 from api.featureExtraction import fea_ns
 from api.multiplePerspectives import mul_ns
 from api.HSI import hsi_ns
+from api.mosaic import mos_ns
 
 api.add_namespace(swag_ns)
 api.add_namespace(fea_ns)
 api.add_namespace(mul_ns)
 api.add_namespace(hsi_ns)
+api.add_namespace(mos_ns)
 
 cors_headers = {
     "Access-Control-Allow-Origin": "*",

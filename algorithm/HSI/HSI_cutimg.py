@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import flaskProjectDemo.HSI as hsi
+import algorithm.HSI as hsi
 import scipy.io as io
 import os
 
@@ -9,9 +9,9 @@ import os
 #  生成九宫格的程序  暂时用不到  暂时放在这里吧
 def Hsi_cutimg_f(image_path):
     # 读取原图像
-    out_path = "/image_result/" + "test"     # 这里要加一个东西用以标记是这个图片产生的结果。。。
+    out_path = "/image_result/"     # 这里要加一个东西用以标记是这个图片产生的结果。。。
     img_raw = hsi.load_data(image_path)
-    os.mkdir(out_path)
+    # os.mkdir(out_path)
     print(np.min(img_raw))
     print(np.max(img_raw))
     # img_raw = (img_raw - np.min(img_raw))/(np.max(img_raw) - np.min(img_raw))
@@ -156,3 +156,7 @@ def Hsi_cutimg_f(image_path):
     io.savemat(out_path + '/arr6.mat', {'arr6': sample6})
     io.savemat(out_path + '/arr7.mat', {'arr7': sample7})
     io.savemat(out_path + '/arr8.mat', {'arr8': sample8})
+
+
+
+

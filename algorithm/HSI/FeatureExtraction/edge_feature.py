@@ -2,6 +2,7 @@ import cv2
 import algorithm.HSI as hsi
 import numpy as np
 from skimage import filters
+import scipy.io as io
 
 
 def image_normalize(image):
@@ -12,11 +13,16 @@ def image_normalize(image):
 
 
 def gauss_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
+
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
     img = img.astype(np.uint8)
+
     blurred = cv2.GaussianBlur(img, (5, 5), 0)
     gauss_img = img - blurred
     #  输出路径
@@ -26,7 +32,23 @@ def gauss_edge_f(image_path, k_num):
 
 
 def canny_edge_f(image_path, k_num, out_path):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat(image_path + '/arr4.mat')
+    image = data['arr4']
+    '''red_band = 76
+    blue_band = 15
+    green_band = 46
+    img_r = image[:, :, red_band] * 255
+    img_r = img_r.astype(np.uint8)
+    img_g = image[:, :, green_band] * 255
+    img_g = img_g.astype(np.uint8)
+    img_b = image[:, :, blue_band] * 255
+    img_b = img_b.astype(np.uint8)
+    pseudo_image = cv2.merge([img_b, img_g, img_r])
+    cv2.imshow("test", pseudo_image)
+    cv2.waitKey(0)'''
+
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
@@ -44,7 +66,10 @@ def canny_edge_f(image_path, k_num, out_path):
 # Laplace算子
 # 常用的Laplace算子模板  [[0, 1, 0], [1, -4, 1], [0, 1, 0]]   [[1 ,1 , 1],[1, -8, 1],[1, 1, 1]]
 def laplace_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
@@ -58,7 +83,10 @@ def laplace_edge_f(image_path, k_num):
 
 
 def prewitt_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
@@ -84,7 +112,10 @@ def prewitt_edge_f(image_path, k_num):
 
 
 def sobel_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     [m, n, p] = image.shape
     img = image[:, :, k_num] * 255
     img = np.reshape(img, (m, n))
@@ -101,7 +132,10 @@ def sobel_edge_f(image_path, k_num):
 
 
 def roberts_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255

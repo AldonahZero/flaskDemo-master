@@ -69,7 +69,7 @@ class HSIResultFile(Base):
 
     fid = Column('fid', String(36), primary_key=True)
     pid = Column('pid', String(36), index=True)
-    type = Column('type', String(10))
+    type = Column('type', String(36))
     path = Column('path', String(128))
     create_time = Column('create_time', DateTime)
 

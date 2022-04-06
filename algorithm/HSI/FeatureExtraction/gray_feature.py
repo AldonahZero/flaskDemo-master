@@ -1,3 +1,6 @@
+import uuid
+from datetime import datetime
+
 import numpy as np
 import cv2
 import algorithm.HSI as hsi
@@ -8,6 +11,9 @@ import algorithm.HSI.HSI_grabcut as grabcut_my
 
 
 # 返回的输入矩阵的均值向量   结果是一个 1*256大小的向量
+from common.mysql_operate import db_session, HSIResultFile
+
+
 def gray_mean_f(image):
     [_, _, p] = image.shape
     result = np.zeros(p, float)
@@ -85,27 +91,6 @@ def gray_mean_back_f(image, image_tar, image_back):
     return result
 
 
-#  输入：高光谱原始数据的路径
-# 返回的是一个  256大小的向量  表示目标和背景的差值
-#  会出现两个窗口  第一个窗口需要点点圈定目标的范围 回车 关掉窗口
-#  第二个窗口圈定灰布的范围 回车，关掉窗口
-def gray_mean_dif_f(image_path):
-    image = hsi.load_data(image_path)
-    data_path = grabcut_my.Hsi_grabcut_f(image_path)
-    image_tar_path = data_path + 'target.jpg'
-    image_back_path = data_path + 'back.jpg'
-    image_tar = cv2.imread(image_tar_path)
-    image_back = cv2.imread(image_back_path)
-    [_, _, p] = image.shape
-    spec_tar_mean = gray_mean_tar_f(image, image_tar)
-    spec_back_mean = gray_mean_back_f(image, image_tar, image_back)
-    result = np.zeros((3, p), float)
-    result[0, :] = spec_tar_mean
-    result[1, :] = spec_back_mean
-    result[2, :] = spec_back_mean - spec_tar_mean
-    return result
-
-
 # 传进来两个数据  一个是高光谱原始数据  一个是目标的二值图（mask）
 def gray_var_tar_f(image, image_tar):
     arr = arr_tar_f(image, image_tar)
@@ -122,12 +107,63 @@ def gray_var_back_f(image, image_tar, image_back):
 
 
 #  输入：高光谱原始数据的路径
-# 返回的是一个  256大小的向量  表示目标和背景的差值
-#  会出现两个窗口  第一个窗口需要点点圈定目标的范围 回车 关掉窗口
-#  第二个窗口圈定灰布的范围 回车，关掉窗口
-def gray_var_dif_f(image_path):
+# 返回的是一个  256大小的向量  表示目标均值
+# 灰度均值
+def gray_mean_dif_f(image_path, data_path, excel_save_path):
+    file_name = image_path.split("/")[-1]
+    key = file_name[0:file_name.rindex('.')]
+
     image = hsi.load_data(image_path)
-    data_path = grabcut_my.Hsi_grabcut_f(image_path)
+    image_tar_path = data_path + 'target.jpg'
+    image_back_path = data_path + 'back.jpg'
+    image_tar = cv2.imread(image_tar_path)
+    image_back = cv2.imread(image_back_path)
+    [_, _, p] = image.shape
+    spec_tar_mean = gray_mean_tar_f(image, image_tar)
+    spec_back_mean = gray_mean_back_f(image, image_tar, image_back)
+    spec_mean_dif = spec_back_mean - spec_tar_mean
+
+    # 输出结果
+    excel_id = str(uuid.uuid1())
+    out_path = excel_save_path + excel_id + '_result_mean.xls'
+    output = open(out_path, 'w', encoding='gbk')
+    output.write("目标灰度均值")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_tar_mean[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("背景灰度均值")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_back_mean[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("目标背景灰度均值之差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_mean_dif[i]))
+        output.write('\t')
+
+    # 将结果记录存放到数据库
+    session = db_session()
+    excel_result_file = HSIResultFile(fid=excel_id, pid=key, type="gray_mean_dif_f", path=out_path, create_time=datetime.now())
+    session.add(excel_result_file)
+    session.commit()
+    session.close()
+
+    return spec_tar_mean
+
+
+#  输入：高光谱原始数据的路径
+# 返回的是一个  256大小的向量  表示目标方差
+
+def gray_var_dif_f(image_path, data_path, excel_save_path):
+    file_name = image_path.split("/")[-1]
+    key = file_name[0:file_name.rindex('.')]
+    image = hsi.load_data(image_path)
     image_tar_path = data_path + 'target.jpg'
     image_back_path = data_path + 'back.jpg'
     image_tar = cv2.imread(image_tar_path)
@@ -135,36 +171,84 @@ def gray_var_dif_f(image_path):
     [_, _, p] = image.shape
     spec_tar_var = gray_var_tar_f(image, image_tar)
     spec_back_var = gray_var_back_f(image, image_tar, image_back)
-    result = np.zeros((3, p), float)
-    result[0, :] = spec_tar_var
-    result[1, :] = spec_back_var
-    result[2, :] = spec_back_var - spec_tar_var
-    return result
+    spec_var_dif = spec_back_var - spec_tar_var
+    # 输出结果
+    excel_id = str(uuid.uuid1())
+    out_path = excel_save_path + excel_id + '_result_var.xls'
+    output = open(out_path, 'w', encoding='gbk')
+    output.write("目标灰度方差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_tar_var[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("背景灰度方差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_back_var[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("目标背景灰度方差之差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_var_dif[i]))
+        output.write('\t')
+
+    # 将结果记录存放到数据库
+    session = db_session()
+    excel_result_file = HSIResultFile(fid=excel_id, pid=key, type="gray_var_dif_f", path=out_path,
+                                      create_time=datetime.now())
+    session.add(excel_result_file)
+    session.commit()
+    session.close()
+
+    return spec_tar_var
 
 
 #  输入：高光谱原始数据的路径
-# 返回的是一个  256大小的向量  表示目标和背景的差值
-#  会出现两个窗口  第一个窗口需要点点圈定目标的范围 回车 关掉窗口
-#  第二个窗口圈定灰布的范围 回车，关掉窗口
-#  注意计算时间过略长  大概10分钟以上
-#  而且高光谱图像不太适合做灰度直方图  因为对于一个波段来说 大部分的像素的灰度值集中在同一个范围内 这会导致协方差系数过大
-#  要想调整效果   需要再读入原始数据后  对每个波段单独图像归一化
-def gray_histogram_dif_f(image_path):
+# 返回的是一个  256大小的向量  表示目标的灰度直方图
+
+def gray_histogram_dif_f(image_path, band_index, data_path, excel_save_path):
+    file_name = image_path.split("/")[-1]
+    key = file_name[0:file_name.rindex('.')]
     image = hsi.load_data(image_path)
-    data_path = grabcut_my.Hsi_grabcut_f(image_path)
     image_tar_path = data_path + 'target.jpg'
     image_back_path = data_path + 'back.jpg'
     image_tar = cv2.imread(image_tar_path)
     image_back = cv2.imread(image_back_path)
     [_, _, p] = image.shape
-    result = np.zeros(p, float)
-    arr1 = arr_back_f(image, image_tar, image_back)
-    arr2 = arr_tar_f(image, image_tar)
-    for i in range(p):
-        his_back = gray_histogram_f(arr1, i)
-        his_tar = gray_histogram_f(arr2, i)
-        temp = np.corrcoef(his_tar, his_back)
-        result[i] = temp[0, 1]
-    return result
+    arr1 = arr_tar_f(image, image_tar)
+    arr2 = arr_back_f(image, image_tar, image_back)
+    his_tar = gray_histogram_f(arr1, band_index)
+    his_back = gray_histogram_f(arr2, band_index)
+    # 输出结果
 
+    excel_id = str(uuid.uuid1())
+    out_path = excel_save_path + excel_id + 'result_hist.xls'
+    output = open(out_path, 'w', encoding='gbk')
+    output.write("目标灰度直方图")
+    output.write('\t')
+    for i in range(256):
+        output.write(str(his_tar[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("背景灰度直方图")
+    output.write('\t')
+    for i in range(256):
+        output.write(str(his_back[i]))
+        output.write('\t')
+    output.write('\n')
+
+    # 将结果记录存放到数据库
+    session = db_session()
+    excel_result_file = HSIResultFile(fid=excel_id, pid=key, type="gray_histogram_dif_f", path=out_path,
+                                      create_time=datetime.now())
+    session.add(excel_result_file)
+    session.commit()
+    session.close()
+
+    return his_tar
 

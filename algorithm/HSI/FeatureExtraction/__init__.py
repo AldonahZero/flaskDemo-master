@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import algorithm.HSI.HSI_grabcut as grabcut_my
 from skimage import filters
+import scipy.io as io
 
 
 #  边缘特征
@@ -17,11 +18,16 @@ def image_normalize(image):
 
 
 def gauss_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
+
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
     img = img.astype(np.uint8)
+
     blurred = cv2.GaussianBlur(img, (5, 5), 0)
     gauss_img = img - blurred
     #  输出路径
@@ -31,7 +37,23 @@ def gauss_edge_f(image_path, k_num):
 
 
 def canny_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
+    '''red_band = 76
+    blue_band = 15
+    green_band = 46
+    img_r = image[:, :, red_band] * 255
+    img_r = img_r.astype(np.uint8)
+    img_g = image[:, :, green_band] * 255
+    img_g = img_g.astype(np.uint8)
+    img_b = image[:, :, blue_band] * 255
+    img_b = img_b.astype(np.uint8)
+    pseudo_image = cv2.merge([img_b, img_g, img_r])
+    cv2.imshow("test", pseudo_image)
+    cv2.waitKey(0)'''
+
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
@@ -49,7 +71,10 @@ def canny_edge_f(image_path, k_num):
 # Laplace算子
 # 常用的Laplace算子模板  [[0, 1, 0], [1, -4, 1], [0, 1, 0]]   [[1 ,1 , 1],[1, -8, 1],[1, 1, 1]]
 def laplace_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
@@ -63,7 +88,10 @@ def laplace_edge_f(image_path, k_num):
 
 
 def prewitt_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
@@ -89,7 +117,10 @@ def prewitt_edge_f(image_path, k_num):
 
 
 def sobel_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     [m, n, p] = image.shape
     img = image[:, :, k_num] * 255
     img = np.reshape(img, (m, n))
@@ -106,14 +137,16 @@ def sobel_edge_f(image_path, k_num):
 
 
 def roberts_edge_f(image_path, k_num):
-    image = hsi.load_data(image_path)
+    #  image = hsi.load_data(image_path)
+    #  暂时直接拿的图像分割的结果来做的不需要源地址
+    data = io.loadmat('../image_result/arr4.mat')
+    image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
     img = img * 255
     img = img.astype(np.uint8)
     roberts = filters.roberts(img)
-    cv2.imshow("test",  roberts)
-    cv2.waitKey(0)
+    roberts = roberts * 255.0
     out_path = "../image_result/edge_roberts_result.jpg"
     cv2.imwrite(out_path, roberts)
     return out_path
@@ -200,27 +233,6 @@ def gray_mean_back_f(image, image_tar, image_back):
     return result
 
 
-#  输入：高光谱原始数据的路径
-# 返回的是一个  256大小的向量  表示目标和背景的差值
-#  会出现两个窗口  第一个窗口需要点点圈定目标的范围 回车 关掉窗口
-#  第二个窗口圈定灰布的范围 回车，关掉窗口
-def gray_mean_dif_f(image_path):
-    image = hsi.load_data(image_path)
-    data_path = grabcut_my.Hsi_grabcut_f(image_path)
-    image_tar_path = data_path + 'target.jpg'
-    image_back_path = data_path + 'back.jpg'
-    image_tar = cv2.imread(image_tar_path)
-    image_back = cv2.imread(image_back_path)
-    [_, _, p] = image.shape
-    spec_tar_mean = gray_mean_tar_f(image, image_tar)
-    spec_back_mean = gray_mean_back_f(image, image_tar, image_back)
-    result = np.zeros((3, p), float)
-    result[0, :] = spec_tar_mean
-    result[1, :] = spec_back_mean
-    result[2, :] = spec_back_mean - spec_tar_mean
-    return result
-
-
 # 传进来两个数据  一个是高光谱原始数据  一个是目标的二值图（mask）
 def gray_var_tar_f(image, image_tar):
     arr = arr_tar_f(image, image_tar)
@@ -240,9 +252,51 @@ def gray_var_back_f(image, image_tar, image_back):
 # 返回的是一个  256大小的向量  表示目标和背景的差值
 #  会出现两个窗口  第一个窗口需要点点圈定目标的范围 回车 关掉窗口
 #  第二个窗口圈定灰布的范围 回车，关掉窗口
+def gray_mean_dif_f(image_path):
+    image = hsi.load_data(image_path)
+    data_path = '../image_result/'
+    image_tar_path = data_path + 'target.jpg'
+    image_back_path = data_path + 'back.jpg'
+    image_tar = cv2.imread(image_tar_path)
+    image_back = cv2.imread(image_back_path)
+    [_, _, p] = image.shape
+    spec_tar_mean = gray_mean_tar_f(image, image_tar)
+    spec_back_mean = gray_mean_back_f(image, image_tar, image_back)
+    spec_mean_dif = spec_back_mean - spec_tar_mean
+
+    # 输出结果
+
+    out_path = '../image_result/result_mean.xls'
+    output = open(out_path, 'w', encoding='gbk')
+    output.write("目标灰度均值")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_tar_mean[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("背景灰度均值")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_back_mean[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("目标背景灰度均值之差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_mean_dif[i]))
+        output.write('\t')
+    return out_path
+
+
+#  输入：高光谱原始数据的路径
+# 返回的是一个  256大小的向量  表示目标和背景的差值
+#  会出现两个窗口  第一个窗口需要点点圈定目标的范围 回车 关掉窗口
+#  第二个窗口圈定灰布的范围 回车，关掉窗口
 def gray_var_dif_f(image_path):
     image = hsi.load_data(image_path)
-    data_path = grabcut_my.Hsi_grabcut_f(image_path)
+    data_path = '../image_result/'
     image_tar_path = data_path + 'target.jpg'
     image_back_path = data_path + 'back.jpg'
     image_tar = cv2.imread(image_tar_path)
@@ -250,11 +304,31 @@ def gray_var_dif_f(image_path):
     [_, _, p] = image.shape
     spec_tar_var = gray_var_tar_f(image, image_tar)
     spec_back_var = gray_var_back_f(image, image_tar, image_back)
-    result = np.zeros((3, p), float)
-    result[0, :] = spec_tar_var
-    result[1, :] = spec_back_var
-    result[2, :] = spec_back_var - spec_tar_var
-    return result
+    spec_var_dif = spec_back_var - spec_tar_var
+    # 输出结果
+
+    out_path = '../image_result/result_var.xls'
+    output = open(out_path, 'w', encoding='gbk')
+    output.write("目标灰度方差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_tar_var[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("背景灰度方差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_back_var[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("目标背景灰度方差之差")
+    output.write('\t')
+    for i in range(p):
+        output.write(str(spec_var_dif[i]))
+        output.write('\t')
+    return out_path
 
 
 #  输入：高光谱原始数据的路径
@@ -264,23 +338,37 @@ def gray_var_dif_f(image_path):
 #  注意计算时间过略长  大概10分钟以上
 #  而且高光谱图像不太适合做灰度直方图  因为对于一个波段来说 大部分的像素的灰度值集中在同一个范围内 这会导致协方差系数过大
 #  要想调整效果   需要再读入原始数据后  对每个波段单独图像归一化
-def gray_histogram_dif_f(image_path):
+def gray_histogram_dif_f(image_path, band_index):
     image = hsi.load_data(image_path)
-    data_path = grabcut_my.Hsi_grabcut_f(image_path)
+    data_path = '../image_result/'
     image_tar_path = data_path + 'target.jpg'
     image_back_path = data_path + 'back.jpg'
     image_tar = cv2.imread(image_tar_path)
     image_back = cv2.imread(image_back_path)
     [_, _, p] = image.shape
-    result = np.zeros(p, float)
-    arr1 = arr_back_f(image, image_tar, image_back)
-    arr2 = arr_tar_f(image, image_tar)
-    for i in range(p):
-        his_back = gray_histogram_f(arr1, i)
-        his_tar = gray_histogram_f(arr2, i)
-        temp = np.corrcoef(his_tar, his_back)
-        result[i] = temp[0, 1]
-    return result
+    arr1 = arr_tar_f(image, image_tar)
+    arr2 = arr_back_f(image, image_tar, image_back)
+    his_tar = gray_histogram_f(arr1, band_index)
+    his_back = gray_histogram_f(arr2, band_index)
+    # 输出结果
+
+    out_path = '../image_result/result_hist.xls'
+    output = open(out_path, 'w', encoding='gbk')
+    output.write("目标灰度直方图")
+    output.write('\t')
+    for i in range(256):
+        output.write(str(his_tar[i]))
+        output.write('\t')
+    output.write('\n')
+
+    output.write("背景灰度直方图")
+    output.write('\t')
+    for i in range(256):
+        output.write(str(his_back[i]))
+        output.write('\t')
+    output.write('\n')
+
+    return out_path
 
 
 #  光谱特征
@@ -290,12 +378,12 @@ def gray_histogram_dif_f(image_path):
 
 #  归一化水体指数  用来衡量该像素点对应的地物与水体的接近程序（ 镜面反射 以及 水汽的含量 都会导致其接近水体）
 #  返回一个二维矩阵  大小为 -1 到 1（ 可以直接显示  不用考虑负数）
-def HSI_NDWI_f(image_path, out_path):
+def HSI_NDWI_f(image_path):
     image = hsi.load_data(image_path)
     result = (image[:, :, 46] - image[:, :, 167]) / (image[:, :, 46] + image[:, :, 167])
     # cv2.imshow("RESULT", result)
     # cv2.waitKey(0)
-    # out_path = "../image_result/NDWI_result.jpg"
+    out_path = "../image_result/NDWI_result.jpg"
     result = result * 255
     cv2.imwrite(out_path, result)
     return out_path
@@ -318,7 +406,7 @@ def HSI_NDVI_f(image_path, out_path):
 #  输入 高光谱数据的路径： image_path     目标的二值图（通过 grabcut 程序得到的分割图像）
 def HSI_SAM_f(image_path):
     image = hsi.load_data(image_path)
-    image_tar_path = HSI_SAM_grabcut_f(image)
+    image_tar_path = '../image_result/target.jpg'
     image_tar = cv2.imread(image_tar_path)
     [m, n, p] = image.shape
     spec_mean = gray_mean_tar_f(image, image_tar)
@@ -334,58 +422,6 @@ def HSI_SAM_f(image_path):
     result = result * 255
     cv2.imwrite(out_path, result)
     return out_path
-
-
-def HSI_SAM_grabcut_f(img_raw):
-    # 读取原图像
-    out_path = '../image_result/'
-    # os.mkdir(out_path)   # 创建文件夹的作用  如果已经有所有的对应文件夹后  注释掉  如果没有  加上
-    # img_raw = (img_raw - np.min(img_raw))/(np.max(img_raw) - np.min(img_raw))
-    img_raw = img_raw * 255
-    img_raw = img_raw.astype(np.uint8)
-    # img = cv2.resize(img, (416, 416), interpolation=cv2.INTER_AREA)
-
-    red_band = 76
-    blue_band = 15
-    green_band = 46
-    [m, n, p] = img_raw.shape
-    img_r = img_raw[:, :, red_band]
-    img_g = img_raw[:, :, green_band]
-    img_b = img_raw[:, :, blue_band]
-    img = cv2.merge([img_b, img_g, img_r])
-
-    out_path1 = out_path + 'target.jpg'
-    img2 = (img - np.min(img)) / (np.max(img) - np.min(img))
-    # img = cv2.resize(img, (416, 416), interpolation=cv2.INTER_AREA)
-    plt.figure(figsize=(12, 9))  # 自己设定窗口图片的大小
-    plt.imshow(img2[:, :, [2, 1, 0]])
-    output = plt.ginput(0)
-    plt.show()
-    # print('output = ', output)
-    length_output = len(output)
-    cnt = np.array(np.zeros((length_output, 1, 2)), np.int32)
-
-    # plt.fill()
-    x = np.array(np.zeros(length_output), np.int16)
-    y = np.array(np.zeros(length_output), np.int16)
-    for i in range(length_output):
-        # cv2.circle(img, (output[i][0].astype(int), output[i][1].astype(int)), 2, (0, 255, 255), -1)
-        cnt[i, 0, 0] = output[i][0].astype(int)
-        cnt[i, 0, 1] = output[i][1].astype(int)
-        x[i] = cnt[i, 0, 0]
-        y[i] = cnt[i, 0, 1]
-    '''
-    plt.fill(x, y, 'g', 1)
-    '''
-
-    mask = np.zeros(img.shape, np.uint8)
-    pts = cnt.reshape((-1, 1, 2))
-    mask = cv2.polylines(mask, [pts], True, (255, 255, 255))
-    # # -------------填充多边形---------------------
-    mask2 = cv2.fillPoly(mask, [pts], (255, 255, 255))
-    ROI = cv2.bitwise_and(mask2, img)
-    cv2.imwrite(out_path1, mask2)
-    return out_path1
 
 
 # 角点检测显示程序
@@ -410,7 +446,7 @@ def Harris_points_f(image_path, out_path):
     dst = cv2.cornerHarris(img, 2, 3, 0, 0.4)
     dst = cv2.dilate(dst, None)  # 角点原来是个小叉叉（××） 膨胀角点
     pseudo_image[dst > 0.01 * dst.max()] = [0, 0, 255]
-    #out_path = "../image_result/points_Harris.jpg"
+    # out_path = "../image_result/points_Harris.jpg"
     cv2.imwrite(out_path, pseudo_image)
     return out_path
 

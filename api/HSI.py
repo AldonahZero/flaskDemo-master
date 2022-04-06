@@ -1,12 +1,17 @@
+import base64
 import os
 import uuid
 from datetime import datetime
+from io import BytesIO
 
 import pandas as pd
 from flask import request, flash, jsonify, send_from_directory
 from flask_restx import Resource, Namespace
 from flask_restx.reqparse import RequestParser
 from werkzeug.datastructures import FileStorage
+
+import matplotlib.pyplot as plt
+
 
 from algorithm.HSI.showPseudoColor import show_image
 from algorithm.HSI.FeatureExtraction.edge_feature import canny_edge_f
@@ -22,6 +27,8 @@ hsi_ns = Namespace('hsi', description='高光谱算法')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'raw'}
 HSI_UPLOAD_FOLDER = 'algorithm/HSI/static/upload/'
 HSI_RESULT_FOLDER = 'algorithm/HSI/static/result/'
+CUT_RESULT_PATH = 'algorithm/HSI/static/cut_result/'
+EXCEL_SAVE_PATH = 'algorithm/HSI/static/excel_result/'
 
 # 文件上传格式
 parser: RequestParser = hsi_ns.parser()
@@ -103,11 +110,12 @@ def get_result_obj(key):
 #             return jsonify({'code': 201, 'message': 'success', 'url': rel_out_path})
 
 
-@hsi_ns.route('/HSI_grabcut/<key>',  doc={"description": "图像分割"})
+@hsi_ns.route('/HSI_grabcut/<key>',  doc={"description": "图像分割返回結果：掩膜图像：target.jpg,标定背景的掩膜图像： back.jpg,"
+                                                         "九宫格切割结果的目标可视化显示: cut_result.jpg"})
 @hsi_ns.param('key', '上传时返回的key')
 class HSI_grabcut(Resource):
     def get(self, key):
-        '''图像分割'''
+        '''图像分割 选择特征前需要先运行此方法'''
         save_path = get_file_obj(key).file_path
         try:
             out_path = Hsi_grabcut_f(save_path)
@@ -115,83 +123,72 @@ class HSI_grabcut(Resource):
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': 'success', 'target_path': out_path + 'target.jpg',
-                            'back_path': out_path + 'back.jpg'})
+                            'back_path': out_path + 'back.jpg', 'cut_result': out_path + 'cut_result.jpg'})
 
 
-@hsi_ns.route('/gray_mean/<key>')
+@hsi_ns.route('/gray_mean/<key>', doc={"description": "返回结果 result：灰度均值数组  src: 折线图base64编码"})
 @hsi_ns.param('key', '上传时返回的key')
 class gray_mean(Resource):
     def get(self, key):
         '''灰度均值'''
         save_path = get_file_obj(key).file_path
+        data_path = CUT_RESULT_PATH + key + "/"
         try:
-            result = gray_mean_dif_f(save_path)
-            data = pd.DataFrame(result)
-            writer = pd.ExcelWriter('algorithm/HSI/static/excel_result/hsi_gray_mean_result.xlsx')
-            data.to_excel(writer, 'sheet', float_format='%.5f', header="false")
-            writer.save()
-            writer.close()
-            wb = load_workbook('algorithm/HSI/static/excel_result/hsi_gray_mean_result.xlsx')
-            sheet = wb.active
-            sheet['A2'] = "目标灰度均值"
-            sheet['A3'] = "背景灰度均值"
-            sheet['A4'] = "目标背景灰度均值之差"
-            wb.save('algorithm/HSI/static/excel_result/hsi_gray_mean_result.xlsx')
-            # print(result)
+            result = gray_mean_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
+            plt.plot(result)
+            sio = BytesIO()
+            plt.savefig(sio, format='png')
+            data = base64.encodebytes(sio.getvalue()).decode()
+            src = 'data:image/png;base64,' + str(data).replace('\n', '')
+            plt.close()
         except BaseException as e:
             print(e)
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist()})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src})
 
 
-@hsi_ns.route('/gray_diff/<key>')
+@hsi_ns.route('/gray_diff/<key>', doc={"description": "返回结果 result：灰度方差数组  src: 折线图base64编码"})
 @hsi_ns.param('key', '上传时返回的key')
 class gray_diff(Resource):
     def get(self, key):
         '''灰度方差'''
         save_path = get_file_obj(key).file_path
+        data_path = CUT_RESULT_PATH + key + "/"
         try:
-            result = gray_var_dif_f(save_path)
-            data = pd.DataFrame(result)
-            writer = pd.ExcelWriter('algorithm/HSI/static/excel_result/result_mean.xlsx')
-            data.to_excel(writer, 'sheet', float_format='%.5f', header="false")
-            writer.save()
-            writer.close()
-            wb = load_workbook('algorithm/HSI/static/excel_result/hsi_gray_mean_result.xlsx')
-            sheet = wb.active
-            sheet['A2'] = "目标灰度方差"
-            sheet['A3'] = "背景灰度方差"
-            sheet['A4'] = "目标背景灰度方差"
-            wb.save('algorithm/HSI/static/excel_result/result_var.xlsx')
+            result = gray_var_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
+            plt.plot(result)
+            sio = BytesIO()
+            plt.savefig(sio, format='png')
+            data = base64.encodebytes(sio.getvalue()).decode()
+            src = 'data:image/png;base64,' + str(data).replace('\n', '')
+            plt.close()
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist()})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src})
 
 
-@hsi_ns.route('/gray_histogram_diff/<key>')
+@hsi_ns.route('/gray_histogram_diff/<key>/<int:band_index>')
 @hsi_ns.param('key', '上传时返回的key')
+@hsi_ns.param('band_index', '波段索引(1到176的数字)')
 class gray_histogram_dif(Resource):
-    def get(self, key):
+    def get(self, key,band_index):
         '''目标背景各波段灰度直方图协方差系数'''
         save_path = get_file_obj(key).file_path
+        data_path = CUT_RESULT_PATH + key + "/"
         try:
-            result = gray_histogram_dif_f(save_path)
-            data = pd.DataFrame(result)
-            writer = pd.ExcelWriter('algorithm/HSI/static/excel_result/result_his.xlsx')
-            data.to_excel(writer, 'sheet', float_format='%.5f', header="false")
-            writer.save()
-            writer.close()
-            wb = load_workbook('algorithm/HSI/static/excel_result/result_his.xlsx')
-            sheet = wb.active
-            sheet['A2'] = "目标灰度直方图"
-            sheet['A3'] = "背景灰度直方图"
-            wb.save('algorithm/HSI/static/excel_result/hsi_gray_mean_result.xlsx')
+            result = gray_histogram_dif_f(save_path,band_index, data_path, EXCEL_SAVE_PATH)
+            plt.plot(result)
+            sio = BytesIO()
+            plt.savefig(sio, format='png')
+            data = base64.encodebytes(sio.getvalue()).decode()
+            src = 'data:image/png;base64,' + str(data).replace('\n', '')
+            plt.close()
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist()})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src})
 
 
 @hsi_ns.route('/HSI_NDWI/<key>')
@@ -245,10 +242,10 @@ class HSI_SAM(Resource):
 class canny_edge(Resource):
     def get(self, key, index):
         '''边缘检测'''
-        save_path = get_file_obj(key).file_path
+        cut_path = CUT_RESULT_PATH + key + '/'
         out_path = HSI_RESULT_FOLDER + key + '_edge_canny_result.jpg'
         try:
-            result = canny_edge_f(save_path, index, out_path)
+            result = canny_edge_f(cut_path, index, out_path)
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
@@ -284,11 +281,12 @@ class Harris_points(Resource):
         else:
             return jsonify({'code': 201, 'message': 'success', 'result': result})
 
-
-@hsi_ns.route('/download/<result_key>')
-@hsi_ns.param('result_key', '36位的excel文件key')
-class download_result(Resource):
-    def get(self, result_key):
-        '''角点检测'''
-        save_path = get_result_obj(result_key).path
-        send_from_directory(save_path, filename="123.jpg", as_attachment=True)
+#
+# @hsi_ns.route('/download/<result_key>')
+# @hsi_ns.param('result_key', '36位的excel文件key')
+# class download_result(Resource):
+#     def get(self, result_key):
+#         '''结果数据下载'''
+#         save_path = get_result_obj(result_key).path
+#         return send_from_directory(save_path, filename="123", as_attachment=True)
+#         #return jsonify({'code': 201, 'message': 'success'})

@@ -58,6 +58,18 @@ class HSIPictureFile(Base):
 
     pid = Column('pid', String(36), primary_key=True)
     uid = Column('uid', String(36), index=True)
+    file_path = Column('file_path', String(128))
+    picture_path = Column('picture_path', String(128))
+    create_time = Column('create_time', DateTime)
+
+
+
+class HSIResultFile(Base):
+    __tablename__ = 'hsi_result_file'
+
+    fid = Column('fid', String(36), primary_key=True)
+    pid = Column('pid', String(36), index=True)
+    type = Column('type', String(10))
     path = Column('path', String(128))
     create_time = Column('create_time', DateTime)
 

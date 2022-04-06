@@ -21,3 +21,4 @@ scikit-learn~=1.0.2
 websocket
 gevent
 gevent-websocket
+openpyxl

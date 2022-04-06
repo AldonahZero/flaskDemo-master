@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import algorithm.HSI as hsi
 from config.setting import RESULT_FOLDER
@@ -37,7 +39,7 @@ def Hsi_grabcut_f(image_path):
     plt.imshow(img2[:, :, [2, 1, 0]])
     output = plt.ginput(0)
     plt.show()
-    # print('output = ', output)
+    print('output = ', output)
     length_output = len(output)
     cnt = np.array(np.zeros((length_output, 1, 2)), np.int32)
 

@@ -203,8 +203,8 @@ def main_gray_hist_differential(path,path_bitwise,path_gray_histogram_save):
                     '''
                     plt.savefig('static\\images_save\\gray_histogram\\' + original_name)
                     '''
-                    print(path_gray_histogram_save + original_name)
-                    plt.savefig(path_gray_histogram_save + original_name)
+                    print(os.path.join(path_gray_histogram_save,original_name))
+                    plt.savefig(os.path.join(path_gray_histogram_save,original_name))
 
                     # plt.show()
 

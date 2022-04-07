@@ -22,3 +22,4 @@ websocket
 gevent
 gevent-websocket
 openpyxl
+piexif

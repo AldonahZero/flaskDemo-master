@@ -36,12 +36,13 @@ file_parser.add_argument('file', location='files',
                     type=FileStorage, required=True)
 
 # 上传图片路径
-UPLOAD_PATH = get_upload_location("/cutimg/static/images")
+UPLOAD_PATH = get_upload_location(os.path.join('cutimg', 'static', 'images'))
+# print(UPLOAD_PATH)
 # 图片路径
-CUTIMG_PATH = get_upload_location("/cutimg/static")
+CUTIMG_PATH = get_upload_location(os.path.join('cutimg', 'static'))
 # /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static
 # 服务器图片路径
-CUTIMG_SERVER_PATH = get_server_location("/cutimg/static")
+CUTIMG_SERVER_PATH = get_server_location(os.path.join('cutimg', 'static'))
 #  /algorithm/cutimg/static
 
 # 实际访问地址 /api/v1/fea/fileupload
@@ -76,6 +77,7 @@ class FileUploadHandler(Resource):
             file.save(path)
 
             # 前端路径
+
             proLoadPath = os.path.join('algorithm/cutimg/static/images', save_filename)
             # realProLoadPath = os.path.join(UPLOAD_PATH, save_filename)
             # print(realProLoadPath)
@@ -113,10 +115,10 @@ class rt_cutimg(Resource):
 
             real_mymain_color_path = find_se_com(CUTIMG_PATH, '/' + pics.url)
             current_app.logger.info(real_mymain_color_path)
-            real_path2 = os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m/')
-            real_path3 = os.path.join(CUTIMG_PATH, 'images_GLCM/images_camouflage/mix/20m/')
+            real_path2 = os.path.join(CUTIMG_PATH,'images_GLCM_bitwise','images_camouflage','mix','20m')
+            real_path3 = os.path.join(CUTIMG_PATH, 'images_GLCM','images_camouflage','mix','20m')
             path2,path3 = cutimg.mycutimg(real_mymain_color_path,real_path2,real_path3, list_cut)
-            path2 = 'algorithm/cutimg/static/images_GLCM_bitwise/images_camouflage/mix/20m/1.JPG'
+            path2 = os.path.join(CUTIMG_SERVER_PATH, 'images_GLCM_bitwise','images_camouflage','mix','20m','1.JPG')
             # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
             # pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/main_color/main_color2.JPG')
 
@@ -126,19 +128,25 @@ class rt_cutimg(Resource):
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': path2, 'data1': path3})
 
-@fea_ns.route('/main_gray_hist_differential')
+# 待修复
+@fea_ns.route('/main_gray_hist_differential/<gray_hist_differential_id>')
+@fea_ns.param('gray_hist_differential_id', '图片id')
 class rt_main_gray_hist_differential(Resource):
-    def get(self):
+    def get(self, gray_hist_differential_id):
         '''直方图图像'''
         try:
             # path = 'static/images_GLCM_original'
             # path_bitwise = 'static/images_GLCM_bitwise'
             # path_gray_histogram_save = 'static/images_save/gray_histogram/'
-            path = os.path.join(CUTIMG_PATH,'images_GLCM_original')
+            pid = int(gray_hist_differential_id)
+            session = db_session()
+            pics = session.query(FEAPictureFile).filter(FEAPictureFile.pid == pid).first()
+
+            real_mymain_color_path = find_se_com(CUTIMG_PATH, '/' + pics.url)
             path_bitwise = os.path.join(CUTIMG_PATH, 'images_GLCM_bitwise')
-            path_gray_histogram_save = os.path.join(CUTIMG_PATH, 'images_save/gray_histogram')
-            gray_histogram_differential.main_gray_hist_differential(path=path, path_bitwise=path_bitwise, path_gray_histogram_save=path_gray_histogram_save)
-            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/gray_histogram/1.JPG')
+            path_gray_histogram_save = os.path.join(CUTIMG_PATH, 'images_save', 'gray_histogram')
+            gray_histogram_differential.main_gray_hist_differential(path=real_mymain_color_path, path_bitwise=path_bitwise, path_gray_histogram_save=path_gray_histogram_save)
+            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save','gray_histogram', '1.JPG')
             list = []
             list.append(pic_url)
         except BaseException as e:
@@ -163,7 +171,7 @@ class rt_mymain_color(Resource):
 
             mymain_color_path = main_color_demon.mymain_color(real_mymain_color_path)
             # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
-            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/main_color/main_color2.JPG')
+            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save', 'main_color', 'main_color2.JPG')
             list = []
             list.append(pic_url)
         except BaseException as e:
@@ -181,8 +189,8 @@ class rt_main_edge(Resource):
             path = os.path.join(CUTIMG_PATH,'images_GLCM')
             path_edge = os.path.join(CUTIMG_PATH, 'images_GLCM_edge')
             edge_batch.main_edge(path=path, path_edge=path_edge)
-            url1 = os.path.join(CUTIMG_SERVER_PATH, 'images_GLCM_edge/images_camouflage/mix/20m_canny/14.JPG')
-            url2 = os.path.join(CUTIMG_SERVER_PATH, 'images_GLCM_edge/images_camouflage/mix/20m_canny/15.JPG')
+            url1 = os.path.join(CUTIMG_SERVER_PATH, 'images_GLCM_edge','images_camouflage', 'mix', '20m_canny', '14.JPG')
+            url2 = os.path.join(CUTIMG_SERVER_PATH, 'images_GLCM_edge','images_camouflage', 'mix', '20m_canny', '15.JPG')
             urls = []
             urls.append(url1)
             urls.append(url2)
@@ -209,7 +217,7 @@ class rt_myGLCM_demo(Resource):
             mymain_color_path = GLCM_demo.myGLCM_demo(real_myGLCM_demo_path)
             current_app.logger.info(mymain_color_path)
             # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
-            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/GLCM_demo/GLCM_Features.png')
+            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save','GLCM_demo','GLCM_Features.png')
             list = []
             list.append(pic_url)
         except BaseException as e:
@@ -227,9 +235,9 @@ class rt_myconer(Resource):
             # path = 'static\\images_GLCM'
             # path_save_coner = 'static/images_save/coner/
             path = os.path.join(CUTIMG_PATH,'images_GLCM')
-            path_save_coner = os.path.join(CUTIMG_PATH, 'images_save/coner')
+            path_save_coner = os.path.join(CUTIMG_PATH, 'images_save','coner')
             coner_demon.myconer(path=path,  path_save_coner=path_save_coner)
-            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save/coner/coner.JPG')
+            pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save','coner','coner.JPG')
             list = []
             list.append(pic_url)
         except BaseException as e:
@@ -245,9 +253,9 @@ class rt_myblobhist(Resource):
         try:
             # path1 = 'static/images_GLCM/images_camouflage/mix/20m/'
             # path_blob_hist_save = 'static/images_save/blob_hist/'
-            path1 = os.path.join(CUTIMG_PATH,'images_GLCM/images_camouflage/mix/20m/')
-            path_blob_hist_save = os.path.join(CUTIMG_PATH, 'images_save/blob_hist/')
-            server_path_blob_hist_save = os.path.join(CUTIMG_SERVER_PATH, 'images_save/blob_hist/')
+            path1 = os.path.join(CUTIMG_PATH,'images_GLCM','images_camouflage','mix','20m')
+            path_blob_hist_save = os.path.join(CUTIMG_PATH, 'images_save','blob_hist')
+            server_path_blob_hist_save = os.path.join(CUTIMG_SERVER_PATH, 'images_save','blob_hist')
             blob_hist_correlation.myblobhist(path1=path1,  path_blob_hist_save=path_blob_hist_save)
             urls = []
             for filename in os.listdir(path_blob_hist_save):

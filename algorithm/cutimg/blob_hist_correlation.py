@@ -79,6 +79,8 @@ def hist_square(hist_1, hist_2):
 
 
 def myblobhist(path1,path_blob_hist_save):
+    path1 = path1 + os.path.sep
+    path_blob_hist_save = path_blob_hist_save+ os.path.sep
 
     array_area1 = []
     array_length1 = []

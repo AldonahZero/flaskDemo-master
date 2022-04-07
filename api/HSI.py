@@ -20,7 +20,6 @@ from algorithm.HSI.HSI_grabcut import Hsi_grabcut_f
 from algorithm.HSI.FeatureExtraction.gray_feature import gray_mean_dif_f, gray_var_dif_f, gray_histogram_dif_f
 from algorithm.HSI.band_Selection import ECA_f
 from common.mysql_operate import db_session, HSIPictureFile, HSIResultFile
-from openpyxl import load_workbook
 
 hsi_ns = Namespace('hsi', description='高光谱算法')
 

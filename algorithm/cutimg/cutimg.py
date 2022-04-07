@@ -97,7 +97,7 @@ def mycutimg(img_input,path2, path3, output):
     # cv2.imwrite('D:/202177test/save/' + 'bitwise' + str(hight_name) + '/' + angle_number + '.jpg', mask2)
     # cv2.imwrite('\\images_GLCM_bitwise\\images_camouflage\\mix\\20m\\' + str(number)+'.JPG', mask2)
     number = 1
-    cv2.imwrite(path2 + str(number)+'.JPG', mask2)
+    cv2.imwrite(os.path.join(path2,str(number)+'.JPG') , mask2)
     # cv2.imwrite('/' + path1 + '_bitwise' + '/images_camouflage/mix/20m/' + str(number)+'.JPG', mask2)
 
     # 获取最小外接距 九宫格图像
@@ -182,7 +182,7 @@ def mycutimg(img_input,path2, path3, output):
             # cv2.imwrite('\\images_GLCM\\images_camouflage\\mix\\20m\\' + str(number) + str(i * 3 + j) + '.JPG', temp)
             # path3 = ''
             # path_mid = path3 + str(number) + str(i * 3 + j) + '.JPG'
-            cv2.imwrite(path3 + str(number) + str(i * 3 + j) + '.JPG', temp)
+            cv2.imwrite(os.path.join(path3,str(number) + str(i * 3 + j) + '.JPG') , temp)
             # cv2.imwrite(path_mid, temp)
 
             # cv2.imshow('temp', temp)

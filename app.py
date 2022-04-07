@@ -6,8 +6,6 @@ from config.setting import SERVER_PORT
 from config.setting import SECRET_KEY
 from werkzeug.datastructures import Headers
 from werkzeug.middleware.proxy_fix import ProxyFix
-from geventwebsocket.handler import WebSocketHandler
-from gevent.pywsgi import WSGIServer
 
 from api.__init__ import api_v1, cors_headers
 

@@ -192,7 +192,7 @@ def calcu_glcm_Auto_correlation(glcm, nbit=64):
 def myGLCM_demo(image_url):
     main()
     mymain_color_real_path_prex = os.path.dirname(os.path.realpath(__file__))
-    mymain_color_real_path = os.path.join(mymain_color_real_path_prex,'static/images_save/GLCM_demo')
+    mymain_color_real_path = os.path.join(mymain_color_real_path_prex,'static','images_save','GLCM_demo')
 
     if (len(os.listdir(mymain_color_real_path)) != 0):
         # GLCM可视化图存储文件夹
@@ -316,7 +316,7 @@ def myGLCM_demo(image_url):
 
     plt.tight_layout(pad=0.5)
     # plt.savefig('static\\images_save\\GLCM_demo\\GLCM_Features.png'
-    plt.savefig(path2 + '/GLCM_Features.png'
+    plt.savefig(os.path.join(path2,'GLCM_Features.png')
                 , format='png'
                 , bbox_inches='tight'
                 , pad_inches=0

@@ -154,7 +154,7 @@ def myconer(path, path_save_coner):
                             '''
                             plt.savefig('static\\images_save\\coner\\coner.JPG')
                             '''
-                            plt.savefig(path_save_coner + '/coner.JPG')
+                            plt.savefig(os.path.join(path_save_coner,'coner.JPG') )
                             # plt.show()
 
     return path_save_coner

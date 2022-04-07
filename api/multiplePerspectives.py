@@ -25,7 +25,7 @@ parser: RequestParser = mul_ns.parser()
 parser.add_argument('file', location='files',
                     type=FileStorage, required=True)
 # 上传图片路径
-UPLOAD_PATH = get_upload_location("/multiplePerspectives/static/images")
+UPLOAD_PATH = get_upload_location(os.path.join('multiplePerspectives','static','images'))
 
 
 # print(UPLOAD_PATH)

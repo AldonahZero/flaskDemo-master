@@ -26,7 +26,7 @@ output:
 多张图像存储于path3(1-9张)
 '''
 # 上传图片路径
-CUTIMG_PATH = get_upload_location("/cutimg/static")
+CUTIMG_PATH = get_upload_location(os.path.join('cutimg','static'))
 # /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static
 def mycutimg(img_input,path2, path3, output):
     '''

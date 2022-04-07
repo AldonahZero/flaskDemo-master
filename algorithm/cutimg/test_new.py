@@ -28,7 +28,7 @@ img_input2 = cv2.imread('static/images_GLCM_original/images_camouflage/mix/20m/2
 
 
 # 上传图片路径
-CUTIMG_PATH = get_upload_location("/cutimg/static")
+CUTIMG_PATH = get_upload_location(os.path.join('cutimg.py','static'))
 # /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static
 # 服务器图片路径
 CUTIMG_SERVER_PATH = get_server_location("/cutimg/static")

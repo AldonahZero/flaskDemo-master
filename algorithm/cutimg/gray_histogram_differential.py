@@ -110,11 +110,11 @@ def main_gray_hist_differential(path,path_bitwise,path_gray_histogram_save):
                     # 如果原图为空
                     if not os.path.exists(path3 + '/' + original_name):
                         img_name = img_name + 1
-                        # print(0)
+                        print(0)
                         continue
                     # if not os.path.exists(path3_bitwise + '/' + str(img_name) + '.JPG'):
                     if not os.path.exists(path3_bitwise + '/' + original_name):
-                        # print(img_name)
+                        print(original_name)
                         img_name = img_name + 1
                         # print(img_name)
                         continue
@@ -203,8 +203,9 @@ def main_gray_hist_differential(path,path_bitwise,path_gray_histogram_save):
                     '''
                     plt.savefig('static\\images_save\\gray_histogram\\' + original_name)
                     '''
-                    print(os.path.join(path_gray_histogram_save,original_name))
-                    plt.savefig(os.path.join(path_gray_histogram_save,original_name))
+                    res_path = os.path.join(path_gray_histogram_save,original_name)
+                    print(res_path)
+                    plt.savefig(res_path)
 
                     # plt.show()
 

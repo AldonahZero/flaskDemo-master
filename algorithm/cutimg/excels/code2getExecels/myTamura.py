@@ -396,7 +396,7 @@ def get_Tamura_excels(path_cutimg, path_excels_save):
 
 # if __name__ == '__main__':
 #
-#     img = cv2.imread('D:/camouflageProject/matlab2PythonCode/1.png', cv2.IMREAD_GRAYSCALE)
+#     img = cv2.imread('D:/camouflageProject/matlab2PythonCode/1.JPG', cv2.IMREAD_GRAYSCALE)
 #     fcrs = coarseness(img, 5)
 #     print("coarseness: %f" % fcrs)
 #     fcon = contrast(img)

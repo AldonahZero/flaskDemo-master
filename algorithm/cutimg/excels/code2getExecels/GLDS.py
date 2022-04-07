@@ -200,7 +200,7 @@ def get_GLDS_excels(path_cutimg, path_excels_save):
     f.save(path_excels_save +'/' + 'excel_GLDS.xls')
     return
 
-# img_path="D:/camouflageProject/matlab2PythonCode/1.png"
+# img_path="D:/camouflageProject/matlab2PythonCode/1.JPG"
 # img1 = cv2.imread(img_path, 0)
 # print(get_GLDS(img1))
 

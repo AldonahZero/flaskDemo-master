@@ -129,23 +129,19 @@ class rt_cutimg(Resource):
             return jsonify({'code': 201, 'message': '查找成功', 'data': path2, 'data1': path3})
 
 # 待修复
-@fea_ns.route('/main_gray_hist_differential/<gray_hist_differential_id>')
-@fea_ns.param('gray_hist_differential_id', '图片id')
+@fea_ns.route('/main_gray_hist_differential')
+# @fea_ns.param('gray_hist_differential_id', '图片id')
 class rt_main_gray_hist_differential(Resource):
-    def get(self, gray_hist_differential_id):
+    def get(self):
         '''直方图图像'''
         try:
             # path = 'static/images_GLCM_original'
             # path_bitwise = 'static/images_GLCM_bitwise'
             # path_gray_histogram_save = 'static/images_save/gray_histogram/'
-            pid = int(gray_hist_differential_id)
-            session = db_session()
-            pics = session.query(FEAPictureFile).filter(FEAPictureFile.pid == pid).first()
-
-            real_mymain_color_path = find_se_com(CUTIMG_PATH, '/' + pics.url)
+            path = os.path.join(CUTIMG_PATH, 'images_GLCM_original')
             path_bitwise = os.path.join(CUTIMG_PATH, 'images_GLCM_bitwise')
             path_gray_histogram_save = os.path.join(CUTIMG_PATH, 'images_save', 'gray_histogram')
-            gray_histogram_differential.main_gray_hist_differential(path=real_mymain_color_path, path_bitwise=path_bitwise, path_gray_histogram_save=path_gray_histogram_save)
+            gray_histogram_differential.main_gray_hist_differential(path=path, path_bitwise=path_bitwise, path_gray_histogram_save=path_gray_histogram_save)
             pic_url = os.path.join(CUTIMG_SERVER_PATH, 'images_save','gray_histogram', '1.JPG')
             list = []
             list.append(pic_url)

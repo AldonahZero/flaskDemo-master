@@ -368,7 +368,7 @@ def get_GGCM_excels(path_cutimg, path_excels_save):
 
 
 # if __name__ =='__main__':
-#     fp = 'D:/camouflageProject/matlab2PythonCode/1.png'
+#     fp = 'D:/camouflageProject/matlab2PythonCode/1.JPG'
 #     img = cv2.imread(fp)
 #     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 #     glgcm_features = glgcm(img_gray, 15, 15)

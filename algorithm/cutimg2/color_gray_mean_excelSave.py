@@ -47,7 +47,8 @@ def myGrayMean_excelSave(path_cutimg, excels_color_gray_mean):
 
         sheet1.write_merge(1, 1, q, q, average)
         q += 1
+    excel_save_path = os.path.join(excels_color_gray_mean, 'excel_color_gray_mean.xls')
 
-    f.save(excels_color_gray_mean + 'excel_color_gray_mean.xls')
-    return excels_color_gray_mean
+    f.save(excel_save_path )
+    return excel_save_path
 

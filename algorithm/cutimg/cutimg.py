@@ -26,79 +26,30 @@ output:
 多张图像存储于path3(1-9张)
 '''
 # 上传图片路径
-CUTIMG_PATH = get_upload_location(os.path.join('cutimg','static'))
+CUTIMG_PATH = get_upload_location(os.path.join('cutimg2','static'))
 # /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static
-def mycutimg(img_input,path2, path3, output):
-    '''
-    shutil.rmtree('要清空的文件夹名')
-    os.mkdir('要清空的文件夹名')
-    '''
-    # print(CUTIMG_PATH)
-    # print(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))
-    if (len(os.listdir(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))) != 0):
-        # 掩膜存储路径
-        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))
-        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM_bitwise/images_camouflage/mix/20m'))
-        # 分割之后图像存储路径
-        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM/images_camouflage/mix/20m'))
-        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM/images_camouflage/mix/20m'))
-        # 灰度直方图存储路径
-        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_save/gray_histogram'))
-        os.mkdir(os.path.join(CUTIMG_PATH,'images_save/gray_histogram'))
-        # 边缘图像存储路径
-        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM_edge'))
-        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM_edge'))
-        # 边缘方向直方图存储路径
-        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_GLCM_edge_hist'))
-        os.mkdir(os.path.join(CUTIMG_PATH,'images_GLCM_edge_hist'))
-        # 角点存储文件夹
-        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_save/coner'))
-        os.mkdir(os.path.join(CUTIMG_PATH,'images_save/coner'))
-        # 斑块图像存储路径
-        shutil.rmtree(os.path.join(CUTIMG_PATH,'images_save/blob_hist'))
-        os.mkdir(os.path.join(CUTIMG_PATH,'images_save/blob_hist'))
-
+def mycutimg(img_input, path_bitwise, path_cutimg, output):
 
     img = cv2.imread(img_input)
-    # path1 =
-    # path2 = '/images_GLCM_bitwise/images_camouflage/mix/20m/'
-    # path3 = '/images_GLCM/images_camouflage/mix/20m/'
-    # 快速定位专用 实际不执行
-    if False:
-        os.mkdir('/images_GLCM_bitwise/images_camouflage/mix/20m/')
-        os.mkdir('/images_GLCM/images_camouflage/mix/20m/')
 
-    # img = cv2.imread(path1 + str(number) + '.JPG')
-    # main
-    # plt.imshow(img[:,:,::-1])
-    # output = plt.ginput(0, 100)
-    # print(output)
-    # print(type(output))
-    # print(type(output[0]))
-    # print(type(output[0][0]))
-    # plt.show()
-    # cv2.waitKey(0)
-    # print('output = ', output)
     length_output = len(output)
     cnt = np.array(np.zeros((length_output, 1, 2)), np.float32)
     for i in range(length_output):
         cnt[i, 0, 0] = output[i][0].astype(int)
         cnt[i, 0, 1] = output[i][1].astype(int)
 
-    # 为灰度直方图等 获取掩膜
+        # 为灰度直方图等 获取掩膜
     cnt2 = np.array(cnt, np.int32)
     mask = np.zeros(img.shape, np.uint8)
     pts = cnt2.reshape((-1, 1, 2))
-    # print('pts', pts)
+
     mask = cv2.polylines(mask, [pts], True, (255, 255, 255))
     # # -------------填充多边形---------------------
     mask2 = cv2.fillPoly(mask, [pts], (255, 255, 255))
     ROI = cv2.bitwise_and(mask2, img)
-    # cv2.imwrite('D:/202177test/save/' + 'bitwise' + str(hight_name) + '/' + angle_number + '.jpg', mask2)
-    # cv2.imwrite('\\images_GLCM_bitwise\\images_camouflage\\mix\\20m\\' + str(number)+'.JPG', mask2)
+
     number = 1
-    cv2.imwrite(os.path.join(path2,str(number)+'.JPG') , mask2)
-    # cv2.imwrite('/' + path1 + '_bitwise' + '/images_camouflage/mix/20m/' + str(number)+'.JPG', mask2)
+    cv2.imwrite(os.path.join(path_bitwise, str(number) + '.JPG'), mask2)
 
     # 获取最小外接距 九宫格图像
     rect = cv2.minAreaRect(cnt)
@@ -182,13 +133,13 @@ def mycutimg(img_input,path2, path3, output):
             # cv2.imwrite('\\images_GLCM\\images_camouflage\\mix\\20m\\' + str(number) + str(i * 3 + j) + '.JPG', temp)
             # path3 = ''
             # path_mid = path3 + str(number) + str(i * 3 + j) + '.JPG'
-            cv2.imwrite(os.path.join(path3,str(number) + str(i * 3 + j) + '.JPG') , temp)
+            cv2.imwrite(os.path.join(path_cutimg, str(number) + str(i * 3 + j) + '.JPG'), temp)
             # cv2.imwrite(path_mid, temp)
 
             # cv2.imshow('temp', temp)
             # cv2.waitKey(0)
     # print(path2,path3)
-    return path2, path3
+    return path_bitwise, path_cutimg
 
 # mycutimg(number=1)
 if __name__ == '__main__':

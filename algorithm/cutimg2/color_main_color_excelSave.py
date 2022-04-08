@@ -5,7 +5,7 @@ import xlwt
 from skimage import io
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
-import utils
+from algorithm.cutimg2 import utils
 import cv2
 
 # 设置表格样式
@@ -98,7 +98,7 @@ def myMainColor_excelSave(path_cutimg, excels_color_main_color):
 
     cnt = 0
 
-    img_target = cv2.imread(path_cutimg + '14.jpg')
+    img_target = cv2.imread(path_cutimg)
     img_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2RGB)
     img_target = img_target.reshape((img_target.shape[0] * img_target.shape[1], 3))
     res, per, color_main = c_main(img_target)
@@ -188,6 +188,8 @@ def myMainColor_excelSave(path_cutimg, excels_color_main_color):
 
 
     # 主色提取颜色RGB值以及占比表格保存路径
-    f.save(excels_color_main_color + 'excel_main_color.xls')
-    return excels_color_main_color
+    excel_save_path = os.path.join(excels_color_main_color, 'excel_main_color.xls')
+
+    f.save(excel_save_path)
+    return excel_save_path
 

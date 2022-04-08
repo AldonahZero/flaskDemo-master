@@ -1,5 +1,6 @@
+import os
 def find_se(per, las):
-    pers = per.split('/')[1:]
+    pers = per.split(os.path.sep)[1:]
     # print(pers)
     lass = las.split('/')[1:]
     # print(lass)
@@ -21,6 +22,6 @@ if __name__ == '__main__':
                    "/algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG"))
     p = cutting("/Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static", persub)
 
-    persub1 = (find_se_com("/Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg/static",
-                      "/algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG"))
+    persub1 = (find_se_com("D:\\flaskDemo-master\\algorithm\\cutimg2\\static\\excels_save\\blob_Kmeans",
+                      "/algorithm/cutimg2/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG"))
     print(persub1)

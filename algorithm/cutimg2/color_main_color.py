@@ -8,7 +8,7 @@ import numpy as np
 import xlwt
 from skimage import io
 from sklearn.cluster import KMeans
-import utils
+from algorithm.cutimg2 import utils
 from PIL import ImageFont, ImageDraw, Image
 import shutil
 
@@ -20,6 +20,7 @@ path2: 输出的主色提取图像的存储路径
 输出:
 主色提取图像存储于path2
 '''
+
 
 def blob_kmeans(img, j):
     m = img.shape[0]
@@ -37,7 +38,8 @@ def blob_kmeans(img, j):
     flags = cv2.KMEANS_PP_CENTERS
 
     # K-Means聚类 聚集成4类
-    compactness, labels, centers = cv2.kmeans(data, j, None, criteria, 10, flags)
+    compactness, labels, centers = cv2.kmeans(
+        data, j, None, criteria, 10, flags)
 
     dst = labels.reshape((img.shape[0], img.shape[1]))
     dst = np.uint8(dst)
@@ -85,18 +87,18 @@ def hist_square(hist_1, hist_2):
     dy = dy - pow(ey, 2)
     # 求协方差cov=E[XY]-E[X]E[Y]
     for i in range(length_of_hist):
-        exy += hist_1[i]*hist_2[i]
+        exy += hist_1[i] * hist_2[i]
     exy = exy / length_of_hist
-    cov = exy - ex*ey
+    cov = exy - ex * ey
     # 求协方差系数 p = cov / (dx开平方*dy开平方)
-    p = cov / (pow(dx, 0.5)*pow(dy, 0.5))
+    p = cov / (pow(dx, 0.5) * pow(dy, 0.5))
     return ex, ey, exy, dx, dy, cov, p, skewness
 
 
 def centroid_histogram(clt):
 
     numLabels = np.arange(0, len(np.unique(clt.labels_)) + 1)
-    (hist, _) = np.histogram(clt.labels_, bins = numLabels)
+    (hist, _) = np.histogram(clt.labels_, bins=numLabels)
 
     # normalize the histogram, such that it sums to one
     hist = hist.astype("float")
@@ -109,7 +111,7 @@ def centroid_histogram(clt):
 def plot_colors(hist, centroids):
     # initialize the bar chart representing the relative frequency
     # of each of the colors
-    bar = np.zeros((100, int(max(hist)*300), 3), dtype="uint8")
+    bar = np.zeros((100, int(max(hist) * 300), 3), dtype="uint8")
     # bar[np.where(bar==0)] = 255
     startX = 0
     # loop over the percentage of each cluster and the color of
@@ -120,8 +122,8 @@ def plot_colors(hist, centroids):
     for (percent, color) in zip(hist, centroids):
         # plot the relative percentage of each cluster
         endX = (percent * 300)
-        cv2.rectangle(bar, (0, nums*20), (int(endX), (nums + 1)*20),
-            color.astype("uint8").tolist(), -1)
+        cv2.rectangle(bar, (0, nums * 20), (int(endX), (nums + 1) * 20),
+                      color.astype("uint8").tolist(), -1)
         cv2.rectangle(bar, (int(endX), nums * 20), (300, (nums + 1) * 20),
                       [255, 255, 255], -1)
         # 绘制文字信息
@@ -130,15 +132,15 @@ def plot_colors(hist, centroids):
         color_1.append(color)
         nums = nums + 1
 
-    fontpath = "font/simsun.ttc"
-    font = ImageFont.truetype(fontpath, 15)
+    # fontpath = "font/simsun.ttc"
+    # font = ImageFont.truetype(fontpath, 15)
     img_pil = Image.fromarray(bar)
     draw = ImageDraw.Draw(img_pil)
-    draw.text((0, 0), "%.2f%%" % (hist[0] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 20), "%.2f%%" % (hist[1] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 40), "%.2f%%" % (hist[2] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 60), "%.2f%%" % (hist[3] * 100), font=font, fill=(0, 0, 0))
-    draw.text((0, 80), "%.2f%%" % (hist[4] * 100), font=font, fill=(0, 0, 0))
+    draw.text((0, 0), "%.2f%%" % (hist[0] * 100), fill=(0, 0, 0))
+    draw.text((0, 20), "%.2f%%" % (hist[1] * 100), fill=(0, 0, 0))
+    draw.text((0, 40), "%.2f%%" % (hist[2] * 100), fill=(0, 0, 0))
+    draw.text((0, 60), "%.2f%%" % (hist[3] * 100), fill=(0, 0, 0))
+    draw.text((0, 80), "%.2f%%" % (hist[4] * 100), fill=(0, 0, 0))
     # return the bar chart
     bar = np.array(img_pil)
     return bar, percent_1, color_1
@@ -162,8 +164,7 @@ def c_main(img, k, num, path2):
     image_output = np.zeros((width, length, 3), dtype="uint8")
 
     for i in range(len(labels)):
-        image_output[i//length, i%length] = clt.cluster_centers_[labels[i]]
-
+        image_output[i // length, i % length] = clt.cluster_centers_[labels[i]]
 
     # image_output = image.reshape(width, length, 3)
     plt.figure(1)
@@ -177,18 +178,18 @@ def c_main(img, k, num, path2):
     plt.axis('off')  # 去掉坐标轴
     plt.imshow(bar[:, :, [2, 1, 0]])
     # plt.savefig('static\\images_save\\main_color\\' + 'main_color' + str(num) + '.JPG')
-    plt.savefig(path2 + 'main_color' + str(num) + '.jpg')
+
+    save_path = os.path.join(path2, 'main_color' + str(num) + '.jpg')
+    plt.savefig(save_path)
     # plt.show()
-    return bar, per, color
+    return bar, per, color, save_path
 
 
 def myMainColor(path_cutimg, path_mainColor):
     # path_cutimg_target = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/14.jpg'
     # path_mainColor = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_mainColor/'
-    path_cutimg_target = path_cutimg + '14.jpg'
+    path_cutimg_target = path_cutimg
     img_input = cv2.imread(path_cutimg_target)
-    c_main(img_input, k=5, num=1, path2=path_mainColor)
-    return path_mainColor
-
-
-
+    bar, per, color, save_path = c_main(
+        img_input, k=5, num=1, path2=path_mainColor)
+    return save_path

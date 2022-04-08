@@ -116,9 +116,12 @@ def myGrayHitogram_excelSave(path_original, path_bitwise, excels_color_gray_hist
     sheet1.write_merge(1, 1, 1, 1, cov1)
     sheet1.write_merge(1, 1, 2, 2, p1)
 
-    f.save(excels_color_gray_histogram + 'excel_color_gray_histogram.xls')
 
-    return excels_color_gray_histogram
+
+    excel_save_path = os.path.join(excels_color_gray_histogram, 'excel_color_gray_histogram.xls')
+
+    f.save(excel_save_path )
+    return excel_save_path
 
 # print(myGrayHitogram_excelSave())
 

@@ -1,25 +1,4 @@
 import cv2
-from webNew3.cutimg import mycutimg
-from webNew3.color_gray_mean import myGrayMean
-from webNew3.color_gray_mean_excelSave import myGrayMean_excelSave
-from webNew3.color_gray_histogram import myGrayHitogram
-from webNew3.color_gray_histogram_excelSave import myGrayHitogram_excelSave
-from webNew3.color_main_color import myMainColor
-from webNew3.color_main_color_excelSave import myMainColor_excelSave
-from webNew3.edge import myEdge
-from webNew3.edge_histogram import myEdgeHistogram
-from webNew3.texture_GLCM import myGLCM
-from webNew3.texture_GLCM_excelSave import myGLCM_excelSave
-from webNew3.texture_GGCM import myGGCM
-from webNew3.texture_GGCM_excelSave import myGGCM_excelSave
-from webNew3.texture_GLDS import myGLDS
-from webNew3.texture_GLDS_excelSave import myGLDS_excelSave
-from webNew3.texture_Tamura import myTamura
-from webNew3.texture_Tamura_excelSave import myTamura_excelSave
-from webNew3.texture_LBP_excelSave import myLBP_excelSave
-from webNew3.Blob_Kmeans import myBlob_excelSave
-from webNew3.coner_coner import myConer
-from webNew3.coner_coner_excelsSave import myConer_excelSave
 
 
 path_original = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_original/1.jpg'

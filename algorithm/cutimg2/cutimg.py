@@ -16,7 +16,7 @@ path_cutimg: 分割之后的目标背景图像存储路径
 多张图像存储于path_cutimg(1-9张)
 '''
 
-def mycutimg(img_input):
+def mycutimg(img_input, path_bitwise, path_cutimg):
 
     img = img_input
 

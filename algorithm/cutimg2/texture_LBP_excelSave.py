@@ -232,7 +232,7 @@ def myLBP_excelSave(path_cutimg, excels_texture_LBP):
     # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
     # excels_texture_LBP = 'D:/Python/Python/WZ_GLDM/webNew3/static/excels_save/texture_LBP/'  # LBP表格存储路径
 
-    img_target = cv2.imread(path_cutimg + '14.jpg')
+    img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
 
     # 计算目标图像的灰度共生矩阵值
     gray_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)
@@ -276,7 +276,9 @@ def myLBP_excelSave(path_cutimg, excels_texture_LBP):
 
     sheet1.write_merge(1, 1, 0, 0, everage)
 
-    f.save(excels_texture_LBP + '/' + 'excel_LBP.xls')
-    return
+    excel_save_path = os.path.join(excels_texture_LBP, 'excel_LBP.xls')
+
+    f.save(excel_save_path)
+    return excel_save_path
 
 

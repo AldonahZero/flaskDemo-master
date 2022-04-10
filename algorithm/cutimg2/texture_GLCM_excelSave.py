@@ -71,7 +71,7 @@ def myGLCM_excelSave(path_cutimg, excels_texture_GLCM):
     # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
     # excels_texture_GLCM = 'D:/Python/Python/WZ_GLDM/webNew3/static/excels_save/texture_GLCM/'  # GLCM表格存储路径
 
-    img_target = cv2.imread(path_cutimg + '14.jpg')
+    img_target = cv2.imread(os.path.join(path_cutimg,target_name))
 
     # 计算目标图像的灰度共生矩阵值
     gray_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)
@@ -105,9 +105,9 @@ def myGLCM_excelSave(path_cutimg, excels_texture_GLCM):
             continue
         backg_name = str(1) + str(j) + '.jpg'
         # print(backg_name)
-        if not os.path.exists(path_cutimg + backg_name):
+        if not os.path.exists(os.path.join(path_cutimg, backg_name)):
             continue
-        img_backg = cv2.imread(path_cutimg + backg_name)
+        img_backg = cv2.imread(os.path.join(path_cutimg, backg_name))
         if img_backg is None:
             continue
         [a2, b2, c2] = img_backg.shape
@@ -156,9 +156,9 @@ def myGLCM_excelSave(path_cutimg, excels_texture_GLCM):
     sheet1.write_merge(2, 2, 5, 5, everage_asm)
     sheet1.write_merge(2, 2, 6, 6, everage_dissimilarity)
     # print('end')
-
-    f.save(excels_texture_GLCM +'excel_texture_GLCM.xls')
-    return excels_texture_GLCM
+    res_path = os.path.join(excels_texture_GLCM, 'excel_texture_GLCM.xls')
+    f.save(res_path)
+    return res_path
 
 
 

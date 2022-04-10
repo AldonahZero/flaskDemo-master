@@ -99,7 +99,7 @@ def myGGCM_excelSave(path_cutimg, excels_texture_GGCM):
     # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
     # excels_texture_GGCM = 'D:/Python/Python/WZ_GLDM/webNew3/static/excels_save/texture_GGCM/'  # GGCM表格存储路径
 
-    img_target = cv2.imread(path_cutimg + '14.jpg')
+    img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
 
     # 计算目标图像的灰度共生矩阵值
     gray_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)
@@ -224,7 +224,7 @@ def myGGCM_excelSave(path_cutimg, excels_texture_GGCM):
     sheet1.write_merge(2, 2, 14, 14, everage_14)
     sheet1.write_merge(2, 2, 15, 15, everage_15)
 
-
-    f.save(excels_texture_GGCM + 'excel_texture_GGCM.xls')
-    return excels_texture_GGCM
+    res_path = os.path.join(excels_texture_GGCM, 'excel_texture_GGCM.xls')
+    f.save(res_path)
+    return res_path
 

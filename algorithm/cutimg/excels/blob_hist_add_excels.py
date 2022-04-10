@@ -125,7 +125,7 @@ def myblobhist():
     path1 = 'static/images_GLCM/images_camouflage/mix/20m/'
     path_blob_hist_save = 'static/images_save/blob_hist/'
 
-    img_input = cv2.imread(path1 +'14.JPG')
+    img_input = cv2.imread(os.path.join(path1, '14.jpg'))
     k2 = np.ones((3, 3), np.uint8)  # 开运算算子
     img_input = cv2.cvtColor(img_input, cv2.COLOR_BGR2HSV)
     img_input = cv2.medianBlur(img_input, 5)
@@ -164,7 +164,7 @@ def myblobhist():
     # cv2.imshow("dst3", dst3[:, :, 1])
     # cv2.imshow("dst2", dst2)
     # cv2.imwrite('static\\images_save\\blob_hist\\' + 'blob' + '14.JPG', dst2)
-    cv2.imwrite(path_blob_hist_save + 'blob' + '14.JPG', dst2)
+   cv2.imwrite(os.path.join(path_blob_hist_save, 'blob' + '14.jpg'), dst2)
 
     area_ = []
     length_ = []

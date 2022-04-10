@@ -62,7 +62,7 @@ def myGLCM(path_cutimg):
     # 修改灰度直方图的方向
     angle = 2  # 0-0° 1-90° 2-180° 3-270°
 
-    img_target = cv2.imread(path_cutimg + '14.jpg')
+    img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
 
     # 计算目标图像的灰度共生矩阵值
     gray_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)

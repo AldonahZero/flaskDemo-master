@@ -256,7 +256,7 @@ def myTamura(path_cutimg):
 
     # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
 
-    img_target = cv2.imread(path_cutimg + '14.jpg')
+    img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
 
     # 计算目标图像的灰度共生矩阵值
     gray_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)

@@ -303,8 +303,8 @@ def myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner
     # path_coner_BRISKF = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_coner/BRISKF/'
     # path_coner_KAZE = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_coner/KAZE/'
 
-    path = path_cutimg + '14.jpg'
-
+    path = os.path.join(path_cutimg, '14.jpg')
+    result_list = []
     # -------------------------------------------ORB---------------------------------------------------
     img1 = cv2.imread(path)
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
@@ -312,7 +312,9 @@ def myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner
     orb = cv2.ORB_create()
     kp1, des1 = orb.detectAndCompute(gray1, None)
     cv2.drawKeypoints(gray1, kp1, img1)
-    cv2.imwrite(path_coner_ORB + 'ORB.jpg', img1)
+    ORB_url = os.path.join(path_coner_ORB, 'ORB.jpg')
+    cv2.imwrite(ORB_url, img1)
+    result_list.append(ORB_url)
 
     # -------------------------------------------SIFT---------------------------------------------------
     img2 = cv2.imread(path)
@@ -321,7 +323,9 @@ def myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner
     sift = cv2.xfeatures2d.SIFT_create()
     kp2, dst2 = sift.detectAndCompute(gray2, None)  # 第二个参数为mask区域
     cv2.drawKeypoints(gray2, kp2, img2)
-    cv2.imwrite(path_coner_SIFT + 'SIFT.jpg', img2)
+    SIFT_url = os.path.join(path_coner_SIFT, 'SIFT.jpg')
+    cv2.imwrite(SIFT_url, img2)
+    result_list.append(SIFT_url)
 
     # -------------------------------------------SURF---------------------------------------------------
     img3 = cv2.imread(path)
@@ -330,7 +334,9 @@ def myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner
     surf = cv2.xfeatures2d.SURF_create()
     kp3, dst3 = surf.detectAndCompute(gray3, None)  # 第二个参数为mask区域
     cv2.drawKeypoints(gray3, kp3, img3)
-    cv2.imwrite(path_coner_SURF + 'SURF.jpg', img3)
+    SURF_url = os.path.join(path_coner_SURF, 'SURF.jpg')
+    cv2.imwrite(SURF_url, img3)
+    result_list.append(SURF_url)
 
     # -------------------------------------------KAZE---------------------------------------------------
     img4 = cv2.imread(path)
@@ -341,7 +347,9 @@ def myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner
     kp4 = kaze.detect(gray4, None)
     kp4, dst4 = brief.compute(gray4, kp4)
     cv2.drawKeypoints(gray4, kp4, img4)
-    cv2.imwrite(path_coner_KAZE + 'KAZE.jpg', img4)
+    KAZE_url = os.path.join(path_coner_KAZE, 'KAZE.jpg')
+    cv2.imwrite(KAZE_url, img4)
+    result_list.append(KAZE_url)
 
     # -------------------------------------------FAST---------------------------------------------------
     img5 = cv2.imread(path)
@@ -352,7 +360,9 @@ def myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner
     kp5 = fast.detect(gray5, None)
     kp5, des5 = brief.compute(gray5, kp5)
     cv2.drawKeypoints(gray5, kp5, img5)
-    cv2.imwrite(path_coner_FAST + 'FAST.jpg', img5)
+    FAST_url = os.path.join(path_coner_FAST, 'FAST.jpg')
+    cv2.imwrite(FAST_url, img5)
+    result_list.append(FAST_url)
 
     # -------------------------------------------BRISKF-------------------------------------------------
     img6 = cv2.imread(path)
@@ -363,9 +373,11 @@ def myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner
     kp6 = brisk.detect(gray6, None)
     kp6, des6 = brief.compute(gray6, kp6)
     cv2.drawKeypoints(gray6, kp6, img6)
-    cv2.imwrite(path_coner_BRISKF + 'BRISKF.jpg', img6)
+    BRISKF_url = os.path.join(path_coner_BRISKF, 'BRISKF.jpg')
+    cv2.imwrite(BRISKF_url, img6)
+    result_list.append(BRISKF_url)
 
-    return path_coner
+    return result_list
 
 # myConer()
 

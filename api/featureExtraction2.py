@@ -17,7 +17,7 @@ from common.remove_file_dir import remove_file_dir
 from common.get_server_file_path import get_server_file_path
 
 from algorithm.cutimg import gray_histogram_differential, main_color_demon, edge_batch, GLCM_demo, coner_demon, blob_hist_correlation, cutimg
-from algorithm.cutimg2 import color_gray_mean, color_gray_mean_excelSave, color_gray_histogram, color_gray_histogram_excelSave, color_main_color, color_main_color_excelSave
+from algorithm.cutimg2 import color_gray_mean, color_gray_mean_excelSave, color_gray_histogram, color_gray_histogram_excelSave, color_main_color, color_main_color_excelSave,texture_GLCM,texture_GLCM_excelSave, texture_GGCM, texture_GGCM_excelSave, texture_GLDS, texture_GLDS_excelSave, texture_Tamura, texture_Tamura_excelSave, texture_LBP_excelSave, Blob_Kmeans, coner_coner, coner_coner_excelsSave, edge, edge_histogram
 from werkzeug.datastructures import FileStorage
 import traceback
 import numpy as np
@@ -167,7 +167,9 @@ class rt_cutimg(Resource):
             return jsonify({'code': 201, 'message': '查找成功',
                             'data': path2, 'data1': path3})
 
-#---------------------------------------------颜色特征--------------------------------------------------------
+# ---------------------------------------------颜色特征--------------------------------------------------------
+
+
 @fea2_ns.route('/color_gray_mean')
 class rt_color_gray_mean(Resource):
     def get(self):
@@ -203,8 +205,9 @@ class rt_myGrayHitogram(Resource):
 
             data = {}
             path = os.path.join(src_path, pics.url)
-            path_bit = os.path.join(CUTIMG_ABS_PATH, 'img_save_bitwise','1.jpg')
-            arr = color_gray_histogram.myGrayHitogram(path,path_bit)
+            path_bit = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_bitwise', '1.jpg')
+            arr = color_gray_histogram.myGrayHitogram(path, path_bit)
 
             data['arr'] = arr.tolist()
             path_excel_save = os.path.join(
@@ -225,9 +228,12 @@ class rt_myMainColor(Resource):
         '''算法处理的是原图与path_bitwise对应的掩膜图像，返回一个长度为256的一维数组'''
         try:
             data = {}
-            path_bit = os.path.join(CUTIMG_ABS_PATH, 'img_save_bitwise','1.jpg')
-            path_mainColor = os.path.join(CUTIMG_ABS_PATH, 'img_save_mainColor')
-            main_color_url = color_main_color.myMainColor(path_bit,path_mainColor)
+            path_bit = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_bitwise', '1.jpg')
+            path_mainColor = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_mainColor')
+            main_color_url = color_main_color.myMainColor(
+                path_bit, path_mainColor)
 
             data['main_color_url'] = main_color_url
             path_excel_save = os.path.join(
@@ -242,158 +248,248 @@ class rt_myMainColor(Resource):
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
 
 
-#---------------------------------------------边缘特征--------------------------------------------------------
+# ---------------------------------------------边缘特征--------------------------------------------------------
 
-
-@fea2_ns.route('/mymain_color/<mymain_color_id>')
-@fea2_ns.param('mymain_color_id', '图片id')
-class rt_mymain_color(Resource):
-    def get(self, mymain_color_id):
-        '''提取主色'''
-        try:
-            # 61
-            pid = int(mymain_color_id)
-            session = db_session()
-            pics = session.query(FEAPictureFile).filter(
-                FEAPictureFile.pid == pid).first()
-
-            real_mymain_color_path = os.path.join(src_path, pics.url)
-            current_app.logger.info(real_mymain_color_path)
-
-            mymain_color_path = main_color_demon.mymain_color(
-                real_mymain_color_path)
-            # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
-            pic_url = os.path.join(
-                CUTIMG_SERVER_PATH,
-                'images_save',
-                'main_color',
-                'main_color2.JPG')
-            list = []
-            list.append(pic_url)
-        except BaseException as e:
-            current_app.logger.error(traceback.format_exc())
-            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
-        else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': list})
-
-
-@fea2_ns.route('/main_edge')
-class rt_main_edge(Resource):
+@fea2_ns.route('/myEdge')
+class rt_myEdge(Resource):
     def get(self):
-        '''边缘图像'''
-        current_app.logger.info(CUTIMG_ABS_PATH)
+        '''coner_coner'''
         try:
-            path = os.path.join(CUTIMG_ABS_PATH, 'images_GLCM')
-            path_edge = os.path.join(CUTIMG_ABS_PATH, 'images_GLCM_edge')
-            edge_batch.main_edge(path=path, path_edge=path_edge)
-            url1 = os.path.join(
-                CUTIMG_SERVER_PATH,
-                'images_GLCM_edge',
-                'images_camouflage',
-                'mix',
-                '20m_canny',
-                '14.JPG')
-            url2 = os.path.join(
-                CUTIMG_SERVER_PATH,
-                'images_GLCM_edge',
-                'images_camouflage',
-                'mix',
-                '20m_canny',
-                '15.JPG')
-            urls = []
-            urls.append(url1)
-            urls.append(url2)
+            data = {}
+            path_cutimg = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            path_edge = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_edge')
+            path_coner_ORB = os.path.join(
+                path_edge, 'canny')
+            path_coner_FAST = os.path.join(
+                path_edge, 'laplacian')
+            path_coner_SURF = os.path.join(
+                path_edge, 'log')
+            path_coner_SIFT = os.path.join(
+                path_edge, 'prewitt')
+            path_coner_BRISKF = os.path.join(
+                path_edge, 'roberts')
+            path_coner_KAZE = os.path.join(
+                path_edge, 'sobel')
+            urls = edge.myEdge(path_cutimg, path_edge, path_coner_ORB, path_coner_FAST, path_coner_SURF, path_coner_SIFT,
+             path_coner_BRISKF, path_coner_KAZE)
+            server_urls = []
+            for url in urls:
+                server_urls.append(get_server_file_path(url))
+            data['urls'] = server_urls
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': urls})
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
 
 
-@fea2_ns.route('/myGLCM_demo/<myGLCM_demo_id>')
-@fea2_ns.param('myGLCM_demo_id', '图片id')
-class rt_myGLCM_demo(Resource):
-    def get(self, myGLCM_demo_id):
-        '''GLCM可视化结果'''
-        try:
-            # 62
-            pid = int(myGLCM_demo_id)
-            session = db_session()
-            pics = session.query(FEAPictureFile).filter(
-                FEAPictureFile.pid == pid).first()
+# ---------------------------------------------纹理特征--------------------------------------------------------
 
-            real_myGLCM_demo_path = os.path.join(src_path, pics.url)
-            current_app.logger.info(real_myGLCM_demo_path)
-
-            mymain_color_path = GLCM_demo.myGLCM_demo(real_myGLCM_demo_path)
-            current_app.logger.info(mymain_color_path)
-            # /algorithm/cutimg/static/images_GLCM_original/images_camouflage/mix/20m/2.JPG
-            pic_url = os.path.join(
-                CUTIMG_SERVER_PATH,
-                'images_save',
-                'GLCM_demo',
-                'GLCM_Features.png')
-            list = []
-            list.append(pic_url)
-        except BaseException as e:
-            current_app.logger.error(traceback.format_exc())
-            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
-        else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': list})
-
-
-@fea2_ns.route('/myconer')
-class rt_myconer(Resource):
+@fea2_ns.route('/myGLCM')
+class rt_myGLCM(Resource):
     def get(self):
-        '''角点匹配情况图像'''
+        '''myGLCM'''
         try:
-            # path = 'static\\images_GLCM'
-            # path_save_coner = 'static/images_save/coner/
-            path = os.path.join(CUTIMG_ABS_PATH, 'images_GLCM')
-            path_save_coner = os.path.join(
-                CUTIMG_ABS_PATH, 'images_save', 'coner')
-            coner_demon.myconer(path=path, path_save_coner=path_save_coner)
-            pic_url = os.path.join(
-                CUTIMG_SERVER_PATH,
-                'images_save',
-                'coner',
-                'coner.JPG')
-            list = []
-            list.append(pic_url)
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            arr = texture_GLCM.myGLCM(
+                path)
+            data['arr'] = arr.tolist()
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'color_main_color')
+            excel_path = texture_GLCM_excelSave.myGLCM_excelSave(
+                path, path_excel_save)
+            data['excel_path'] = get_server_file_path(excel_path)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': list})
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
 
-
-@fea2_ns.route('/myblobhist')
-class rt_myblobhist(Resource):
+@fea2_ns.route('/myGGCM')
+class rt_myGGCM(Resource):
     def get(self):
-        '''斑块图像以及对应直方图'''
+        '''myGGCM'''
         try:
-            # path1 = 'static/images_GLCM/images_camouflage/mix/20m/'
-            # path_blob_hist_save = 'static/images_save/blob_hist/'
-            path1 = os.path.join(
-                CUTIMG_ABS_PATH,
-                'images_GLCM',
-                'images_camouflage',
-                'mix',
-                '20m')
-            path_blob_hist_save = os.path.join(
-                CUTIMG_ABS_PATH, 'images_save', 'blob_hist')
-            server_path_blob_hist_save = os.path.join(
-                CUTIMG_SERVER_PATH, 'images_save', 'blob_hist')
-            blob_hist_correlation.myblobhist(
-                path1=path1, path_blob_hist_save=path_blob_hist_save)
-            urls = []
-            for filename in os.listdir(path_blob_hist_save):
-                if not filename.startswith('.') and filename.endswith('JPG'):
-                    url = os.path.join(server_path_blob_hist_save, filename)
-                    urls.append(url)
-
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            arr = texture_GGCM.myGGCM(
+                path)
+            data['arr'] = arr.tolist()
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'texture_GGCM')
+            excel_path = texture_GGCM_excelSave.myGGCM_excelSave(
+                path, path_excel_save)
+            data['excel_path'] = get_server_file_path(excel_path)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'data': urls})
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+@fea2_ns.route('/myGLDS')
+class rt_myGLDS(Resource):
+    def get(self):
+        '''myGLDS'''
+        try:
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            arr = texture_GLDS.myGLDS(
+                path)
+            data['arr'] = arr
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'texture_GLDS')
+            excel_path = texture_GLDS_excelSave.myGLDS_excelSave(
+                path, path_excel_save)
+            data['excel_path'] = get_server_file_path(excel_path)
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+@fea2_ns.route('/texture_Tamura')
+class rt_texture_Tamura(Resource):
+    def get(self):
+        '''texture_Tamura'''
+        try:
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            arr = texture_Tamura.myTamura(
+                path)
+            data['arr'] = arr.tolist()
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
+            excel_path = texture_Tamura_excelSave.myTamura_excelSave(
+                path, path_excel_save)
+            data['excel_path'] = get_server_file_path(excel_path)
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+@fea2_ns.route('/texture_Tamura')
+class rt_texture_Tamura(Resource):
+    def get(self):
+        '''texture_Tamura'''
+        try:
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            arr = texture_Tamura.myTamura(
+                path)
+            data['arr'] = arr.tolist()
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
+            excel_path = texture_Tamura_excelSave.myTamura_excelSave(
+                path, path_excel_save)
+            data['excel_path'] = get_server_file_path(excel_path)
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+
+@fea2_ns.route('/texture_LBP_excelSave')
+class rt_texture_LBP_excelSave(Resource):
+    def get(self):
+        '''texture_LBP_excelSave'''
+        try:
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
+            excel_path = texture_LBP_excelSave.myLBP_excelSave(
+                path, path_excel_save)
+            data['excel_path'] = get_server_file_path(excel_path)
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+#---------------------------------------------斑块特征--------------------------------------------------------
+
+@fea2_ns.route('/Blob_Kmeans')
+class rt_Blob_Kmeans(Resource):
+    def get(self):
+        '''texture_LBP_excelSave'''
+        try:
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'blob_Kmeans')
+            path_save_blob = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_blob')
+            excel_path = Blob_Kmeans.myBlob_excelSave(
+                path, path_excel_save, path_save_blob)
+            data['excel_path'] = get_server_file_path(excel_path)
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+
+#---------------------------------------------角点特征--------------------------------------------------------
+@fea2_ns.route('/coner_coner')
+class rt_coner_coner(Resource):
+    def get(self):
+        '''coner_coner'''
+        try:
+            data = {}
+            path_cutimg = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            path_coner = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_coner')
+            path_coner_ORB = os.path.join(
+                path_coner, 'ORB')
+            path_coner_FAST = os.path.join(
+                path_coner, 'FAST')
+            path_coner_SURF = os.path.join(
+                path_coner, 'SURF')
+            path_coner_SIFT = os.path.join(
+                path_coner, 'SIFT')
+            path_coner_BRISKF = os.path.join(
+                path_coner, 'BRISKF')
+            path_coner_KAZE = os.path.join(
+                path_coner, 'KAZE')
+            urls = coner_coner.myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner_SURF, path_coner_SIFT,
+             path_coner_BRISKF, path_coner_KAZE)
+            server_urls = []
+            for url in urls:
+                server_urls.append(get_server_file_path(url))
+            data['urls'] = server_urls
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+
+@fea2_ns.route('/myConer_excelSave')
+class rt_myConer_excelSave(Resource):
+    def get(self):
+        '''texture_LBP_excelSave'''
+        try:
+            data = {}
+            path = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            path_excel_save = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
+            data['excel_path'] = coner_coner_excelsSave.myConer_excelSave(path, path_excel_save)
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})

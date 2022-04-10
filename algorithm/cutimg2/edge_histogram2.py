@@ -128,7 +128,7 @@ def myEdgeHistogram_calculation(path_edge, path_edge_histogram_save):
 
     path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
 
-    img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
+    img_target = cv2.imread(path_cutimg + '14.jpg')
     img_target_edge = cv2.imread(path_edge + '14.jpg')
 
     bar_hist_target = EDH(img_target, TH, img_target_edge)
@@ -194,26 +194,6 @@ def myEdgeHistogram(path_cutimg, path_edge, path_edge_canny, path_edge_laplacian
     for i in range(0, len(row0)):
         sheet1.write(0, i, row0[i], set_style('Times New Roman', 220, True))
 
-    # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
-    #
-    # path_edge = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge/'  # 边缘保存路径
-    # path_edge_canny = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge/canny/'  # 边缘保存路径
-    # path_edge_laplacian = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge/laplacian/'  # 边缘保存路径
-    # path_edge_log = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge/log/'  # 边缘保存路径
-    # path_edge_prewitt = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge/prewitt/'  # 边缘保存路径
-    # path_edge_roberts = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge/roberts/'  # 边缘保存路径
-    # path_edge_sobel = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge/sobel/'  # 边缘保存路径
-    #
-    # path_edge_histogram = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge_histogram/'  # 边缘方向直方图保存路径
-    # path_edge_histogram_canny = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge_histogram/canny/'  # 边缘方向直方图保存路径
-    # path_edge_histogram_laplacian = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge_histogram/laplacian/'  # 边缘方向直方图保存路径
-    # path_edge_histogram_log = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge_histogram/log/'  # 边缘方向直方图保存路径
-    # path_edge_histogram_prewitt = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge_histogram/prewitt/'  # 边缘方向直方图保存路径
-    # path_edge_histogram_roberts = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge_histogram/roberts/'  # 边缘方向直方图保存路径
-    # path_edge_histogram_sobel = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_edge_histogram/sobel/'  # 边缘方向直方图保存路径
-    #
-    # excels_edge_histogram = 'D:/Python/Python/WZ_GLDM/webNew3/static/excels_save/edge_histogram/'
-
     sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_canny, path_edge_histogram_canny))
     sheet1.write_merge(1, 1, 2, 2, myEdgeHistogram_calculation(path_edge_laplacian, path_edge_histogram_laplacian))
     sheet1.write_merge(1, 1, 3, 3, myEdgeHistogram_calculation(path_edge_log, path_edge_histogram_log))
@@ -223,4 +203,82 @@ def myEdgeHistogram(path_cutimg, path_edge, path_edge_canny, path_edge_laplacian
     # plt.show()
     f.save(excels_edge_histogram + '/' + 'excel_edge_histogram.xls')
     return path_edge_histogram, excels_edge_histogram
+
+
+def myEdgeHistogramCanny(path_edge_canny, path_edge_histogram_canny, excels_edge_histogram):
+
+    f = xlwt.Workbook()
+    sheet1 = f.add_sheet('边缘方向直方图', cell_overwrite_ok=True)
+    row0 = ["目标背景边缘方向直方图协方差系数", "Canny"]
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i], set_style('Times New Roman', 220, True))
+
+    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_canny, path_edge_histogram_canny))
+    f.save(excels_edge_histogram + '/' + 'excel_edge_histogram_canny.xls')
+    return path_edge_histogram_canny, excels_edge_histogram
+
+
+def myEdgeHistogramLaplacian(path_edge_laplacian, path_edge_histogram_laplacian, excels_edge_histogram):
+
+    f = xlwt.Workbook()
+    sheet1 = f.add_sheet('边缘方向直方图', cell_overwrite_ok=True)
+    row0 = ["目标背景边缘方向直方图协方差系数", "Laplacian"]
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i], set_style('Times New Roman', 220, True))
+
+    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_laplacian, path_edge_histogram_laplacian))
+    f.save(excels_edge_histogram + '/' + 'excel_edge_histogram_laplacian.xls')
+    return path_edge_histogram_laplacian, excels_edge_histogram
+
+
+def myEdgeHistogramLog(path_edge_log, path_edge_histogram_log, excels_edge_histogram):
+
+    f = xlwt.Workbook()
+    sheet1 = f.add_sheet('边缘方向直方图', cell_overwrite_ok=True)
+    row0 = ["目标背景边缘方向直方图协方差系数", "Log"]
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i], set_style('Times New Roman', 220, True))
+
+    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_log, path_edge_histogram_log))
+    f.save(excels_edge_histogram + '/' + 'excel_edge_histogram_log.xls')
+    return path_edge_histogram_log, excels_edge_histogram
+
+
+def myEdgeHistogramPrewitt(path_edge_prewitt, path_edge_histogram_prewitt, excels_edge_histogram):
+
+    f = xlwt.Workbook()
+    sheet1 = f.add_sheet('边缘方向直方图', cell_overwrite_ok=True)
+    row0 = ["目标背景边缘方向直方图协方差系数", "Prewitt"]
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i], set_style('Times New Roman', 220, True))
+
+    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_prewitt, path_edge_histogram_prewitt))
+    f.save(excels_edge_histogram + '/' + 'excel_edge_histogram_prewitt.xls')
+    return path_edge_histogram_prewitt, excels_edge_histogram
+
+
+def myEdgeHistogramRoberts(path_edge_roberts, path_edge_histogram_roberts, excels_edge_histogram):
+
+    f = xlwt.Workbook()
+    sheet1 = f.add_sheet('边缘方向直方图', cell_overwrite_ok=True)
+    row0 = ["目标背景边缘方向直方图协方差系数", "Roberts"]
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i], set_style('Times New Roman', 220, True))
+
+    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_roberts, path_edge_histogram_roberts))
+    f.save(excels_edge_histogram + '/' + 'excel_edge_histogram_roberts.xls')
+    return path_edge_histogram_roberts, excels_edge_histogram
+
+
+def myEdgeHistogramSobel(path_edge_sobel, path_edge_histogram_sobel, excels_edge_histogram):
+
+    f = xlwt.Workbook()
+    sheet1 = f.add_sheet('边缘方向直方图', cell_overwrite_ok=True)
+    row0 = ["目标背景边缘方向直方图协方差系数", "Sobel"]
+    for i in range(0, len(row0)):
+        sheet1.write(0, i, row0[i], set_style('Times New Roman', 220, True))
+
+    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_sobel, path_edge_histogram_sobel))
+    f.save(excels_edge_histogram + '/' + 'excel_edge_histogram_sobel.xls')
+    return path_edge_histogram_sobel, excels_edge_histogram
 

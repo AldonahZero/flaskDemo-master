@@ -74,7 +74,7 @@ def myGLDS_excelSave(path_cutimg, excels_texture_GLDS):
     # excels_texture_GLDS = 'D:/Python/Python/WZ_GLDM/webNew3/static/excels_save/texture_GLDS/'  # GLDS表格存储路径
 
 
-    img_target = cv2.imread(path_cutimg + '14.jpg')
+    img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
     gray_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)
     gray_target = img_as_ubyte(gray_target)
     res_target = get_GLDS(gray_target)
@@ -137,7 +137,8 @@ def myGLDS_excelSave(path_cutimg, excels_texture_GLDS):
     sheet1.write_merge(2, 2, 3, 3, everage_3)
     sheet1.write_merge(2, 2, 4, 4, everage_4)
 
-    f.save(excels_texture_GLDS + 'excel_texture_GLDS.xls')
+    excel_save_path = os.path.join(excels_texture_GLDS, 'excel_texture_GLDS.xls')
 
-    return excels_texture_GLDS
+    f.save(excel_save_path)
+    return excel_save_path
 

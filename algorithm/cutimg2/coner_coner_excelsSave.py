@@ -341,7 +341,7 @@ def myConer_excelSave(path_cutimg, excels_coner_coner):
 
 
     target_name = str(1) + str(4) + '.jpg'
-    img_target = cv2.imread(path_cutimg + target_name)
+    img_target = cv2.imread(os.path.join(path_cutimg, target_name))
 
     # 计算目标
     gray_target = img_target
@@ -540,7 +540,9 @@ def myConer_excelSave(path_cutimg, excels_coner_coner):
     sheet1.write_merge(2, 2, 5, 5, everage_FAST_b)
     sheet1.write_merge(2, 2, 6, 6, everage_KAZE_b)
 
-    f.save(excels_coner_coner + 'excel_coner_coner.xls')
+    excel_save_path = os.path.join(excels_coner_coner, 'excel_coner_coner.xls')
+
+    f.save(excel_save_path)
 
     return excels_coner_coner
 

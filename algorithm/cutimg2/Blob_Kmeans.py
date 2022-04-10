@@ -90,7 +90,7 @@ def hist_square(hist_1, hist_2):
     return ex, ey, exy, dx, dy, cov, p, skewness
 
 
-def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
+def myBlob_excelSave(path_cutimg, excels_save_blob_Kmeans, path_blob_hist_save):
     f = xlwt.Workbook()
 
     sheet1 = f.add_sheet('Blob', cell_overwrite_ok=True)
@@ -121,8 +121,7 @@ def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
 
     path1 = path_cutimg
 
-
-    img_input = cv2.imread(path1 +'14.jpg')
+    img_input = cv2.imread(os.path.join(path1,'14.jpg'))
     k2 = np.ones((3, 3), np.uint8)  # 开运算算子
     img_input = cv2.cvtColor(img_input, cv2.COLOR_BGR2HSV)
     img_input = cv2.medianBlur(img_input, 5)
@@ -161,7 +160,7 @@ def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
     # cv2.imshow("dst3", dst3[:, :, 1])
     # cv2.imshow("dst2", dst2)
     # cv2.imwrite('static\\images_save\\blob_hist\\' + 'blob' + '14.jpg', dst2)
-    cv2.imwrite(path_blob_hist_save + 'blob' + '14.jpg', dst2)
+    cv2.imwrite(os.path.join(path_blob_hist_save, 'blob' + '14.jpg'), dst2)
 
     area_ = []
     length_ = []
@@ -235,31 +234,31 @@ def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
     plt.figure('area_14')
     n, bins, patches = plt.hist(array_area1, 100, (0, 1))
     # plt.savefig('static\\images_save\\blob_hist\\' + 'area_' + '14.jpg')
-    plt.savefig(path_blob_hist_save + 'area_' + '14.jpg')
+    plt.savefig(path_blob_hist_save +os.path.sep+ 'area_' + '14.jpg')
     plt.close()
 
     plt.figure('length_14')
     n, bins, patches = plt.hist(array_length1, 100, (0, 1))
     # plt.savefig('static\\images_save\\blob_hist\\' + 'length_' + '14.jpg')
-    plt.savefig(path_blob_hist_save + 'length_' + '14.jpg')
+    plt.savefig(path_blob_hist_save +os.path.sep+ 'length_' + '14.jpg')
     plt.close()
 
     plt.figure('rect_14')
     n, bins, patches = plt.hist(array_rect1, 100, (0, 1))
     # plt.savefig('static\\images_save\\blob_hist\\' + 'rect_' + '14.jpg')
-    plt.savefig(path_blob_hist_save + 'rect_' + '14.jpg')
+    plt.savefig(path_blob_hist_save +os.path.sep+ 'rect_' + '14.jpg')
     plt.close()
 
     plt.figure('circle_14')
     n, bins, patches = plt.hist(array_circle1, 100, (0, 1))
     # plt.savefig('static\\images_save\\blob_hist\\' + 'circle_' + '14.jpg')
-    plt.savefig(path_blob_hist_save + 'circle_' + '14.jpg')
+    plt.savefig(path_blob_hist_save +os.path.sep+ 'circle_' + '14.jpg')
     plt.close()
 
     plt.figure('stretch_14')
     n, bins, patches = plt.hist(array_stretch1, 100, (0, 1))
     # plt.savefig('static\\images_save\\blob_hist\\' + 'stretch_' + '14.jpg')
-    plt.savefig(path_blob_hist_save + 'stretch_' + '14.jpg')
+    plt.savefig(path_blob_hist_save +os.path.sep+ 'stretch_' + '14.jpg')
     plt.close()
 
     result_area = 0
@@ -272,12 +271,10 @@ def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
     for i in range(10, 19):
         path = str(i)
         # if i == 14 or not os.path.exists('static\\images_GLCM\\images_camouflage\\mix\\20m\\' + path + '.jpg'):
-        if i == 14 or not os.path.exists(path1 + path + '.jpg'):
-            continue
         nums1 = nums1 + 1
 
         # img_input = cv2.imread('static\\images_GLCM\\images_camouflage\\mix\\20m\\' + path + '.jpg')
-        img_input = cv2.imread(path1 + path + '.jpg')
+        img_input = cv2.imread(os.path.join(path1, path + '.jpg'))
         k2 = np.ones((3, 3), np.uint8)  # 开运算算子
         img_input = cv2.cvtColor(img_input, cv2.COLOR_BGR2HSV)
         img_input = cv2.medianBlur(img_input, 5)
@@ -318,7 +315,7 @@ def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
         # plt.figure('background')
         plt.imshow(dst2)
         # cv2.imwrite('static\\images_save\\blob_hist\\' + 'blob' + path + '.jpg', dst2)
-        cv2.imwrite(path_blob_hist_save + 'blob' + path + '.jpg', dst2)
+        cv2.imwrite(path_blob_hist_save +os.path.sep+ 'blob' + path + '.jpg', dst2)
 
         area_ = []
         length_ = []
@@ -394,31 +391,31 @@ def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
         plt.figure('area_' + path)
         n, bins, patches = plt.hist(array_area2, 100, (0, 1))
         # plt.savefig('static\\images_save\\blob_hist\\' + 'area_' + path + '.jpg')
-        plt.savefig(path_blob_hist_save + 'area_' + path + '.jpg')
+        plt.savefig(path_blob_hist_save +os.path.sep+ 'area_' + path + '.jpg')
         plt.close()
 
         plt.figure('length_' + path)
         n, bins, patches = plt.hist(array_length2, 100, (0, 1))
         # plt.savefig('static\\images_save\\blob_hist\\' + 'length_' + path + '.jpg')
-        plt.savefig(path_blob_hist_save + 'length_' + path + '.jpg')
+        plt.savefig(path_blob_hist_save +os.path.sep+ 'length_' + path + '.jpg')
         plt.close()
 
         plt.figure('rect_' + path)
         n, bins, patches = plt.hist(array_rect2, 100, (0, 1))
         # plt.savefig('static\\images_save\\blob_hist\\' + 'rect_' + path + '.jpg')
-        plt.savefig(path_blob_hist_save + 'rect_' + path + '.jpg')
+        plt.savefig(path_blob_hist_save +os.path.sep+ 'rect_' + path + '.jpg')
         plt.close()
 
         plt.figure('circle_' + path)
         n, bins, patches = plt.hist(array_circle2, 100, (0, 1))
         # plt.savefig('static\\images_save\\blob_hist\\' + 'circle_' + path + '.jpg')
-        plt.savefig(path_blob_hist_save + 'circle_' + path + '.jpg')
+        plt.savefig(path_blob_hist_save +os.path.sep+ 'circle_' + path + '.jpg')
         plt.close()
 
         plt.figure('stretch_' + path)
         n, bins, patches = plt.hist(array_stretch2, 100, (0, 1))
         # plt.savefig('static\\images_save\\blob_hist\\' + 'stretch_' + path + '.jpg')
-        plt.savefig(path_blob_hist_save + 'stretch_' + path + '.jpg')
+        plt.savefig(path_blob_hist_save +os.path.sep+ 'stretch_' + path + '.jpg')
         plt.close()
 
         hist_area1 = cv2.calcHist([array_area1], [0], None, [100], [0, 1])
@@ -469,7 +466,10 @@ def myBlob_excelSave(path_cutimg, excels_blob_Kmeans, path_blob_hist_save):
     sheet1.write_merge(1, 1, 4, 4, str(result_rect[0]))
     sheet1.write_merge(1, 1, 5, 5, str(result_stretch[0]))
     # cv2.waitKey(0)
-    f.save(excels_blob_Kmeans + 'excel_Blob_Kmean.xls')
-    return excels_blob_Kmeans
+    excel_save_path = os.path.join(excels_save_blob_Kmeans, 'excel_Blob_Kmean.xls')
+
+    f.save(excel_save_path)
+    return excel_save_path
+
 
 

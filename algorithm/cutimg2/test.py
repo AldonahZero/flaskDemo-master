@@ -1,4 +1,37 @@
 import cv2
+from .cutimg import mycutimg
+from .color_gray_mean import myGrayMean
+from .color_gray_mean_excelSave import myGrayMean_excelSave
+from .color_gray_histogram import myGrayHitogram
+from .color_gray_histogram_excelSave import myGrayHitogram_excelSave
+from .color_main_color import myMainColor
+from .color_main_color_excelSave import myMainColor_excelSave
+from .edge import myEdge
+from .edge_histogram import myEdgeHistogram
+from .edge2 import myEdgeCanny
+from .edge2 import myEdgeLaplacian
+from .edge2 import myEdgeSobel
+from .edge2 import myEdgeRoberts
+from .edge2 import myEdgePrewitt
+from .edge2 import myEdgeLog
+from .edge_histogram2 import myEdgeHistogramCanny
+from .edge_histogram2 import myEdgeHistogramLaplacian
+from .edge_histogram2 import myEdgeHistogramSobel
+from .edge_histogram2 import myEdgeHistogramRoberts
+from .edge_histogram2 import myEdgeHistogramPrewitt
+from .edge_histogram2 import myEdgeHistogramLog
+from .texture_GLCM import myGLCM
+from .texture_GLCM_excelSave import myGLCM_excelSave
+from .texture_GGCM import myGGCM
+from .texture_GGCM_excelSave import myGGCM_excelSave
+from .texture_GLDS import myGLDS
+from .texture_GLDS_excelSave import myGLDS_excelSave
+from .texture_Tamura import myTamura
+from .texture_Tamura_excelSave import myTamura_excelSave
+from .texture_LBP_excelSave import myLBP_excelSave
+from .Blob_Kmeans import myBlob_excelSave
+from .coner_coner import myConer
+from .coner_coner_excelsSave import myConer_excelSave
 
 
 path_original = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_original/1.jpg'
@@ -105,7 +138,7 @@ myMainColor()
 '''
 # print(myMainColor(path_cutimg, path_mainColor))
 
-# color_main_color_excelSave.py 颜色特征-主色提取 可视化展示部分
+# color_main_color_excelSave.py 颜色特征-主色提取 表格存储部分
 '''
 myMainColor_excelSave()
 输入为 path_cutimg, excels_color_main_color
@@ -139,6 +172,30 @@ myEdgeHistogram()
 #                     path_edge_histogram_laplacian, path_edge_histogram_log, path_edge_histogram_prewitt,
 #                     path_edge_histogram_roberts, path_edge_histogram_sobel, excels_edge_histogram))
 
+#=========================================边缘特征分开封装版本========
+# edge2.py 多种算子分开封装
+'''
+输入为 原始子图路径path_cutimg、边缘图像文件路径path_edge、边缘图像子文件路径path_edge_canny（以及其他算子的路径）
+返回值为 各种算子计算出来的边缘图像的存储路径
+'''
+# myEdgeCanny(path_cutimg, path_edge, path_edge_canny)
+# myEdgeLaplacian(path_cutimg, path_edge, path_edge_laplacian)
+# myEdgeLog(path_cutimg, path_edge, path_edge_log)
+# myEdgeRoberts(path_cutimg, path_edge, path_edge_roberts)
+# myEdgePrewitt(path_cutimg, path_edge, path_edge_prewitt)
+# myEdgeSobel(path_cutimg, path_edge, path_edge_sobel)
+
+# edge_histogram2.py 多种算子分开封装
+'''
+输入为 边缘图像路径path_edge_canny、边缘方向直方图存储路径path_edge_histogram_canny、表格存储路径excels_edge_histogram
+返回值为 边缘方向直方图存储路径path_edge_histogram_canny、表格存储路径excels_edge_histogram
+'''
+# myEdgeHistogramCanny(path_edge_canny, path_edge_histogram_canny, excels_edge_histogram)
+# myEdgeHistogramLaplacian(path_edge_laplacian, path_edge_histogram_laplacian, excels_edge_histogram)
+# myEdgeHistogramLog(path_edge_log, path_edge_histogram_log, excels_edge_histogram)
+# myEdgeHistogramSobel(path_edge_sobel, path_edge_histogram_sobel, excels_edge_histogram)
+# myEdgeHistogramPrewitt(path_edge_prewitt, path_edge_histogram_prewitt, excels_edge_histogram)
+# myEdgeHistogramRoberts(path_edge_roberts, path_edge_histogram_roberts, excels_edge_histogram)
 #---------------------------------------------纹理特征--------------------------------------------------------
 # texture_GLCM.py  可视化部分
 '''
@@ -227,7 +284,7 @@ myLBP_excelSave()
 # print(myLBP_excelSave(path_cutimg, excels_texture_LBP))
 
 
-#---------------------------------------------纹理特征--------------------------------------------------------
+#---------------------------------------------斑块特征--------------------------------------------------------
 # Blob_Kmeans.py  可视化与表格存储同时运行
 ''' 
 myBlob_excelSave()

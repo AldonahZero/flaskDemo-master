@@ -236,7 +236,7 @@ class rt_myMainColor(Resource):
             main_color_url = color_main_color.myMainColor(
                 path_bit, path_mainColor)
 
-            data['main_color_url'] = main_color_url
+            data['main_color_url'] = get_server_file_path(main_color_url)
             path_excel_save = os.path.join(
                 CUTIMG_ABS_PATH, 'excels_save', 'color_main_color')
             excel_path = color_main_color_excelSave.myMainColor_excelSave(

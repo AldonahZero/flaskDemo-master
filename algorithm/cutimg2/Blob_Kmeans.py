@@ -177,7 +177,7 @@ def myBlob_excelSave(path_cutimg, excels_save_blob_Kmeans, path_blob_hist_save):
         # cv2.imshow("dst5", dst5)
 
         dst6 = cv2.merge((dst5, dst5, dst5))
-        contours, hierarchy = cv2.findContours(dst5, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        image, contours, hierarchy = cv2.findContours(dst5, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         # print('length of contours = ', len(contours))
         num_contours = len(contours)
@@ -332,7 +332,7 @@ def myBlob_excelSave(path_cutimg, excels_save_blob_Kmeans, path_blob_hist_save):
             # cv2.imshow("dst5", dst5)
 
             dst6 = cv2.merge((dst5, dst5, dst5))
-            contours, hierarchy = cv2.findContours(dst5, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            image, contours, hierarchy = cv2.findContours(dst5, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
             # print('length of contours = ', len(contours))
             num_contours = len(contours)

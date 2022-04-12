@@ -15,6 +15,7 @@ from common.getUploadLocation import get_upload_location, get_server_location, g
 from common.remove_file_dir import remove_file_dir
 # from common.find_star_end import find_se_com
 from common.get_server_file_path import get_server_file_path
+from common.get_server_ip_and_port import get_server_ip_and_port
 
 from algorithm.cutimg import gray_histogram_differential, main_color_demon, edge_batch, GLCM_demo, coner_demon, blob_hist_correlation, cutimg
 from algorithm.cutimg2 import color_gray_mean, color_gray_mean_excelSave, color_gray_histogram, color_gray_histogram_excelSave, color_main_color, color_main_color_excelSave,texture_GLCM,texture_GLCM_excelSave, texture_GGCM, texture_GGCM_excelSave, texture_GLDS, texture_GLDS_excelSave, texture_Tamura, texture_Tamura_excelSave, texture_LBP_excelSave, Blob_Kmeans, coner_coner, coner_coner_excelsSave, edge, edge_histogram
@@ -184,7 +185,7 @@ class rt_color_gray_mean(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_gray_mean')
             excel_path = color_gray_mean_excelSave.myGrayMean_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -214,7 +215,7 @@ class rt_myGrayHitogram(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_gray_histogram')
             excel_path = color_gray_histogram_excelSave.myGrayHitogram_excelSave(
                 path, path_bit, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -240,7 +241,7 @@ class rt_myMainColor(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_main_color')
             excel_path = color_main_color_excelSave.myMainColor_excelSave(
                 path_bit, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -302,7 +303,7 @@ class rt_myGLCM(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_main_color')
             excel_path = texture_GLCM_excelSave.myGLCM_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -324,7 +325,7 @@ class rt_myGGCM(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_GGCM')
             excel_path = texture_GGCM_excelSave.myGGCM_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -346,7 +347,7 @@ class rt_myGLDS(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_GLDS')
             excel_path = texture_GLDS_excelSave.myGLDS_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -368,7 +369,7 @@ class rt_texture_Tamura(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
             excel_path = texture_Tamura_excelSave.myTamura_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -390,7 +391,7 @@ class rt_texture_Tamura(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
             excel_path = texture_Tamura_excelSave.myTamura_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -410,7 +411,7 @@ class rt_texture_LBP_excelSave(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
             excel_path = texture_LBP_excelSave.myLBP_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -433,7 +434,7 @@ class rt_Blob_Kmeans(Resource):
                 CUTIMG_ABS_PATH, 'img_save_blob')
             excel_path = Blob_Kmeans.myBlob_excelSave(
                 path, path_excel_save, path_save_blob)
-            data['excel_path'] = get_server_file_path(excel_path)
+            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})

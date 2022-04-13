@@ -180,7 +180,7 @@ def myEdgeHistogram_calculation(path_cutimg, path_edge, path_edge_histogram_save
 
     result = os.path.join(path_edge_histogram_save, 'edge_histogram.jpg')
     plt.savefig(result)
-    # plt.clf()
+    plt.clf()
     return everage_result
 
 

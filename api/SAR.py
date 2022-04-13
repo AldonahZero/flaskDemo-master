@@ -23,8 +23,8 @@ IMG_UPLOAD = os.path.join(UPLOAD_FOLDER, 'SAR')
 IMG_RESULT = os.path.join(RESULT_FOLDER, 'SAR')
 #  /algorithm/cutimg/static
 
-print(IMG_UPLOAD)
-print(IMG_RESULT)
+# print(IMG_UPLOAD)
+# print(IMG_RESULT)
 ALLOWED_EXTENSIONS = {'jpg', 'tiff', 'tif', 'png'}
 
 

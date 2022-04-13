@@ -18,7 +18,7 @@ from common.get_server_file_path import get_server_file_path
 from common.get_server_ip_and_port import get_server_ip_and_port
 
 from algorithm.cutimg import gray_histogram_differential, main_color_demon, edge_batch, GLCM_demo, coner_demon, blob_hist_correlation, cutimg
-from algorithm.cutimg2 import color_gray_mean, color_gray_mean_excelSave, color_gray_histogram, color_gray_histogram_excelSave, color_main_color, color_main_color_excelSave,texture_GLCM,texture_GLCM_excelSave, texture_GGCM, texture_GGCM_excelSave, texture_GLDS, texture_GLDS_excelSave, texture_Tamura, texture_Tamura_excelSave, texture_LBP_excelSave, Blob_Kmeans, coner_coner, coner_coner_excelsSave, edge, edge_histogram
+from algorithm.cutimg2 import color_gray_mean, color_gray_mean_excelSave, color_gray_histogram, color_gray_histogram_excelSave, color_main_color, color_main_color_excelSave, texture_GLCM, texture_GLCM_excelSave, texture_GGCM, texture_GGCM_excelSave, texture_GLDS, texture_GLDS_excelSave, texture_Tamura, texture_Tamura_excelSave, texture_LBP_excelSave, Blob_Kmeans, coner_coner, coner_coner_excelsSave, edge, edge_histogram
 from werkzeug.datastructures import FileStorage
 import traceback
 import numpy as np
@@ -185,7 +185,8 @@ class rt_color_gray_mean(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_gray_mean')
             excel_path = color_gray_mean_excelSave.myGrayMean_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -215,7 +216,8 @@ class rt_myGrayHitogram(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_gray_histogram')
             excel_path = color_gray_histogram_excelSave.myGrayHitogram_excelSave(
                 path, path_bit, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -241,7 +243,8 @@ class rt_myMainColor(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_main_color')
             excel_path = color_main_color_excelSave.myMainColor_excelSave(
                 path_bit, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -274,11 +277,60 @@ class rt_myEdge(Resource):
             path_coner_KAZE = os.path.join(
                 path_edge, 'sobel')
             urls = edge.myEdge(path_cutimg, path_edge, path_coner_ORB, path_coner_FAST, path_coner_SURF, path_coner_SIFT,
-             path_coner_BRISKF, path_coner_KAZE)
+                               path_coner_BRISKF, path_coner_KAZE)
             server_urls = []
             for url in urls:
                 server_urls.append(get_server_file_path(url))
             data['urls'] = server_urls
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+
+@fea2_ns.route('/myEdgeHistogram')
+class rt_myEdgeHistogram(Resource):
+    def get(self):
+        '''myEdger'''
+        try:
+            data = {}
+            path_cutimg = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            path_edge = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_edge')
+            path_coner_ORB = os.path.join(
+                path_edge, 'canny')
+            path_coner_FAST = os.path.join(
+                path_edge, 'laplacian')
+            path_coner_SURF = os.path.join(
+                path_edge, 'log')
+            path_coner_SIFT = os.path.join(
+                path_edge, 'prewitt')
+            path_coner_BRISKF = os.path.join(
+                path_edge, 'roberts')
+            path_coner_KAZE = os.path.join(
+                path_edge, 'sobel')
+            path_edge_histogram = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_edge_histogram')
+            path_edge_histogram_canny = os.path.join(
+                path_edge, 'canny')
+            path_edge_histogram_laplacian = os.path.join(
+                path_edge, 'laplacian')
+            path_edge_histogram_log = os.path.join(
+                path_edge, 'log')
+            path_edge_histogram_prewitt = os.path.join(
+                path_edge, 'prewitt')
+            path_edge_histogram_roberts = os.path.join(
+                path_edge, 'roberts')
+            path_edge_histogram_sobel = os.path.join(
+                path_edge, 'sobel')
+            excels_edge_histogram = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'edge_histogram')
+            path_edge_histogram1, excel_path = edge_histogram.myEdgeHistogram(path_cutimg, path_edge, path_coner_ORB, path_coner_FAST, path_coner_SURF, path_coner_SIFT,
+                                                                              path_coner_BRISKF, path_coner_KAZE, path_edge_histogram, path_edge_histogram_canny, path_edge_histogram_laplacian, path_edge_histogram_log, path_edge_histogram_prewitt, path_edge_histogram_roberts, path_edge_histogram_sobel, excels_edge_histogram)
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -303,12 +355,14 @@ class rt_myGLCM(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'color_main_color')
             excel_path = texture_GLCM_excelSave.myGLCM_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
 
 @fea2_ns.route('/myGGCM')
 class rt_myGGCM(Resource):
@@ -325,12 +379,14 @@ class rt_myGGCM(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_GGCM')
             excel_path = texture_GGCM_excelSave.myGGCM_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
 
 @fea2_ns.route('/myGLDS')
 class rt_myGLDS(Resource):
@@ -347,12 +403,14 @@ class rt_myGLDS(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_GLDS')
             excel_path = texture_GLDS_excelSave.myGLDS_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
 
 @fea2_ns.route('/texture_Tamura')
 class rt_texture_Tamura(Resource):
@@ -369,12 +427,14 @@ class rt_texture_Tamura(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
             excel_path = texture_Tamura_excelSave.myTamura_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
 
 @fea2_ns.route('/texture_Tamura')
 class rt_texture_Tamura(Resource):
@@ -391,7 +451,8 @@ class rt_texture_Tamura(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
             excel_path = texture_Tamura_excelSave.myTamura_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -411,14 +472,16 @@ class rt_texture_LBP_excelSave(Resource):
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
             excel_path = texture_LBP_excelSave.myLBP_excelSave(
                 path, path_excel_save)
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
 
-#---------------------------------------------斑块特征--------------------------------------------------------
+# ---------------------------------------------斑块特征--------------------------------------------------------
+
 
 @fea2_ns.route('/Blob_Kmeans')
 class rt_Blob_Kmeans(Resource):
@@ -434,9 +497,10 @@ class rt_Blob_Kmeans(Resource):
                 CUTIMG_ABS_PATH, 'img_save_blob')
             excel_path = Blob_Kmeans.myBlob_excelSave(
                 path, path_excel_save, path_save_blob)
-            data['url'] =  path_save_blob = os.path.join(
+            data['url'] = path_save_blob = os.path.join(
                 CUTIMG_SERVER_PATH, 'img_save_blob', 'blob14.jpg')
-            data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
@@ -444,7 +508,7 @@ class rt_Blob_Kmeans(Resource):
             return jsonify({'code': 201, 'message': '查找成功', 'data': data})
 
 
-#---------------------------------------------角点特征--------------------------------------------------------
+# ---------------------------------------------角点特征--------------------------------------------------------
 @fea2_ns.route('/coner_coner')
 class rt_coner_coner(Resource):
     def get(self):
@@ -468,7 +532,7 @@ class rt_coner_coner(Resource):
             path_coner_KAZE = os.path.join(
                 path_coner, 'KAZE')
             urls = coner_coner.myConer(path_cutimg, path_coner, path_coner_ORB, path_coner_FAST, path_coner_SURF, path_coner_SIFT,
-             path_coner_BRISKF, path_coner_KAZE)
+                                       path_coner_BRISKF, path_coner_KAZE)
             server_urls = []
             for url in urls:
                 server_urls.append(get_server_file_path(url))
@@ -490,7 +554,8 @@ class rt_myConer_excelSave(Resource):
                 CUTIMG_ABS_PATH, 'img_save_cutimg')
             path_excel_save = os.path.join(
                 CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
-            data['excel_path'] = coner_coner_excelsSave.myConer_excelSave(path, path_excel_save)
+            data['excel_path'] = coner_coner_excelsSave.myConer_excelSave(
+                path, path_excel_save)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})

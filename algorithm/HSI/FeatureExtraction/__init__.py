@@ -378,12 +378,12 @@ def gray_histogram_dif_f(image_path, band_index):
 
 #  归一化水体指数  用来衡量该像素点对应的地物与水体的接近程序（ 镜面反射 以及 水汽的含量 都会导致其接近水体）
 #  返回一个二维矩阵  大小为 -1 到 1（ 可以直接显示  不用考虑负数）
-def HSI_NDWI_f(image_path):
+def HSI_NDWI_f(image_path, out_path):
     image = hsi.load_data(image_path)
     result = (image[:, :, 46] - image[:, :, 167]) / (image[:, :, 46] + image[:, :, 167])
     # cv2.imshow("RESULT", result)
     # cv2.waitKey(0)
-    out_path = "../image_result/NDWI_result.jpg"
+    # out_path = "../image_result/NDWI_result.jpg"
     result = result * 255
     cv2.imwrite(out_path, result)
     return out_path

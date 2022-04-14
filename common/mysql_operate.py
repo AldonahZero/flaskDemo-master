@@ -62,7 +62,11 @@ class HSIPictureFile(Base):
     picture_path = Column('picture_path', String(128))
     create_time = Column('create_time', DateTime)
 
-
+    def to_json(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
 
 class HSIResultFile(Base):
     __tablename__ = 'hsi_result_file'

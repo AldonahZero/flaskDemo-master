@@ -10,7 +10,7 @@ import os
 CUT_RESULT_PATH = 'algorithm/HSI/static/cut_result/'
 # 图像分割程序   输入为高光谱图像原始数据  返回值为结果保存目录   结果自动保存为该目录下的  target.jpg  back.jpg文件
 # 修改输出路径  直接改 out_path 即可
-def Hsi_grabcut_f(image_path):
+def Hsi_grabcut_f(image_path, cutpos1, cotpos2):
     # 读取原图像
     file_name = image_path.split("/")[-1]
     key = file_name[0:file_name.rindex('.')]
@@ -41,10 +41,10 @@ def Hsi_grabcut_f(image_path):
     out_path1 = out_path + 'target.jpg'
     img2 = (img - np.min(img)) / (np.max(img) - np.min(img))
     # img = cv2.resize(img, (416, 416), interpolation=cv2.INTER_AREA)
-    plt.figure(figsize=(12, 9))  # 自己设定窗口图片的大小
-    plt.imshow(img2[:, :, [2, 1, 0]])
-    output = plt.ginput(0)
-    plt.show()
+    # plt.figure(figsize=(12, 9))  # 自己设定窗口图片的大小
+    # plt.imshow(img2[:, :, [2, 1, 0]])
+    output = cutpos1
+    # plt.show()
     # print('output = ', output)
     length_output = len(output)
     cnt = np.array(np.zeros((length_output, 1, 2)), np.int32)
@@ -71,8 +71,8 @@ def Hsi_grabcut_f(image_path):
     mask2 = cv2.fillPoly(mask, [pts], (255, 255, 255))
     ROI = cv2.bitwise_and(mask2, img)
     cv2.imwrite(out_path1, mask2)
-    cv2.imshow('mask', mask2)
-    cv2.waitKey(0)
+    # cv2.imshow('mask', mask2)
+    # cv2.waitKey(0)
 
 
 
@@ -219,10 +219,10 @@ def Hsi_grabcut_f(image_path):
 
     img2 = (img - np.min(img)) / (np.max(img) - np.min(img))
     # img = cv2.resize(img, (416, 416), interpolation=cv2.INTER_AREA)
-    plt.figure(figsize=(12, 9))  # 自己设定窗口图片的大小
-    plt.imshow(img2[:, :, [2, 1, 0]])
-    output = plt.ginput(0)
-    plt.show()
+    # plt.figure(figsize=(12, 9))  # 自己设定窗口图片的大小
+    # plt.imshow(img2[:, :, [2, 1, 0]])
+    output = cutpos1
+    # plt.show()
     # print('output = ', output)
     length_output = len(output)
     cnt = np.array(np.zeros((length_output, 1, 2)), np.int32)
@@ -248,9 +248,9 @@ def Hsi_grabcut_f(image_path):
     mask2 = cv2.fillPoly(mask, [pts], (255, 255, 255))
     ROI = cv2.bitwise_and(mask2, img)
     cv2.imwrite(out_path2, mask2)
-    cv2.imshow('mask', mask2)
+    # cv2.imshow('mask', mask2)
     #  cv2.imshow('ROI', ROI)
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
 
     return out_path
 

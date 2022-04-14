@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 from io import BytesIO
 
+import numpy as np
 import pandas as pd
 from flask import request, flash, jsonify, send_from_directory
 from flask_restx import Resource, Namespace
@@ -19,6 +20,8 @@ from algorithm.HSI.FeatureExtraction import HSI_NDWI_f, HSI_NDVI_f, Harris_point
 from algorithm.HSI.HSI_grabcut import Hsi_grabcut_f
 from algorithm.HSI.FeatureExtraction.gray_feature import gray_mean_dif_f, gray_var_dif_f, gray_histogram_dif_f
 from algorithm.HSI.band_Selection import ECA_f
+from common.get_server_file_path import get_server_file_path
+from common.get_server_ip_and_port import get_server_ip_and_port
 from common.mysql_operate import db_session, HSIPictureFile, HSIResultFile
 
 hsi_ns = Namespace('hsi', description='高光谱算法')
@@ -32,6 +35,23 @@ EXCEL_SAVE_PATH = 'algorithm/HSI/static/excel_result/'
 # 文件上传格式
 parser: RequestParser = hsi_ns.parser()
 parser.add_argument('file', location='files', type=FileStorage, required=True)
+
+CutImgDataParser: RequestParser = hsi_ns.parser()
+CutImgDataParser.add_argument(
+    'cutposs1',
+    type=str,
+    required=True,
+    location="json")
+CutImgDataParser.add_argument(
+    'cutposs2',
+    type=str,
+    required=True,
+    location="json")
+CutImgDataParser.add_argument(
+    'cutimg_pid',
+    type=str,
+    required=True,
+    location="json")
 
 
 @hsi_ns.route('/upload', doc={"description": "上传伪彩图片,成功返回调用文件的key,通过此key可以调用后面的功能"})
@@ -62,8 +82,23 @@ class Upload(Resource):
             session.add(picture_file)
             session.commit()
             session.close()
-            return jsonify({'message': 'success', 'key': fid})
+            return jsonify({'message': 'success', 'key': fid, 'picture_path': rel_out_path})
         return jsonify({'code': 400, 'message': "file not allow"})
+
+
+    def get(self):
+        '''查看所有图片'''
+        try:
+            session = db_session()
+            hsi_pictures = session.query(HSIPictureFile).all()
+            data = []
+            for hsi_picture in hsi_pictures:
+                data.append(hsi_picture.to_json())
+
+        except BaseException as e:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
 
 
 def allowed_file(filename):
@@ -109,20 +144,34 @@ def get_result_obj(key):
 #             return jsonify({'code': 201, 'message': 'success', 'url': rel_out_path})
 
 
-@hsi_ns.route('/HSI_grabcut/<key>',  doc={"description": "图像分割返回結果：掩膜图像：target.jpg,标定背景的掩膜图像： back.jpg,"
-                                                         "九宫格切割结果的目标可视化显示: cut_result.jpg"})
-@hsi_ns.param('key', '上传时返回的key')
+@hsi_ns.route('/HSI_grabcut',  doc={"description": "图像分割返回結果：掩膜图像：target.jpg,标定背景的掩膜图像： back.jpg,九宫格切割结果的目标可视化显示: "
+                                                   "cut_result.jpg"})
 class HSI_grabcut(Resource):
-    def get(self, key):
+    @hsi_ns.expect(CutImgDataParser)
+    def post(self):
         '''图像分割 选择特征前需要先运行此方法'''
-        save_path = get_file_obj(key).file_path
+        params = CutImgDataParser.parse_args()
+        cutposs1 = params["cutposs1"]
+        cutposs2 = params["cutposs2"]
+        cutimg_pid = params["cutimg_pid"]
+        save_path = get_file_obj(cutimg_pid).file_path
+
         try:
-            out_path = Hsi_grabcut_f(save_path)
+            out_path = Hsi_grabcut_f(save_path, np.asfarray(eval(cutposs1)), np.asfarray(eval(cutposs2)))
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': 'success', 'target_path': out_path + 'target.jpg',
                             'back_path': out_path + 'back.jpg', 'cut_result': out_path + 'cut_result.jpg'})
+
+
+@hsi_ns.route('/pic_obj/<key>', doc={"description": "按key查找图片"})
+@hsi_ns.param('key', '上传时返回的key')
+class gray_mean(Resource):
+    def get(self, key):
+        '''按key查找图片'''
+        result = get_file_obj(key)
+        return jsonify({'code': 201, 'message': 'success', 'data': result.picture_path})
 
 
 @hsi_ns.route('/gray_mean/<key>', doc={"description": "返回结果 result：灰度均值数组  src: 折线图base64编码"})
@@ -133,7 +182,7 @@ class gray_mean(Resource):
         save_path = get_file_obj(key).file_path
         data_path = CUT_RESULT_PATH + key + "/"
         try:
-            result = gray_mean_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
+            result, excel_path = gray_mean_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
             plt.plot(result)
             sio = BytesIO()
             plt.savefig(sio, format='png')
@@ -144,7 +193,7 @@ class gray_mean(Resource):
             print(e)
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src, 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
 
 
 @hsi_ns.route('/gray_diff/<key>', doc={"description": "返回结果 result：灰度方差数组  src: 折线图base64编码"})
@@ -155,7 +204,7 @@ class gray_diff(Resource):
         save_path = get_file_obj(key).file_path
         data_path = CUT_RESULT_PATH + key + "/"
         try:
-            result = gray_var_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
+            result, excel_path = gray_var_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
             plt.plot(result)
             sio = BytesIO()
             plt.savefig(sio, format='png')
@@ -165,10 +214,10 @@ class gray_diff(Resource):
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src, 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
 
 
-@hsi_ns.route('/gray_histogram_diff/<key>/<int:band_index>')
+@hsi_ns.route('/gray_histogram_diff/<key>/<int:band_index>', doc={"description": "返回结果 result：灰度方差数组  src: 折线图base64编码"})
 @hsi_ns.param('key', '上传时返回的key')
 @hsi_ns.param('band_index', '波段索引(1到176的数字)')
 class gray_histogram_dif(Resource):
@@ -177,24 +226,25 @@ class gray_histogram_dif(Resource):
         save_path = get_file_obj(key).file_path
         data_path = CUT_RESULT_PATH + key + "/"
         try:
-            result = gray_histogram_dif_f(save_path,band_index, data_path, EXCEL_SAVE_PATH)
+            result,excel_path = gray_histogram_dif_f(save_path,band_index, data_path, EXCEL_SAVE_PATH)
             plt.plot(result)
             sio = BytesIO()
             plt.savefig(sio, format='png')
             data = base64.encodebytes(sio.getvalue()).decode()
             src = 'data:image/png;base64,' + str(data).replace('\n', '')
             plt.close()
+            print(os.path.abspath(excel_path))
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src, 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
 
 
 @hsi_ns.route('/HSI_NDWI/<key>')
 @hsi_ns.param('key', '上传时返回的key')
 class HSI_NDWI(Resource):
     def get(self, key):
-        '''归一化水体指数'''
+        '''归一化水体指数 返回结果图片保存路径'''
         save_path = get_file_obj(key).file_path
         out_path = HSI_RESULT_FOLDER + key + '_NDWI_result.jpg'
         try:
@@ -209,7 +259,7 @@ class HSI_NDWI(Resource):
 @hsi_ns.param('key', '上传时返回的key')
 class HSI_NDVI(Resource):
     def get(self, key):
-        '''归一化植被指数'''
+        '''归一化植被指数 返回结果图片保存路径'''
         save_path = get_file_obj(key).file_path
         out_path = HSI_RESULT_FOLDER + key + '_NDVI_result.jpg'
         try:
@@ -224,7 +274,7 @@ class HSI_NDVI(Resource):
 @hsi_ns.param('key', '上传时返回的key')
 class HSI_SAM(Resource):
     def get(self, key):
-        '''光谱余弦距离'''
+        '''光谱余弦距离 返回结果图片保存路径'''
         save_path = get_file_obj(key).file_path
         out_path = HSI_RESULT_FOLDER + key + '_SAM_result.jpg'
         try:
@@ -240,7 +290,7 @@ class HSI_SAM(Resource):
 @hsi_ns.param('index', '数字所选波段索引')
 class canny_edge(Resource):
     def get(self, key, index):
-        '''边缘检测'''
+        '''边缘检测 返回结果图片保存路径'''
         cut_path = CUT_RESULT_PATH + key + '/'
         out_path = HSI_RESULT_FOLDER + key + '_edge_canny_result.jpg'
         try:

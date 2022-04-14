@@ -154,7 +154,7 @@ def gray_mean_dif_f(image_path, data_path, excel_save_path):
     session.commit()
     session.close()
 
-    return spec_tar_mean
+    return spec_tar_mean, out_path
 
 
 #  输入：高光谱原始数据的路径
@@ -204,7 +204,7 @@ def gray_var_dif_f(image_path, data_path, excel_save_path):
     session.commit()
     session.close()
 
-    return spec_tar_var
+    return spec_tar_var, out_path
 
 
 #  输入：高光谱原始数据的路径
@@ -250,5 +250,5 @@ def gray_histogram_dif_f(image_path, band_index, data_path, excel_save_path):
     session.commit()
     session.close()
 
-    return his_tar
+    return his_tar, out_path
 

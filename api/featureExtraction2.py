@@ -434,6 +434,8 @@ class rt_Blob_Kmeans(Resource):
                 CUTIMG_ABS_PATH, 'img_save_blob')
             excel_path = Blob_Kmeans.myBlob_excelSave(
                 path, path_excel_save, path_save_blob)
+            data['url'] =  path_save_blob = os.path.join(
+                CUTIMG_SERVER_PATH, 'img_save_blob', 'blob14.jpg')
             data['excel_path'] = get_server_ip_and_port(get_server_file_path(excel_path))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())

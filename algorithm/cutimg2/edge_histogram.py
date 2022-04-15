@@ -117,7 +117,7 @@ def hist_square(hist_1, hist_2):
     return ex, ey, exy, dx, dy, cov, p, skewness
 
 
-def myEdgeHistogram_calculation(path_edge, path_edge_histogram_save):
+def myEdgeHistogram_calculation(path_cutimg, path_edge, path_edge_histogram_save):
     TH = [
         [-170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40,
          50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180],
@@ -126,10 +126,10 @@ def myEdgeHistogram_calculation(path_edge, path_edge_histogram_save):
          40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170]]
     TH = np.array(TH)
 
-    path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
+    # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
 
     img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
-    img_target_edge = cv2.imread(path_edge + '14.jpg')
+    img_target_edge = cv2.imread(os.path.join(path_edge, '14.jpg'))
 
     bar_hist_target = EDH(img_target, TH, img_target_edge)
     data_pd = np.zeros(36)
@@ -147,10 +147,10 @@ def myEdgeHistogram_calculation(path_edge, path_edge_histogram_save):
         if j == 4:
             continue
         backg_name = str(1) + str(j) + '.jpg'
-        if not os.path.exists(path_cutimg + '/' + backg_name):
+        if not os.path.exists(os.path.join(path_cutimg, backg_name)):
             continue
-        img_backg = cv2.imread(path_cutimg + '/' + backg_name)
-        img_backg_edge = cv2.imread(path_edge + '/' + backg_name)
+        img_backg = cv2.imread(os.path.join(path_cutimg, backg_name))
+        img_backg_edge = cv2.imread(os.path.join(path_cutimg, backg_name))
         if img_backg is None:
             continue
 
@@ -177,7 +177,9 @@ def myEdgeHistogram_calculation(path_edge, path_edge_histogram_save):
     # plt.axis('off')
     # plt.gca().get_xaxis().set_visible(False)
     # plt.gca().get_yaxis().set_visible(False)
-    plt.savefig(path_edge_histogram_save + 'edge_histogram.jpg')
+
+    result = os.path.join(path_edge_histogram_save, 'edge_histogram.jpg')
+    plt.savefig(result)
     plt.clf()
     return everage_result
 
@@ -214,13 +216,15 @@ def myEdgeHistogram(path_cutimg, path_edge, path_edge_canny, path_edge_laplacian
     #
     # excels_edge_histogram = 'D:/Python/Python/WZ_GLDM/webNew3/static/excels_save/edge_histogram/'
 
-    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_edge_canny, path_edge_histogram_canny))
-    sheet1.write_merge(1, 1, 2, 2, myEdgeHistogram_calculation(path_edge_laplacian, path_edge_histogram_laplacian))
-    sheet1.write_merge(1, 1, 3, 3, myEdgeHistogram_calculation(path_edge_log, path_edge_histogram_log))
-    sheet1.write_merge(1, 1, 4, 4, myEdgeHistogram_calculation(path_edge_prewitt, path_edge_histogram_prewitt))
-    sheet1.write_merge(1, 1, 5, 5, myEdgeHistogram_calculation(path_edge_roberts, path_edge_histogram_roberts))
-    sheet1.write_merge(1, 1, 6, 6, myEdgeHistogram_calculation(path_edge_sobel, path_edge_histogram_sobel))
+    sheet1.write_merge(1, 1, 1, 1, myEdgeHistogram_calculation(path_cutimg, path_edge_canny, path_edge_histogram_canny))
+    sheet1.write_merge(1, 1, 2, 2, myEdgeHistogram_calculation(path_cutimg, path_edge_laplacian, path_edge_histogram_laplacian))
+    sheet1.write_merge(1, 1, 3, 3, myEdgeHistogram_calculation(path_cutimg, path_edge_log, path_edge_histogram_log))
+    sheet1.write_merge(1, 1, 4, 4, myEdgeHistogram_calculation(path_cutimg, path_edge_prewitt, path_edge_histogram_prewitt))
+    sheet1.write_merge(1, 1, 5, 5, myEdgeHistogram_calculation(path_cutimg, path_edge_roberts, path_edge_histogram_roberts))
+    sheet1.write_merge(1, 1, 6, 6, myEdgeHistogram_calculation(path_cutimg, path_edge_sobel, path_edge_histogram_sobel))
     # plt.show()
-    f.save(excels_edge_histogram + '/' + 'excel_edge_histogram.xls')
-    return path_edge_histogram, excels_edge_histogram
+
+    result = os.path.join(excels_edge_histogram,'excel_edge_histogram.xls')
+    f.save(result)
+    return path_edge_histogram, result
 

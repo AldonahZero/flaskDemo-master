@@ -51,7 +51,7 @@ class UploadHandler(Resource):
             data = []
             for folder in folders:
                 data.append(folder.to_json())
-            session.close();
+            session.close()
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
@@ -97,7 +97,7 @@ class UploadHandler(Resource):
             session.close()
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
-            return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
+            return jsonify({'code': 400, 'message': '查找成功', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': '上传压缩包成功', 'file_name': save_filename})
 
@@ -119,3 +119,21 @@ class MOSAIC(Resource):
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': 'success', 'result': save_path})
+
+
+@mos_ns.route("/pics/<file_name>", doc={"description": "查看上传的图片列表"})
+class getPics(Resource):
+    def get(self, file_name):
+        '''查看所有上传的压缩文件'''
+        try:
+            session = db_session()
+            pics = session.query(MOSPictureFile).filter(MOSPictureFile.fid == file_name).all()
+            data = []
+            for pic in pics:
+                data.append(pic.to_json())
+            session.close()
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})

@@ -7,28 +7,26 @@ from flask import flash, jsonify, request, Blueprint, current_app
 from flask_restx import Api, Resource, fields, Namespace
 from flask_restx.reqparse import RequestParser
 
-
-from config.setting import RESULT_FOLDER
-from config.setting import UPLOAD_FOLDER
 # print(os.getcwd())
 
 sar = Blueprint('sar', __name__)
 sar_ns = Namespace('SAR', description='SAR图像处理')
-
+UPLOAD_FOLDER = os.path.join('algorithm', 'SAR', 'uploads')
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 # 上传图片路径
 IMG_UPLOAD = os.path.join(UPLOAD_FOLDER, 'SAR')
-# static/uploads/SAR/
+# static/uploads/SAR
 
 # 处理结果图片路径
 IMG_RESULT = os.path.join(RESULT_FOLDER, 'SAR')
-#  /algorithm/cutimg/static
+# static/result/SAR
 
 # print(IMG_UPLOAD)
-# print(IMG_RESULT)
-ALLOWED_EXTENSIONS = {'jpg', 'tiff', 'tif', 'png'}
+print(IMG_RESULT)
+ALLOWED_EXTENSIONS = {'jpg', 'tiff', 'tif', 'png', 'PNG'}
 
 
-@sar_ns.route('/upload/')
+@sar_ns.route('/upload')
 class Upload(Resource):
     @sar_ns.param('file', '文件')
     def post(self):
@@ -43,6 +41,7 @@ class Upload(Resource):
         if file and allowed_file(file.filename):
             filename = str(uuid.uuid1()) + '.' + \
                 file.filename.rsplit('.', 1)[1]
+            filename = 'image_input.png'
             save_path = os.path.join(IMG_UPLOAD, filename)
             file.save(save_path)
             return {'message': 'success', 'url': save_path}
@@ -61,7 +60,7 @@ class image_filter(Resource):
         '''图像滤波'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -79,7 +78,7 @@ class image_binary(Resource):
         '''图像二值化（分割）'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -97,7 +96,7 @@ class value_peak(Resource):
         '''图像峰值点'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -115,7 +114,7 @@ class Fractal(Resource):
         '''分形维数特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -134,7 +133,7 @@ class ggcm(Resource):
         '''灰度梯度共生矩阵特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -153,7 +152,7 @@ class glcm(Resource):
         '''灰度共生矩阵特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -172,7 +171,7 @@ class hog(Resource):
         '''方向梯度直方图特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -190,7 +189,7 @@ class lbp(Resource):
         '''局部二值模式特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path,res = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -208,7 +207,7 @@ class hu(Resource):
         '''Hu矩特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -227,7 +226,7 @@ class geometric(Resource):
         '''相关几何特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -247,7 +246,7 @@ class zernik(Resource):
         '''Zernike矩特征'''
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)
@@ -266,7 +265,7 @@ class rcs(Resource):
         # image_path = IMG_UPLOAD + file_path
         if file_path == 'none':
             # image_path = RESULT_FOLDER + '/SAR/image_input.png'
-            image_path = os.path.join(RESULT_FOLDER, 'SAR/image_input.png')
+            image_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_input.png')
         else:
             # image_path = IMG_UPLOAD + file_path
             image_path = os.path.join(IMG_UPLOAD, file_path)

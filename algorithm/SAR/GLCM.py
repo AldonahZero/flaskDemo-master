@@ -4,7 +4,7 @@ import os
 import numpy as np
 from skimage import img_as_ubyte
 from skimage.feature import greycomatrix, greycoprops
-# from config.setting import RESULT_FOLDER
+
 RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 from .process_pre import nsst_dec
 warnings.filterwarnings("ignore")

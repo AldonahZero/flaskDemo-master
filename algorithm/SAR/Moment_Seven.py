@@ -4,7 +4,7 @@ import math
 import numpy as np
 from .process_pre import otsu_2d
 
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 def MomentSeven(path):
@@ -63,7 +63,7 @@ def MomentSeven(path):
     Mon = np.maximum(Mon, -Mon)
 
     # Hu_path = RESULT_FOLDER + '/SAR/Hu.csv'
-    Hu_path = os.path.join(RESULT_FOLDER,'SAR/Hu.csv')
+    Hu_path = os.path.join(RESULT_FOLDER,'SAR','Hu.csv')
     f = open(Hu_path, 'w', newline="",encoding='utf-8-sig')
     csv_writer = csv.writer(f)
     # 构建列表头

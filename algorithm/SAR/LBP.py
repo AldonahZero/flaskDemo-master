@@ -3,7 +3,7 @@ import math
 import numpy as np
 import csv
 from .process_pre import nsst_dec
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 def circshift(v, shift, num):  # 循环右移
@@ -95,7 +95,7 @@ def getCircularLBPFeature(path, radius=3, neighbors=8):
     for i in range(256):
         lbp.append(lbp_stat[0][i])
     # LBP_features_path = RESULT_FOLDER + '/SAR/LBP.csv'
-    LBP_features_path = os.path.join(RESULT_FOLDER, 'SAR/LBP.csv')
+    LBP_features_path = os.path.join(RESULT_FOLDER, 'SAR','LBP.csv')
     f = open(LBP_features_path, 'w', encoding='utf-8', newline="")
     csv_writer = csv.writer(f)
     # 构建列表头

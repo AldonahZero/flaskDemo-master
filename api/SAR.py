@@ -106,7 +106,7 @@ class value_peak(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 @sar_ns.route('/fractal/<file_path>')
@@ -125,7 +125,7 @@ class Fractal(Resource):
             return {'status': 'failed', 'message': str(e)}, 201
         else:
             return {'status': 'success',
-                    'url': result_n, 'data': result_s}, 201
+                    'url': get_server_ip_and_port(result_n), 'data': result_s}, 201
 
 
 @sar_ns.route('/GGCM/<file_path>')
@@ -144,7 +144,7 @@ class ggcm(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/GLCM/<file_path>')
@@ -164,7 +164,7 @@ class glcm(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/HOG/<file_path>')
@@ -182,7 +182,7 @@ class hog(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': result_s}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': result_s}, 201
 
 
 @sar_ns.route('/LBP/<file_path>')
@@ -200,7 +200,7 @@ class lbp(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/Hu/<file_path>')
@@ -219,10 +219,10 @@ class hu(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
-@sar_ns.route('/Genmetric features/<file_path>')
+@sar_ns.route('/GenmetricFeatures/<file_path>')
 class geometric(Resource):
     def get(self, file_path):
         '''相关几何特征'''
@@ -239,7 +239,7 @@ class geometric(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/Zernike/<file_path>')
@@ -257,7 +257,7 @@ class zernik(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': result_s}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': result_s}, 201
 
 
 @sar_ns.route('/RCS/<file_path>')
@@ -276,7 +276,7 @@ class rcs(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': result_s}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': result_s}, 201
 
 
 # ImgDataParser: RequestParser = sar_ns.parser()
@@ -299,7 +299,7 @@ class rcs(Resource):
 #         except BaseException as e:
 #             return {'status': 'failed', 'message': str(e)}, 201
 #         else:
-#             return {'status': 'success', 'url': result}, 201
+#             return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 # json body
@@ -340,4 +340,4 @@ class Image_Stitching(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201

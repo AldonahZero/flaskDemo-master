@@ -2,7 +2,7 @@ import cv2
 import math
 import numpy as np
 import os
-# from config.setting import RESULT_FOLDER
+
 RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 

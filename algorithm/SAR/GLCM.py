@@ -4,7 +4,8 @@ import os
 import numpy as np
 from skimage import img_as_ubyte
 from skimage.feature import greycomatrix, greycoprops
-from config.setting import RESULT_FOLDER
+# from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 from .process_pre import nsst_dec
 warnings.filterwarnings("ignore")
 
@@ -40,7 +41,7 @@ def get_glcm_features(path):
     out[3][:] = correlation
     out[4][:] = contrast
     # glcm_features_path = RESULT_FOLDER + '/SAR/glcm.csv'
-    glcm_features_path = os.path.join(RESULT_FOLDER,'SAR/glcm.csv')
+    glcm_features_path = os.path.join(RESULT_FOLDER,'SAR','glcm.csv')
     f = open(glcm_features_path, 'w', newline="",encoding='utf-8-sig')
     csv_writer = csv.writer(f)
     # 构建列表头

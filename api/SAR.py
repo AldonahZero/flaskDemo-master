@@ -159,6 +159,7 @@ class glcm(Resource):
             image_path = os.path.join(IMG_UPLOAD, file_path)
         try:
             result, result_s = GLCM.get_glcm_features(image_path)
+            print(result_s)
             res = result_s.tolist()
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201

@@ -8,6 +8,7 @@ from flask_restx import Api, Resource, fields, Namespace
 from flask_restx.reqparse import RequestParser
 
 # print(os.getcwd())
+from common.get_server_ip_and_port import get_server_ip_and_port
 
 sar = Blueprint('sar', __name__)
 sar_ns = Namespace('SAR', description='SAR图像处理')
@@ -22,7 +23,7 @@ IMG_RESULT = os.path.join(RESULT_FOLDER, 'SAR')
 # static/result/SAR
 
 # print(IMG_UPLOAD)
-print(IMG_RESULT)
+# print(IMG_RESULT)
 ALLOWED_EXTENSIONS = {'jpg', 'tiff', 'tif', 'png', 'PNG'}
 
 
@@ -69,7 +70,7 @@ class image_filter(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 @sar_ns.route('/binary/<file_path>')
@@ -87,7 +88,7 @@ class image_binary(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 @sar_ns.route('/value_peak/<file_path>')

@@ -10,7 +10,7 @@ import os
 CUT_RESULT_PATH = 'algorithm/HSI/static/cut_result/'
 # 图像分割程序   输入为高光谱图像原始数据  返回值为结果保存目录   结果自动保存为该目录下的  target.jpg  back.jpg文件
 # 修改输出路径  直接改 out_path 即可
-def Hsi_grabcut_f(image_path, cutpos1, cotpos2):
+def Hsi_grabcut_f(image_path, cutpos1, cutpos2):
     # 读取原图像
     file_name = image_path.split("/")[-1]
     key = file_name[0:file_name.rindex('.')]
@@ -221,7 +221,7 @@ def Hsi_grabcut_f(image_path, cutpos1, cotpos2):
     # img = cv2.resize(img, (416, 416), interpolation=cv2.INTER_AREA)
     # plt.figure(figsize=(12, 9))  # 自己设定窗口图片的大小
     # plt.imshow(img2[:, :, [2, 1, 0]])
-    output = cutpos1
+    output = cutpos2
     # plt.show()
     # print('output = ', output)
     length_output = len(output)

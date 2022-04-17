@@ -2,7 +2,7 @@
 import cv2
 import os
 import numpy as np
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 def warp_corner(H, src):

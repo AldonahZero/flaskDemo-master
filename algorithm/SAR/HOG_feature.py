@@ -3,7 +3,7 @@ import math
 import csv
 import numpy as np
 from .process_pre import nsst_dec
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 def gamma_cor():  # gamma校正
@@ -100,7 +100,7 @@ def HOG_feature(path):
     for i in range(36):
         h.append(feature_h[0][i])
     # hog_features_path = RESULT_FOLDER + '/SAR/hog.csv'
-    hog_features_path = os.path.join(RESULT_FOLDER, 'SAR/hog.csv')
+    hog_features_path = os.path.join(RESULT_FOLDER, 'SAR','hog.csv')
     f = open(hog_features_path, 'w', encoding='utf-8', newline="")
     csv_writer = csv.writer(f)
     # 构建列表头

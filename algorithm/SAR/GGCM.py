@@ -3,8 +3,9 @@ import cv2
 import os
 import numpy as np
 
-from config.setting import RESULT_FOLDER
 from .process_pre import nsst_dec
+
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 np.set_printoptions(suppress=True)  # 输出时禁止科学表示法，直接输出小数值
 
@@ -135,7 +136,7 @@ def get_ggcm_features(path, ngrad=16, ngray=16):
     gray_grad = 1.0 * gray_grad / (m * n)  # 归一化灰度梯度矩阵，减少计算量
     ggcm_feature = ggcm_features(gray_grad, ngrad=16, ngray=16)
     # ggcm_features_path = RESULT_FOLDER + '/SAR/ggcm.csv'
-    ggcm_features_path = os.path.join(RESULT_FOLDER, 'SAR/ggcm.csv')
+    ggcm_features_path = os.path.join(RESULT_FOLDER, 'SAR', 'ggcm.csv')
     f = open(ggcm_features_path, 'w', encoding='utf-8', newline="")
     csv_writer = csv.writer(f)
     # 构建列表头

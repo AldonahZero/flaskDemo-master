@@ -2,7 +2,8 @@ import cv2
 import math
 import numpy as np
 import os
-from config.setting import RESULT_FOLDER
+
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 ###剪切波变换
@@ -29,7 +30,7 @@ def nsst_dec(path):
     # cv2.namedWindow('Filter image', cv2.WINDOW_NORMAL)
     # cv2.imshow('Filter image', image_f)
     # image_f_path = RESULT_FOLDER + '/SAR/image_f.png'
-    image_f_path = os.path.join(RESULT_FOLDER, 'SAR/image_f.png')
+    image_f_path = os.path.join(RESULT_FOLDER, 'SAR','image_f.png')
     cv2.imwrite(image_f_path, image_f)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
@@ -179,7 +180,7 @@ def otsu_2d(path):
                 z[i][j] = 255
     image_b = np.uint8(z)
     # image_b_path = RESULT_FOLDER + '/SAR/image_b.png'
-    image_b_path = os.path.join(RESULT_FOLDER, 'SAR/image_b.png')
+    image_b_path = os.path.join(RESULT_FOLDER, 'SAR','image_b.png')
     cv2.imwrite(image_b_path, image_b)
     return image_b_path, image_b
 

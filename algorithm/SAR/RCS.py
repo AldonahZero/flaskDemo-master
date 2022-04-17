@@ -9,7 +9,7 @@ from skimage import measure
 from skimage.transform import radon
 from .process_pre import otsu_2d
 
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 warnings.filterwarnings("ignore")
 
@@ -96,7 +96,7 @@ def RCS(path1):
         axis.append(i)
 
     # RCS_feature_path = RESULT_FOLDER + '/SAR/RCS.csv'
-    RCS_feature_path = os.path.join(RESULT_FOLDER, 'SAR/RCS.csv')
+    RCS_feature_path = os.path.join(RESULT_FOLDER, 'SAR', 'RCS.csv')
     f = open(RCS_feature_path, 'w', newline="")
     csv_writer = csv.writer(f)
     # # 构建列表头

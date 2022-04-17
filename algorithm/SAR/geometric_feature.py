@@ -6,7 +6,7 @@ import math
 import csv
 import os
 from .process_pre import otsu_2d
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 def get_geometric_feature(path):
     _,image = otsu_2d(path)
@@ -39,7 +39,7 @@ def get_geometric_feature(path):
         beita = c_t**2 / (4 * math.pi * area_t)
         res = np.array((area_t,c_t,E,beita))
     # geometric_path = RESULT_FOLDER + '/SAR/geometric.csv'
-    geometric_path = os.path.join(RESULT_FOLDER,'SAR/geometric.csv')
+    geometric_path = os.path.join(RESULT_FOLDER,'SAR','geometric.csv')
     f = open(geometric_path, 'w', newline="",encoding='utf-8-sig')
     csv_writer = csv.writer(f)
     # 构建列表头

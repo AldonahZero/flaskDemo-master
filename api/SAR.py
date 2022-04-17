@@ -8,6 +8,7 @@ from flask_restx import Api, Resource, fields, Namespace
 from flask_restx.reqparse import RequestParser
 
 # print(os.getcwd())
+from common.get_server_ip_and_port import get_server_ip_and_port
 
 sar = Blueprint('sar', __name__)
 sar_ns = Namespace('SAR', description='SAR图像处理')
@@ -22,7 +23,7 @@ IMG_RESULT = os.path.join(RESULT_FOLDER, 'SAR')
 # static/result/SAR
 
 # print(IMG_UPLOAD)
-print(IMG_RESULT)
+# print(IMG_RESULT)
 ALLOWED_EXTENSIONS = {'jpg', 'tiff', 'tif', 'png', 'PNG'}
 
 
@@ -69,7 +70,7 @@ class image_filter(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 @sar_ns.route('/binary/<file_path>')
@@ -87,7 +88,7 @@ class image_binary(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 @sar_ns.route('/value_peak/<file_path>')
@@ -105,7 +106,7 @@ class value_peak(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 @sar_ns.route('/fractal/<file_path>')
@@ -124,7 +125,7 @@ class Fractal(Resource):
             return {'status': 'failed', 'message': str(e)}, 201
         else:
             return {'status': 'success',
-                    'url': result_n, 'data': result_s}, 201
+                    'url': get_server_ip_and_port(result_n), 'data': result_s}, 201
 
 
 @sar_ns.route('/GGCM/<file_path>')
@@ -143,7 +144,7 @@ class ggcm(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/GLCM/<file_path>')
@@ -158,11 +159,12 @@ class glcm(Resource):
             image_path = os.path.join(IMG_UPLOAD, file_path)
         try:
             result, result_s = GLCM.get_glcm_features(image_path)
+            print(result_s)
             res = result_s.tolist()
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/HOG/<file_path>')
@@ -180,7 +182,7 @@ class hog(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': result_s}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': result_s}, 201
 
 
 @sar_ns.route('/LBP/<file_path>')
@@ -198,7 +200,7 @@ class lbp(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/Hu/<file_path>')
@@ -217,10 +219,10 @@ class hu(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
-@sar_ns.route('/Genmetric features/<file_path>')
+@sar_ns.route('/GenmetricFeatures/<file_path>')
 class geometric(Resource):
     def get(self, file_path):
         '''相关几何特征'''
@@ -237,7 +239,7 @@ class geometric(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': res}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': res}, 201
 
 
 @sar_ns.route('/Zernike/<file_path>')
@@ -255,7 +257,7 @@ class zernik(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': result_s}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': result_s}, 201
 
 
 @sar_ns.route('/RCS/<file_path>')
@@ -274,7 +276,7 @@ class rcs(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result, 'data': result_s}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result), 'data': result_s}, 201
 
 
 # ImgDataParser: RequestParser = sar_ns.parser()
@@ -297,7 +299,7 @@ class rcs(Resource):
 #         except BaseException as e:
 #             return {'status': 'failed', 'message': str(e)}, 201
 #         else:
-#             return {'status': 'success', 'url': result}, 201
+#             return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201
 
 
 # json body
@@ -338,4 +340,4 @@ class Image_Stitching(Resource):
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:
-            return {'status': 'success', 'url': result}, 201
+            return {'status': 'success', 'url': get_server_ip_and_port(result)}, 201

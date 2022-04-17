@@ -2,8 +2,9 @@ import cv2
 import os
 import numpy as np
 import csv
-from config.setting import RESULT_FOLDER
+
 from .process_pre import nsst_dec
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 def Simple_DBC(path):
@@ -32,7 +33,7 @@ def Simple_DBC(path):
     coeffs = np.polyfit(x, y, 1)
 
     # fractal_features_path = RESULT_FOLDER + '/SAR/fractal.csv'
-    fractal_features_path = os.path.join(RESULT_FOLDER, 'SAR/fractal.csv')
+    fractal_features_path = os.path.join(RESULT_FOLDER, 'SAR','fractal.csv')
     f = open(fractal_features_path, 'w', encoding='utf-8-sig', newline="")
     csv_writer = csv.writer(f)
     # 构建列表头

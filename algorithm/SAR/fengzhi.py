@@ -2,7 +2,7 @@ import cv2
 import os
 import matplotlib.pyplot as plt
 from .process_pre import nsst_dec
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 def peak_value(path1):
@@ -41,7 +41,7 @@ def peak_value(path1):
     plt.rcParams['axes.unicode_minus'] = False
     plt.title('峰值点')
     # prek_image_path = RESULT_FOLDER + '/SAR/peak_value.png'
-    prek_image_path = os.path.join(RESULT_FOLDER,'SAR/peak_value.png')
+    prek_image_path = os.path.join(RESULT_FOLDER,'SAR','peak_value.png')
     plt.savefig(prek_image_path)
     return prek_image_path
 

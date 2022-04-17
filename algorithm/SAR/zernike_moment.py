@@ -2,7 +2,7 @@ import csv
 import os
 import math
 import numpy as np
-from config.setting import RESULT_FOLDER
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 from .process_pre import otsu_2d
 
 
@@ -79,7 +79,7 @@ def get_zernike(path, n=2, m=2):
         zernike_name.append('Z' + str(n) + str(m))
         n += 2
     # zernike_path = RESULT_FOLDER + '/SAR/Zernike.csv'
-    zernike_path = os.path.join(RESULT_FOLDER, 'SAR/zernike.csv')
+    zernike_path = os.path.join(RESULT_FOLDER, 'SAR', 'zernike.csv')
     f = open(zernike_path, 'w', newline="")
     csv_writer = csv.writer(f)
     # 构建列表头

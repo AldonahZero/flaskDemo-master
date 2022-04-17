@@ -4,9 +4,25 @@ import os
 import numpy as np
 from skimage import img_as_ubyte
 from skimage.feature import greycomatrix, greycoprops
-from config.setting import RESULT_FOLDER
 from .process_pre import nsst_dec
 warnings.filterwarnings("ignore")
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
+
+def contrast_con(P):
+    (num_level, num_level2, num_dist, num_angle) = P.shape
+
+    P = P.astype(np.float64)
+    glcm_sums = np.apply_over_axes(np.sum, P, axes=(0, 1))
+    glcm_sums[glcm_sums == 0] = 1
+    P /= glcm_sums
+
+    # create weights for specified property
+    I, J = np.ogrid[0:num_level, 0:num_level]
+    weights = (I - J) ** 2;
+    weights = weights.reshape((num_level, num_level, 1, 1))
+    results = np.apply_over_axes(np.sum, (P * weights), axes=(0, 1))[0, 0]
+
+    return results
 
 
 def get_glcm_features(path):
@@ -32,7 +48,7 @@ def get_glcm_features(path):
     entropy = greycoprops(matrix_coocurrence, 'entropy')
     deficit = greycoprops(matrix_coocurrence, 'homogeneity')
     correlation = greycoprops(matrix_coocurrence, 'correlation')
-    contrast = greycoprops(matrix_coocurrence, 'contrast')
+    contrast = contrast_con(matrix_coocurrence)
     out = np.zeros((5,4))
     out[0][:] = energy
     out[1][:] = entropy
@@ -56,4 +72,5 @@ def get_glcm_features(path):
     return glcm_features_path,out
 
 # if __name__ == '__main__':
-#     print(get_glcm_features(r'D:\back_dev_flask-master\static\result\SAR\image_f.png'))
+#     _,out = get_glcm_features(r'D:\back_dev_flask-master1\static\result\SAR\image_f.png')
+#     print(out)

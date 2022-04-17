@@ -1,6 +1,6 @@
 import cv2
-
-from config.setting import RESULT_FOLDER
+import os
+RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
 
 # global img

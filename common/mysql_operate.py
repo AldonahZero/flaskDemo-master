@@ -130,6 +130,11 @@ class MOSResult(Base):
     path = Column('path', String(128))
     create_time = Column('create_time', DateTime)
 
+    def to_json(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
 
 class Pic(Base):
     __tablename__ = 'pic'

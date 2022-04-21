@@ -102,7 +102,7 @@ def filehyperspectralGps(path_txts):
             x1[num][1] = (result2[0])
             x1[num][1] = 180 / math.pi * x1[num][1]
 
-            num = num + 1;
+            num = num + 1
             file.close()
     return x1
 
@@ -155,6 +155,11 @@ def get_file_name(path_date, string):
     return file_name
 
 
+def create_folder(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
 def image_map(img_path, path_hw, path_kjg, path_ggp, key, pos):
     # global img_t
 
@@ -162,6 +167,10 @@ def image_map(img_path, path_hw, path_kjg, path_ggp, key, pos):
     path_result_ggp = MATCH_RESULT_PATH + 'result_ggp/' + key
     path_result_kjg = MATCH_RESULT_PATH + 'result_kjg/' + key
     path_result_hw = MATCH_RESULT_PATH + 'result_hw/' + key
+
+    create_folder(path_result_ggp)
+    create_folder(path_result_kjg)
+    create_folder(path_result_hw)
 
     # 读取图片的长宽
     str_img = str(img_path)
@@ -197,7 +206,7 @@ def image_map(img_path, path_hw, path_kjg, path_ggp, key, pos):
 
 
     # 所选区域的坐标
-    box1 = np.array([pos[0], pos[1], pos[0], pos[1]])
+    box1 = np.array([int(pos[0][0]), int(pos[0][1]), int(pos[1][0]), int(pos[1][1])])
 
     # 取出P2.txt文件中的坐标数据
     file = open(P2_PATH + key + '.txt')
@@ -212,7 +221,7 @@ def image_map(img_path, path_hw, path_kjg, path_ggp, key, pos):
 
     # 比较所选区域和图片是否有交集
     for i in range(rows):
-        box2 = np.array([coordinates[i, 1] / k, coordinates[i, 2] / k, coordinates[i, 3] / k, coordinates[i, 4] / k])
+        box2 = np.array([coordinates[i, 1], coordinates[i, 2], coordinates[i, 3], coordinates[i, 4]])
         out = overlap(box1, box2)
         if out == 1:
             res = int(coordinates[i, 0]) + 1
@@ -254,7 +263,9 @@ def image_map(img_path, path_hw, path_kjg, path_ggp, key, pos):
                         for ggp in range(5):
                             res_ggp = path_ggp + '/' + file_ggp[5*x+ggp]
                             result_ggp = path_result_ggp + '/' + file_ggp[5*x+ggp]
-                            shutil.copy(res_ggp, result_ggp)
+                            if not os.path.exists(result_ggp):
+                                shutil.copy(res_ggp, result_ggp)
+                x1 = []
 
            # cv2.destroyAllWindows()
 

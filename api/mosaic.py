@@ -19,8 +19,10 @@ from algorithm.HSI.HSI_grabcut import Hsi_grabcut_f
 from algorithm.HSI.FeatureExtraction.gray_feature import gray_mean_dif_f, gray_var_dif_f, gray_histogram_dif_f
 from algorithm.HSI.band_Selection import ECA_f
 from algorithm.mosaic.c import image_map
-from common.file_tools import unzip_file, del_file
+from common.file_tools import unzip_file, del_file, zip_file
 from common.getUploadLocation import get_upload_location
+from common.get_server_file_path import get_server_file_path
+from common.get_server_ip_and_port import get_server_ip_and_port
 from common.mysql_operate import db_session, HSIPictureFile, MOSPictureFile, MOSPictureFolder, MOSResult
 from common.remove_file_dir import remove_file_dir
 from algorithm.mosaic.resizeKeepGPS import mosaic
@@ -71,8 +73,8 @@ def allowed_file(filename):
 def get_mosaic_result(pid):
     """按pid查询拼接结果"""
     session = db_session()
-    result = session.query(MOSResult).filter(MOSResult.pid == pid)
-    return result
+    result = session.query(MOSResult).filter(MOSResult.pid == pid).all()
+    return result[0]
 
 def get_file_name(path):
     """查找文件夹所有文件"""
@@ -81,6 +83,12 @@ def get_file_name(path):
         for i in range(len(files)):
             file_name.append(files[i])
     return file_name
+
+def file_add_path(path, file_names):
+    file_name_new = []
+    for file_name in file_names:
+        file_name_new.append(path + file_name)
+    return file_name_new
 
 
 @mos_ns.route("/zipfile", doc={"description": "上传图片压缩包"})
@@ -166,6 +174,7 @@ class MOSAIC(Resource):
             session.commit()
             session.close()
         except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': 'success', 'result': save_path, 'result_id': result_id})
@@ -191,11 +200,29 @@ class getPics(Resource):
 
 @mos_ns.route("/mosaic_result_all", doc={"description": "查看所有拼接结果"})
 class getPics(Resource):
-    def get(self, file_name):
-        '''查看所有上传的压缩文件'''
+    def get(self):
+        '''查看所有拼接结果'''
         try:
             session = db_session()
             pics = session.query(MOSResult).all()
+            data = []
+            for pic in pics:
+                data.append(pic.to_json())
+            session.close()
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 201, 'message': '查找成功', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+
+@mos_ns.route("/mosaic_result/<pid>", doc={"description": "按id查找拼接结果"})
+class getPic(Resource):
+    def get(self, pid):
+        '''查看所有拼接结果'''
+        try:
+            session = db_session()
+            pics = session.query(MOSResult).filter(MOSResult.pid == pid).all()
             data = []
             for pic in pics:
                 data.append(pic.to_json())
@@ -216,9 +243,13 @@ class ggpFileUpload(Resource):
             # 普通参数获取
             # 获取文件对象
             file = request.files.get('file')
-            args = arg_parser.parse_args()
-            save_folder = args['key']
+            # args = arg_parser.parse_args()
+            save_folder = request.form.get('fid')
             save_path = GGP_FOLDER + save_folder
+
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+
             # 删除之前上传的文件
             del_file(save_path)
             path = os.path.join(UPLOAD_PATH, file.filename)
@@ -245,9 +276,12 @@ class kjgFileUpload(Resource):
             # 普通参数获取
             # 获取文件对象
             file = request.files.get('file')
-            args = arg_parser.parse_args()
-            save_folder = args['key']
+            # args = arg_parser.parse_args()
+            save_folder = request.form.get('fid')
             save_path = KJG_FOLDER + save_folder
+
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
             # 删除之前上传的文件
             del_file(save_path)
             path = os.path.join(UPLOAD_PATH, file.filename)
@@ -274,9 +308,12 @@ class hwFileUpload(Resource):
             # 普通参数获取
             # 获取文件对象
             file = request.files.get('file')
-            args = arg_parser.parse_args()
-            save_folder = args['key']
+            # args = arg_parser.parse_args()
+            save_folder = request.form.get('fid')
             save_path = HW_FOLDER + save_folder
+
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
             # 删除之前上传的文件
             del_file(save_path)
             path = os.path.join(UPLOAD_PATH, file.filename)
@@ -297,7 +334,7 @@ class hwFileUpload(Resource):
 @mos_ns.route("/match", doc={"description": "局部匹配;返回高光谱压缩文件，可见光和红外为图片文件"})
 class MATCH(Resource):
     @mos_ns.expect(CutImgDataParser, validate=True)
-    def get(self):
+    def post(self):
         '''局部匹配'''
         try:
             params = CutImgDataParser.parse_args()
@@ -305,14 +342,21 @@ class MATCH(Resource):
             cutimg_pid = params["cutimg_pid"]
             cutposs_data = np.asfarray(eval(cutposs))
             mosaic_result = get_mosaic_result(cutimg_pid)
+            print(cutposs_data)
             fid = mosaic_result.fid
             image_map(mosaic_result.path, HW_FOLDER+fid, KJG_FOLDER+fid, GGP_FOLDER+fid, fid, cutposs_data)
             path_result_ggp = MATCH_RESULT_PATH + 'result_ggp/' + fid
             path_result_kjg = MATCH_RESULT_PATH + 'result_kjg/' + fid
             path_result_hw = MATCH_RESULT_PATH + 'result_hw/' + fid
+            path_result_ggp_zip = MATCH_RESULT_PATH + 'result_ggp_zip/' + fid + '.zip'
+            # zip_file(path_result_ggp,path_result_ggp_zip)
+            ggp_result = get_server_ip_and_port(get_server_file_path(os.path.abspath(path_result_ggp_zip)))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
-            return jsonify({'code': 201, 'message': '失败', 'data': str(e)})
+            return jsonify({'code': 400, 'message': '失败', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': '查找成功', 'ggp_result': get_file_name(path_result_ggp), 'hw_result': get_file_name(path_result_hw), 'kjg_result': get_file_name(path_result_kjg)})
+            return jsonify({'code': 201, 'message': '查找成功', 'ggp_result': ggp_result,
+                            'hw_result': file_add_path(path_result_hw + '/', get_file_name(path_result_hw)),
+                            'kjg_result': file_add_path(path_result_kjg + '/', get_file_name(path_result_kjg))})
+
 

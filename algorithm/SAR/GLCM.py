@@ -8,20 +8,15 @@ from .process_pre import nsst_dec
 warnings.filterwarnings("ignore")
 RESULT_FOLDER = os.path.join('algorithm', 'SAR', 'result')
 
-def contrast_con(P):
-    (num_level, num_level2, num_dist, num_angle) = P.shape
-
+def entropy_con(P):
     P = P.astype(np.float64)
     glcm_sums = np.apply_over_axes(np.sum, P, axes=(0, 1))
     glcm_sums[glcm_sums == 0] = 1
     P /= glcm_sums
-
-    # create weights for specified property
-    I, J = np.ogrid[0:num_level, 0:num_level]
-    weights = (I - J) ** 2;
-    weights = weights.reshape((num_level, num_level, 1, 1))
-    results = np.apply_over_axes(np.sum, (P * weights), axes=(0, 1))[0, 0]
-
+    condition_list = [P != 0, P == 0]
+    choice_list = [-P * np.log(P), 0]
+    P = np.select(condition_list, choice_list)
+    results = np.apply_over_axes(np.sum, P, axes=(0, 1))[0, 0]
     return results
 
 
@@ -45,10 +40,10 @@ def get_glcm_features(path):
                                       normed=False, symmetric=False)
     # P[i,j,d,theta]返回的是一个四维矩阵（四个方向），各维代表不同的意义
     energy = greycoprops(matrix_coocurrence, 'ASM')  # 能量
-    entropy = greycoprops(matrix_coocurrence, 'entropy')
+    entropy = entropy_con(matrix_coocurrence)
     deficit = greycoprops(matrix_coocurrence, 'homogeneity')
     correlation = greycoprops(matrix_coocurrence, 'correlation')
-    contrast = contrast_con(matrix_coocurrence)
+    contrast = greycoprops(matrix_coocurrence, 'contrast')
     out = np.zeros((5,4))
     out[0][:] = energy
     out[1][:] = entropy
@@ -56,7 +51,7 @@ def get_glcm_features(path):
     out[3][:] = correlation
     out[4][:] = contrast
     # glcm_features_path = RESULT_FOLDER + '/SAR/glcm.csv'
-    glcm_features_path = os.path.join(RESULT_FOLDER,'SAR/glcm.csv')
+    glcm_features_path = os.path.join(RESULT_FOLDER,'SAR', 'glcm.csv')
     f = open(glcm_features_path, 'w', newline="",encoding='utf-8-sig')
     csv_writer = csv.writer(f)
     # 构建列表头

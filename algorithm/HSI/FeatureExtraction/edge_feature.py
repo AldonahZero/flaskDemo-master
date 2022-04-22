@@ -12,10 +12,10 @@ def image_normalize(image):
     return image
 
 
-def gauss_edge_f(image_path, k_num):
+def gauss_edge_f(mat_path, k_num, out_path):
     #  image = hsi.load_data(image_path)
     #  暂时直接拿的图像分割的结果来做的不需要源地址
-    data = io.loadmat('../image_result/arr4.mat')
+    data = io.loadmat(mat_path)
     image = data['arr4']
 
     img = image[:, :, k_num]
@@ -26,15 +26,15 @@ def gauss_edge_f(image_path, k_num):
     blurred = cv2.GaussianBlur(img, (5, 5), 0)
     gauss_img = img - blurred
     #  输出路径
-    out_path = "../image_result/edge_gauss_result.jpg"
+    # out_path = "../image_result/edge_gauss_result.jpg"
     cv2.imwrite(out_path, gauss_img)
     return out_path
 
 
-def canny_edge_f(image_path, k_num, out_path):
+def canny_edge_f(mat_path, k_num, out_path):
     #  image = hsi.load_data(image_path)
     #  暂时直接拿的图像分割的结果来做的不需要源地址
-    data = io.loadmat(image_path + '/arr4.mat')
+    data = io.loadmat(mat_path)
     image = data['arr4']
     '''red_band = 76
     blue_band = 15
@@ -65,10 +65,10 @@ def canny_edge_f(image_path, k_num, out_path):
 
 # Laplace算子
 # 常用的Laplace算子模板  [[0, 1, 0], [1, -4, 1], [0, 1, 0]]   [[1 ,1 , 1],[1, -8, 1],[1, 1, 1]]
-def laplace_edge_f(image_path, k_num):
+def laplace_edge_f(mat_path, k_num, out_path):
     #  image = hsi.load_data(image_path)
     #  暂时直接拿的图像分割的结果来做的不需要源地址
-    data = io.loadmat('../image_result/arr4.mat')
+    data = io.loadmat(mat_path)
     image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
@@ -77,15 +77,15 @@ def laplace_edge_f(image_path, k_num):
     laplacian = cv2.Laplacian(img, cv2.CV_16S, ksize=3)
     laplace_image = cv2.convertScaleAbs(laplacian)
 
-    out_path = '../image_result/edge_Laplace_result.jpg'
+    # out_path = '../image_result/edge_Laplace_result.jpg'
     cv2.imwrite(out_path, laplace_image)
     return out_path
 
 
-def prewitt_edge_f(image_path, k_num):
+def prewitt_edge_f(mat_path, k_num, out_path):
     #  image = hsi.load_data(image_path)
     #  暂时直接拿的图像分割的结果来做的不需要源地址
-    data = io.loadmat('../image_result/arr4.mat')
+    data = io.loadmat(mat_path)
     image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
@@ -106,15 +106,15 @@ def prewitt_edge_f(image_path, k_num):
     absY = cv2.convertScaleAbs(y)
     Prewitt = cv2.addWeighted(absX, 0.5, absY, 0.5, 0)
 
-    out_path = "../image_result/edge_Prewitt_result.jpg"
+    # out_path = "../image_result/edge_Prewitt_result.jpg"
     cv2.imwrite(out_path, Prewitt)
     return out_path
 
 
-def sobel_edge_f(image_path, k_num):
+def sobel_edge_f(mat_path, k_num, out_path):
     #  image = hsi.load_data(image_path)
     #  暂时直接拿的图像分割的结果来做的不需要源地址
-    data = io.loadmat('../image_result/arr4.mat')
+    data = io.loadmat(mat_path)
     image = data['arr4']
     [m, n, p] = image.shape
     img = image[:, :, k_num] * 255
@@ -126,15 +126,15 @@ def sobel_edge_f(image_path, k_num):
     Scale_absX = cv2.convertScaleAbs(x)  # convert 转换  scale 缩放
     Scale_absY = cv2.convertScaleAbs(y)
     result = cv2.addWeighted(Scale_absX, 0.5, Scale_absY, 0.5, 0)
-    out_path = "../image_result/edge_soble_result.jpg"
+    # out_path = "../image_result/edge_soble_result.jpg"
     cv2.imwrite(out_path, result)
     return out_path
 
 
-def roberts_edge_f(image_path, k_num):
+def roberts_edge_f(mat_path, k_num, out_path):
     #  image = hsi.load_data(image_path)
     #  暂时直接拿的图像分割的结果来做的不需要源地址
-    data = io.loadmat('../image_result/arr4.mat')
+    data = io.loadmat(mat_path)
     image = data['arr4']
     img = image[:, :, k_num]
     img = image_normalize(img)
@@ -142,7 +142,7 @@ def roberts_edge_f(image_path, k_num):
     img = img.astype(np.uint8)
     roberts = filters.roberts(img)
     roberts = roberts * 255.0
-    out_path = "../image_result/edge_roberts_result.jpg"
+    # out_path = "../image_result/edge_roberts_result.jpg"
     cv2.imwrite(out_path, roberts)
     return out_path
 

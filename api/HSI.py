@@ -1,21 +1,25 @@
 import base64
 import os
+import traceback
 import uuid
 from datetime import datetime
 from io import BytesIO
 
 import numpy as np
 import pandas as pd
-from flask import request, flash, jsonify, send_from_directory
+from flask import request, flash, jsonify, send_from_directory, current_app
 from flask_restx import Resource, Namespace
 from flask_restx.reqparse import RequestParser
 from werkzeug.datastructures import FileStorage
 
 import matplotlib.pyplot as plt
 
-
+import algorithm
+from algorithm.HSI.FeatureExtraction.points_feature import SURF_points_f, SIFT_points_f, Fast_points_f, ORB_points_f, \
+    KAZE_points_f
 from algorithm.HSI.showPseudoColor import show_image
-from algorithm.HSI.FeatureExtraction.edge_feature import canny_edge_f
+from algorithm.HSI.FeatureExtraction.edge_feature import canny_edge_f, gauss_edge_f, laplace_edge_f, prewitt_edge_f, \
+    sobel_edge_f, roberts_edge_f
 from algorithm.HSI.FeatureExtraction import HSI_NDWI_f, HSI_NDVI_f, Harris_points_f
 from algorithm.HSI.HSI_grabcut import Hsi_grabcut_f
 from algorithm.HSI.FeatureExtraction.gray_feature import gray_mean_dif_f, gray_var_dif_f, gray_histogram_dif_f
@@ -291,7 +295,7 @@ class HSI_SAM(Resource):
 class canny_edge(Resource):
     def get(self, key, index):
         '''边缘检测 返回结果图片保存路径'''
-        cut_path = CUT_RESULT_PATH + key + '/'
+        cut_path = CUT_RESULT_PATH + key + '/arr4.mat'
         out_path = HSI_RESULT_FOLDER + key + '_edge_canny_result.jpg'
         try:
             result = canny_edge_f(cut_path, index, out_path)
@@ -330,6 +334,64 @@ class Harris_points(Resource):
         else:
             return jsonify({'code': 201, 'message': 'success', 'result': result})
 
+
+@hsi_ns.route('/Harris_points/<operator>/<key>')
+@hsi_ns.param('key', '上传时返回的key')
+@hsi_ns.param('operator', '算子选项：SURF SIFT Fast ORB KAZE Harris')
+class Harris_points_by_operator(Resource):
+    def get(self, operator, key):
+        '''含算子的角点检测'''
+        global result
+        save_path = CUT_RESULT_PATH + key + '/arr4.mat'
+        try:
+            if operator == 'SURF':
+                result = SURF_points_f(save_path, HSI_RESULT_FOLDER + key + '_points_SURF.jpg')
+            elif operator == 'SIFT':
+                result = SIFT_points_f(save_path, HSI_RESULT_FOLDER + key + '_points_SIFT.jpg')
+            elif operator == 'Fast':
+                result = Fast_points_f(save_path, HSI_RESULT_FOLDER + key + '_points_Fast.jpg')
+            elif operator == 'ORB':
+                result = ORB_points_f(save_path, HSI_RESULT_FOLDER + key + '_points_ORB.jpg')
+            elif operator == 'KAZE':
+                result = KAZE_points_f(save_path, HSI_RESULT_FOLDER + key + '_points_KAZE.jpg')
+            elif operator == 'Harris':
+                result = algorithm.HSI.FeatureExtraction.points_feature.Harris_points_f(save_path, HSI_RESULT_FOLDER + key + '_points_Harris.jpg')
+
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': 'success', 'result': result})
+
+
+@hsi_ns.route('/canny_edge/<operator>/<key>/<int:index>')
+@hsi_ns.param('key', '上传时返回的key')
+@hsi_ns.param('operator', '算子选项：gauss_edge  canny_edge  laplace_edge  prewitt_edge  sobel_edge  roberts_edge')
+@hsi_ns.param('index', '数字所选波段索引')
+class canny_edge_by_operator(Resource):
+    def get(self, operator, key, index):
+        '''含算子的边缘检测'''
+        global result
+        save_path = CUT_RESULT_PATH + key + '/arr4.mat'
+        try:
+            if operator == 'gauss_edge':
+                result = gauss_edge_f(save_path, index, HSI_RESULT_FOLDER + key + '_edge_gauss_result.jpg')
+            elif operator == 'canny_edge':
+                result = canny_edge_f(save_path, index,  HSI_RESULT_FOLDER + key + '_edge_canny_result.jpg')
+            elif operator == 'laplace_edge':
+                result = laplace_edge_f(save_path, index, HSI_RESULT_FOLDER + key + '_edge_Laplace_result.jpg')
+            elif operator == 'prewitt_edge':
+                result = prewitt_edge_f(save_path, index, HSI_RESULT_FOLDER + key + '_edge_Prewitt_result.jpg')
+            elif operator == 'sobel_edge':
+                result = sobel_edge_f(save_path, index, HSI_RESULT_FOLDER + key + '_edge_soble_result.jpg')
+            elif operator == 'roberts_edge':
+                result = roberts_edge_f(save_path, index, HSI_RESULT_FOLDER + key + '_edge_roberts_result.jpg')
+
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': 'success', 'result': result})
 #
 # @hsi_ns.route('/download/<result_key>')
 # @hsi_ns.param('result_key', '36位的excel文件key')

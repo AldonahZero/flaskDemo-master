@@ -19,7 +19,7 @@ from algorithm.HSI.HSI_grabcut import Hsi_grabcut_f
 from algorithm.HSI.FeatureExtraction.gray_feature import gray_mean_dif_f, gray_var_dif_f, gray_histogram_dif_f
 from algorithm.HSI.band_Selection import ECA_f
 from algorithm.mosaic.c import image_map
-from common.file_tools import unzip_file, del_file, zip_file
+from common.file_tools import unzip_file, del_file, zip_file, zip_file_stored
 from common.getUploadLocation import get_upload_location
 from common.get_server_file_path import get_server_file_path
 from common.get_server_ip_and_port import get_server_ip_and_port
@@ -349,7 +349,7 @@ class MATCH(Resource):
             path_result_kjg = MATCH_RESULT_PATH + 'result_kjg/' + fid
             path_result_hw = MATCH_RESULT_PATH + 'result_hw/' + fid
             path_result_ggp_zip = MATCH_RESULT_PATH + 'result_ggp_zip/' + fid + '.zip'
-            # zip_file(path_result_ggp,path_result_ggp_zip)
+            zip_file_stored(path_result_ggp, path_result_ggp_zip)
             ggp_result = get_server_ip_and_port(get_server_file_path(os.path.abspath(path_result_ggp_zip)))
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())

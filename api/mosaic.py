@@ -183,7 +183,7 @@ class MOSAIC(Resource):
 @mos_ns.route("/pics/<file_name>", doc={"description": "查看上传的图片列表"})
 class getPics(Resource):
     def get(self, file_name):
-        '''查看所有上传的压缩文件'''
+        '''查看上传的图片列表'''
         try:
             session = db_session()
             pics = session.query(MOSPictureFile).filter(MOSPictureFile.fid == file_name).all()
@@ -360,3 +360,18 @@ class MATCH(Resource):
                             'kjg_result': file_add_path(path_result_kjg + '/', get_file_name(path_result_kjg))})
 
 
+@mos_ns.route("/deletepic/<pid>", doc={"description": "根据pid删除图片记录"})
+class delPic(Resource):
+    def get(self, pid):
+        '''根据pid删除图片记录'''
+        try:
+            session = db_session()
+            pic = session.query(MOSResult).filter(MOSResult.pid == pid).first()
+            session.delete(pic)
+            session.commit()
+            session.close()
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '删除失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '删除成功'})

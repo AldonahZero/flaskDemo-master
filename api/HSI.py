@@ -187,17 +187,12 @@ class gray_mean(Resource):
         data_path = CUT_RESULT_PATH + key + "/"
         try:
             result, excel_path = gray_mean_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
-            plt.plot(result)
-            sio = BytesIO()
-            plt.savefig(sio, format='png')
-            data = base64.encodebytes(sio.getvalue()).decode()
-            src = 'data:image/png;base64,' + str(data).replace('\n', '')
-            plt.close()
+
         except BaseException as e:
             print(e)
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src, 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'data': result.tolist(), 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
 
 
 @hsi_ns.route('/gray_diff/<key>', doc={"description": "返回结果 result：灰度方差数组  src: 折线图base64编码"})
@@ -209,16 +204,11 @@ class gray_diff(Resource):
         data_path = CUT_RESULT_PATH + key + "/"
         try:
             result, excel_path = gray_var_dif_f(save_path, data_path, EXCEL_SAVE_PATH)
-            plt.plot(result)
-            sio = BytesIO()
-            plt.savefig(sio, format='png')
-            data = base64.encodebytes(sio.getvalue()).decode()
-            src = 'data:image/png;base64,' + str(data).replace('\n', '')
-            plt.close()
+
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src, 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'data': result.tolist(), 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
 
 
 @hsi_ns.route('/gray_histogram_diff/<key>/<int:band_index>', doc={"description": "返回结果 result：灰度方差数组  src: 折线图base64编码"})
@@ -231,17 +221,17 @@ class gray_histogram_dif(Resource):
         data_path = CUT_RESULT_PATH + key + "/"
         try:
             result,excel_path = gray_histogram_dif_f(save_path,band_index, data_path, EXCEL_SAVE_PATH)
-            plt.plot(result)
-            sio = BytesIO()
-            plt.savefig(sio, format='png')
-            data = base64.encodebytes(sio.getvalue()).decode()
-            src = 'data:image/png;base64,' + str(data).replace('\n', '')
-            plt.close()
-            print(os.path.abspath(excel_path))
+            # plt.plot(result)
+            # sio = BytesIO()
+            # plt.savefig(sio, format='png')
+            # data = base64.encodebytes(sio.getvalue()).decode()
+            # src = 'data:image/png;base64,' + str(data).replace('\n', '')
+            # plt.close()
+            # print(os.path.abspath(excel_path))
         except BaseException as e:
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
-            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'src': src, 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
+            return jsonify({'code': 201, 'message': 'success', 'result': result.tolist(), 'data': result.tolist(), 'excel_path': get_server_ip_and_port(get_server_file_path(os.path.abspath(excel_path)))})
 
 
 @hsi_ns.route('/HSI_NDWI/<key>')

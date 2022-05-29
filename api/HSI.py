@@ -382,6 +382,23 @@ class canny_edge_by_operator(Resource):
             return jsonify({'code': 400, 'message': 'failed', 'data': str(e)})
         else:
             return jsonify({'code': 201, 'message': 'success', 'result': result})
+
+
+@hsi_ns.route("/deletepic/<pid>", doc={"description": "根据pid删除图片记录"})
+class delPic(Resource):
+    def get(self, pid):
+        '''根据pid删除图片记录'''
+        try:
+            session = db_session()
+            pic = session.query(HSIPictureFile).filter(HSIPictureFile.pid == pid).first()
+            session.delete(pic)
+            session.commit()
+            session.close()
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '删除失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '删除成功'})
 #
 # @hsi_ns.route('/download/<result_key>')
 # @hsi_ns.param('result_key', '36位的excel文件key')

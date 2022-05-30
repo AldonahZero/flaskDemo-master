@@ -1,4 +1,5 @@
 # coding:utf-8
+import base64
 import os
 import uuid
 from algorithm.SAR import fengzhi, fractal, GGCM, GLCM, HOG_feature, LBP, Moment_Seven, RCS, zernike_moment, \
@@ -45,7 +46,11 @@ class Upload(Resource):
             filename = 'image_input.png'
             save_path = os.path.join(IMG_UPLOAD, filename)
             file.save(save_path)
-            return {'message': 'success', 'url': save_path}
+            f = open(save_path, 'rb')
+            data = base64.b64encode(f.read())
+            f.close()
+            src = 'data:image/png;base64,' + str(data)[2:-1]
+            return {'message': 'success', 'url': src}
         return {'message': "file not allow"}, 201
 
 

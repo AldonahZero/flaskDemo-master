@@ -290,13 +290,8 @@ def myTamura_excelSave(path_cutimg, excels_texture_Tamura):
     cnt = 0
     sign = True
     for j in range(9):
-        if j == 4:
-            continue
         backg_name = str(1) + str(j) + '.jpg'
-        # print(backg_name)
-        if not os.path.exists(path_cutimg + backg_name):
-            continue
-        img_backg = cv2.imread(path_cutimg + backg_name)
+        img_backg = cv2.imread(os.path.join(path_cutimg, backg_name))
         if img_backg is None:
             continue
         [a2, b2, c2] = img_backg.shape

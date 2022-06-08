@@ -53,6 +53,58 @@ class Upload(Resource):
             return {'message': 'success', 'url': src}
         return {'message': "file not allow"}, 201
 
+@sar_ns.route('/uploadfirst')
+class UploadFirst(Resource):
+    @sar_ns.param('file', '文件')
+    def post(self):
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return {'message': 'No file part'}, 201
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return {'message': 'No selected file'}, 201
+        if file and allowed_file(file.filename):
+            filename = str(uuid.uuid1()) + '.' + \
+                file.filename.rsplit('.', 1)[1]
+            filename = 'first.png'
+            save_path = os.path.join(IMG_UPLOAD, filename)
+            file.save(save_path)
+            f = open(save_path, 'rb')
+            data = base64.b64encode(f.read())
+            f.close()
+            src = 'data:image/png;base64,' + str(data)[2:-1]
+            return {'message': 'success', 'url': src}
+        return {'message': "file not allow"}, 201
+
+
+@sar_ns.route('/uploadsecond')
+class UploadSecond(Resource):
+    @sar_ns.param('file', '文件')
+    def post(self):
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return {'message': 'No file part'}, 201
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return {'message': 'No selected file'}, 201
+        if file and allowed_file(file.filename):
+            filename = str(uuid.uuid1()) + '.' + \
+                file.filename.rsplit('.', 1)[1]
+            filename = 'second.png'
+            save_path = os.path.join(IMG_UPLOAD, filename)
+            file.save(save_path)
+            f = open(save_path, 'rb')
+            data = base64.b64encode(f.read())
+            f.close()
+            src = 'data:image/png;base64,' + str(data)[2:-1]
+            return {'message': 'success', 'url': src}
+        return {'message': "file not allow"}, 201
+
+
 
 def allowed_file(filename):
     """判断文件是否允许上传"""
@@ -326,22 +378,21 @@ StitchingImgDataParser.add_argument(
     location="json")
 
 
-@sar_ns.route('/image_stitching')
+@sar_ns.route('/image_stitching/<RIGHT_LEFT>')
 class Image_Stitching(Resource):
-    @sar_ns.expect(StitchingImgDataParser)
-    def post(self):
+    def get(self, RIGHT_LEFT):
         '''图像拼接'''
         try:
-            params = StitchingImgDataParser.parse_args()
-            img1_name = params["image1_path"]
-            img2_name = params["image2_path"]
-            RIGHT_LEFT = params["RIGHT_LEFT"]
+            img1_name = os.path.join('SAR', 'first.png')
+            img2_name = os.path.join('SAR', 'second.png')
 
             # path1 = IMG_UPLOAD + img1_name
             # path2 = IMG_UPLOAD + img2_name
-            path1 = os.path.join(IMG_UPLOAD, img1_name)
-            path2 = os.path.join(IMG_UPLOAD, img2_name)
+            path1 = os.path.join(UPLOAD_FOLDER, img1_name)
+            path2 = os.path.join(UPLOAD_FOLDER, img2_name)
+            # print(path1)
             result = image_stitching.image_stitching(path1, path2, RIGHT_LEFT)
+            # print(result)
         except BaseException as e:
             return {'status': 'failed', 'message': str(e)}, 201
         else:

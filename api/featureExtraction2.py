@@ -469,7 +469,7 @@ class rt_texture_LBP_excelSave(Resource):
             path = os.path.join(
                 CUTIMG_ABS_PATH, 'img_save_cutimg')
             path_excel_save = os.path.join(
-                CUTIMG_ABS_PATH, 'excels_save', 'texture_Tamura')
+                CUTIMG_ABS_PATH, 'excels_save', 'texture_LBP')
             excel_path = texture_LBP_excelSave.myLBP_excelSave(
                 path, path_excel_save)
             data['excel_path'] = get_server_ip_and_port(

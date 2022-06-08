@@ -129,7 +129,7 @@ def image_stitching(path1, path2, RIGHT_LEFT='1'):
     # cv2.namedWindow('image_seam_optim', cv2.WINDOW_NORMAL)
     # cv2.imshow('image_seam_optim', image_seam_optim)
     # stitching_path = RESULT_FOLDER + '/SAR/image_stitching.png'
-    stitching_path = os.path.join(RESULT_FOLDER,'SAR/image_stitching.png')
+    stitching_path = os.path.join(RESULT_FOLDER, 'SAR', 'image_stitching.png')
     cv2.imwrite(stitching_path, image_seam_optim)
     # cv2.waitKey(0)
     # cv2.imwrite('../sar_after_pj2.jpg', image_seam_optim)

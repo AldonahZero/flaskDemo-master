@@ -26,3 +26,5 @@ gevent
 gevent-websocket
 openpyxl
 piexif
+exifread
+screeninfo

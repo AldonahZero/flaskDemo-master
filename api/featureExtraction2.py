@@ -314,23 +314,26 @@ class rt_myEdgeHistogram(Resource):
             path_edge_histogram = os.path.join(
                 CUTIMG_ABS_PATH, 'img_save_edge_histogram')
             path_edge_histogram_canny = os.path.join(
-                path_edge, 'canny')
+                path_edge_histogram, 'canny')
             path_edge_histogram_laplacian = os.path.join(
-                path_edge, 'laplacian')
+                path_edge_histogram, 'laplacian')
             path_edge_histogram_log = os.path.join(
-                path_edge, 'log')
+                path_edge_histogram, 'log')
             path_edge_histogram_prewitt = os.path.join(
-                path_edge, 'prewitt')
+                path_edge_histogram, 'prewitt')
             path_edge_histogram_roberts = os.path.join(
-                path_edge, 'roberts')
+                path_edge_histogram, 'roberts')
             path_edge_histogram_sobel = os.path.join(
-                path_edge, 'sobel')
+                path_edge_histogram, 'sobel')
             excels_edge_histogram = os.path.join(
                 CUTIMG_ABS_PATH, 'excels_save', 'edge_histogram')
             path_edge_histogram1, excel_path = edge_histogram.myEdgeHistogram(path_cutimg, path_edge, path_coner_ORB, path_coner_FAST, path_coner_SURF, path_coner_SIFT,
-                                                                              path_coner_BRISKF, path_coner_KAZE, path_edge_histogram, path_edge_histogram_canny, path_edge_histogram_laplacian, path_edge_histogram_log, path_edge_histogram_prewitt, path_edge_histogram_roberts, path_edge_histogram_sobel, excels_edge_histogram)
+                                                                  path_coner_BRISKF, path_coner_KAZE, path_edge_histogram, path_edge_histogram_canny, path_edge_histogram_laplacian, path_edge_histogram_log, path_edge_histogram_prewitt, path_edge_histogram_roberts, path_edge_histogram_sobel, excels_edge_histogram)
+            data['path_edge_histogram'] = get_server_ip_and_port(
+                get_server_file_path(path_edge_histogram1))
             data['excel_path'] = get_server_ip_and_port(
                 get_server_file_path(excel_path))
+            print(data)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())
             return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})

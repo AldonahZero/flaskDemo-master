@@ -118,71 +118,81 @@ def hist_square(hist_1, hist_2):
 
 
 def myEdgeHistogram_calculation(path_cutimg, path_edge, path_edge_histogram_save):
-    TH = [
-        [-170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40,
-         50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180],
-        [-180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20,
-         30,
-         40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170]]
-    TH = np.array(TH)
-
-    # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
-
-    img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
-    img_target_edge = cv2.imread(os.path.join(path_edge, '14.jpg'))
-
-    bar_hist_target = EDH(img_target, TH, img_target_edge)
-    data_pd = np.zeros(36)
-    data_pd[:] = bar_hist_target[0, :]
-    width = 9
-    plt.subplot(3, 3, 5)
-    p3 = plt.bar(TH[0, :], data_pd, width, label="rainfall", color="#87CEFA")
-
-    [a1, b1, c1] = img_target.shape
     result = 0
     cnt = 0
     sign = True
+    try:
+        TH = [
+            [-170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30,
+             40,
+             50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180],
+            [-180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10,
+             20,
+             30,
+             40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170]]
+        TH = np.array(TH)
 
-    for j in range(9):  # 周围八个背景+目标
-        if j == 4:
-            continue
-        backg_name = str(1) + str(j) + '.jpg'
-        if not os.path.exists(os.path.join(path_cutimg, backg_name)):
-            continue
-        img_backg = cv2.imread(os.path.join(path_cutimg, backg_name))
-        img_backg_edge = cv2.imread(os.path.join(path_cutimg, backg_name))
-        if img_backg is None:
-            continue
+        # path_cutimg = 'D:/Python/Python/WZ_GLDM/webNew3/static/img_save_cutimg/'  # 分割结果保存路径
 
-        # 绘制目标图像边缘方向直方图
-        bar_hist_backg = EDH(img_backg, TH, img_backg_edge)
-        data_pd2 = np.zeros(36)
-        data_pd2[:] = bar_hist_backg[0, :]
+        img_target = cv2.imread(os.path.join(path_cutimg, '14.jpg'))
+        img_target_edge = cv2.imread(os.path.join(path_edge, '14.jpg'))
+
+        bar_hist_target = EDH(img_target, TH, img_target_edge)
+        data_pd = np.zeros(36)
+        data_pd[:] = bar_hist_target[0, :]
         width = 9
-        plt.subplot(3, 3, j + 1)
-        p2 = plt.bar(TH[0, :], data_pd2, width, label="rainfall", color="#87CEFA")
+        # plt.subplot(3, 3, 5)
+        p3 = plt.bar(TH[0, :], data_pd, width, label="rainfall", color="#87CEFA")
 
-        ex1, ey1, exy1, dx1, dy1, cov1, p1, skewness1 = hist_square(data_pd, data_pd2)
-        p1 = np.float32("%.2f" % p1)
-        result = result + p1
+        [a1, b1, c1] = img_target.shape
 
-        cnt = cnt + 1
-        sign = False
-    if sign:
-        everage_result = 'NA'
-    else:
-        everage_result = result / cnt
 
-    # plt.imshow(p2)
-    # plt.axis('off')
-    # plt.gca().get_xaxis().set_visible(False)
-    # plt.gca().get_yaxis().set_visible(False)
+        for j in range(9):  # 周围八个背景+目标
+            if j == 4:
+                continue
+            backg_name = str(1) + str(j) + '.jpg'
+            if not os.path.exists(os.path.join(path_cutimg, backg_name)):
+                continue
+            img_backg = cv2.imread(os.path.join(path_cutimg, backg_name))
+            img_backg_edge = cv2.imread(os.path.join(path_cutimg, backg_name))
+            if img_backg is None:
+                continue
 
-    result = os.path.join(path_edge_histogram_save, 'edge_histogram.jpg')
-    plt.savefig(result)
-    plt.clf()
-    return everage_result
+            # 绘制目标图像边缘方向直方图
+            bar_hist_backg = EDH(img_backg, TH, img_backg_edge)
+            data_pd2 = np.zeros(36)
+            data_pd2[:] = bar_hist_backg[0, :]
+            width = 9
+            plt.subplot(3, 3, j + 1)
+            p2 = plt.bar(TH[0, :], data_pd2, width, label="rainfall", color="#87CEFA")
 
+            ex1, ey1, exy1, dx1, dy1, cov1, p1, skewness1 = hist_square(data_pd, data_pd2)
+            p1 = np.float32("%.2f" % p1)
+            result = result + p1
+
+            cnt = cnt + 1
+            sign = False
+        if sign:
+            everage_result = 'NA'
+        else:
+            everage_result = result / cnt
+
+        # plt.imshow(p2)
+        # plt.axis('off')
+        # plt.gca().get_xaxis().set_visible(False)
+        # plt.gca().get_yaxis().set_visible(False)
+
+        result = os.path.join(path_edge_histogram_save, 'edge_histogram.jpg')
+        print(result)
+        plt.savefig(result)
+        # plt.clf()
+        return everage_result
+    except BaseException as e:
+        if sign:
+            everage_result = 'NA'
+        else:
+            everage_result = result / cnt
+        return everage_result
 
 
 def myEdgeHistogram(path_cutimg, path_edge, path_edge_canny, path_edge_laplacian, path_edge_log, path_edge_prewitt,
@@ -226,5 +236,6 @@ def myEdgeHistogram(path_cutimg, path_edge, path_edge_canny, path_edge_laplacian
 
     result = os.path.join(excels_edge_histogram,'excel_edge_histogram.xls')
     f.save(result)
+    path_edge_histogram = os.path.join(path_edge_histogram,'canny','edge_histogram.jpg')
     return path_edge_histogram, result
 

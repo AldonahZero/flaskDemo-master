@@ -2,6 +2,12 @@ from config.setting import SERVER_PORT
 import socket
 
 
+def replaceAll(input, toReplace, replaceWith):  #
+    while (input.find(toReplace) > -1):
+        input = input.replace(toReplace, replaceWith)
+
+    return input
+
 def extract_ip():
     st = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
@@ -15,11 +21,11 @@ def extract_ip():
 
 
 def get_server_ip_and_port(server_file_path):
-    return 'http://' + extract_ip() + ':' + str(SERVER_PORT) + '/' + server_file_path
+    return 'http://' + extract_ip() + ':' + str(SERVER_PORT) + '/' + replaceAll(server_file_path,'\\','/')
 
 
 # /Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg2/static/excels_save/color_gray_mean/excel_color_gray_mean.xls
 if __name__ == '__main__':
     import get_server_file_path
     print(get_server_ip_and_port(get_server_file_path.get_server_file_path(
-        '/Users/aldno/Downloads/flaskDemo-master/algorithm/cutimg2/static/excels_save/color_gray_mean/excel_color_gray_mean.xls')))
+        '/Users\\aldno\\Downloads/flaskDemo-master/algorithm/cutimg2/static/excels_save/color_gray_mean/excel_color_gray_mean.xls')))

@@ -9,6 +9,7 @@ from os import listdir
 import uuid
 from datetime import datetime
 
+from algorithm.cutimg2.edge_histogram2 import myEdgeHistogramCanny
 from common.mysql_operate import db_session, FEAPictureFile
 from common.file_tools import unzip_file
 from common.getUploadLocation import get_upload_location, get_server_location, get_alg_location
@@ -333,6 +334,90 @@ class rt_myEdgeHistogram(Resource):
                 get_server_file_path(path_edge_histogram1))
             data['excel_path'] = get_server_ip_and_port(
                 get_server_file_path(excel_path))
+            print(data)
+        except BaseException as e:
+            current_app.logger.error(traceback.format_exc())
+            return jsonify({'code': 400, 'message': '查找失败', 'data': str(e)})
+        else:
+            return jsonify({'code': 201, 'message': '查找成功', 'data': data})
+
+
+@fea2_ns.route('/myEdgeHistogram2/<myEdgeHistogramName>')
+@fea2_ns.param('myEdgeHistogramName', '边缘特征名称')
+class rt_myEdgeHistogram2(Resource):
+    def get(self, myEdgeHistogramName):
+        '''myEdger'''
+        try:
+            data = {}
+            path_cutimg = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_cutimg')
+            path_edge = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_edge')
+            path_coner_ORB = os.path.join(
+                path_edge, 'canny')
+            path_coner_FAST = os.path.join(
+                path_edge, 'laplacian')
+            path_coner_SURF = os.path.join(
+                path_edge, 'log')
+            path_coner_SIFT = os.path.join(
+                path_edge, 'prewitt')
+            path_coner_BRISKF = os.path.join(
+                path_edge, 'roberts')
+            path_coner_KAZE = os.path.join(
+                path_edge, 'sobel')
+            path_edge_histogram = os.path.join(
+                CUTIMG_ABS_PATH, 'img_save_edge_histogram')
+            path_edge_histogram_canny = os.path.join(
+                path_edge_histogram, 'canny')
+            path_edge_histogram_laplacian = os.path.join(
+                path_edge_histogram, 'laplacian')
+            path_edge_histogram_log = os.path.join(
+                path_edge_histogram, 'log')
+            path_edge_histogram_prewitt = os.path.join(
+                path_edge_histogram, 'prewitt')
+            path_edge_histogram_roberts = os.path.join(
+                path_edge_histogram, 'roberts')
+            path_edge_histogram_sobel = os.path.join(
+                path_edge_histogram, 'sobel')
+            excels_edge_histogram = os.path.join(
+                CUTIMG_ABS_PATH, 'excels_save', 'edge_histogram')
+
+            result_path_edge_histogram = '';
+            result_excels_edge_histogram = '';
+            if(myEdgeHistogramName == 'VisibleLight_Canny_EDH'):
+                result_path_edge_histogram , result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_ORB, path_edge_histogram_canny, excels_edge_histogram)
+                print()
+            elif (myEdgeHistogramName == 'VisibleLight_Sobel_EDH'):
+                result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_KAZE,
+                                                                                                path_edge_histogram_sobel,
+                                                                                                excels_edge_histogram)
+                print()
+            elif (myEdgeHistogramName == 'VisibleLight_Roberts_EDH'):
+                result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_BRISKF,
+                                                                                                path_edge_histogram_roberts,
+                                                                                                excels_edge_histogram)
+                print()
+            elif (myEdgeHistogramName == 'VisibleLight_Prewitt_EDH'):
+                result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_SIFT,
+                                                                                                path_edge_histogram_prewitt,
+                                                                                                excels_edge_histogram)
+                print()
+            elif (myEdgeHistogramName == 'VisibleLight_Laplacian_EDH'):
+                result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_FAST,
+                                                                                                path_edge_histogram_laplacian,
+                                                                                                excels_edge_histogram)
+                print()
+            elif (myEdgeHistogramName == 'VisibleLight_LoG_EDH'):
+                result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_SURF,
+                                                                                                path_edge_histogram_log,
+                                                                                                excels_edge_histogram)
+                print()
+
+            print(result_path_edge_histogram, result_excels_edge_histogram)
+            data['path_edge_histogram'] = get_server_ip_and_port(
+                get_server_file_path(result_path_edge_histogram))
+            data['excel_path'] = get_server_ip_and_port(
+                get_server_file_path(result_excels_edge_histogram))
             print(data)
         except BaseException as e:
             current_app.logger.error(traceback.format_exc())

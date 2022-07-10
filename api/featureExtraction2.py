@@ -386,33 +386,26 @@ class rt_myEdgeHistogram2(Resource):
             result_excels_edge_histogram = '';
             if(myEdgeHistogramName == 'VisibleLight_Canny_EDH'):
                 result_path_edge_histogram , result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_ORB, path_edge_histogram_canny, excels_edge_histogram)
-                print()
             elif (myEdgeHistogramName == 'VisibleLight_Sobel_EDH'):
                 result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_KAZE,
                                                                                                 path_edge_histogram_sobel,
                                                                                                 excels_edge_histogram)
-                print()
             elif (myEdgeHistogramName == 'VisibleLight_Roberts_EDH'):
                 result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_BRISKF,
                                                                                                 path_edge_histogram_roberts,
                                                                                                 excels_edge_histogram)
-                print()
             elif (myEdgeHistogramName == 'VisibleLight_Prewitt_EDH'):
                 result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_SIFT,
                                                                                                 path_edge_histogram_prewitt,
                                                                                                 excels_edge_histogram)
-                print()
             elif (myEdgeHistogramName == 'VisibleLight_Laplacian_EDH'):
                 result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_FAST,
                                                                                                 path_edge_histogram_laplacian,
                                                                                                 excels_edge_histogram)
-                print()
             elif (myEdgeHistogramName == 'VisibleLight_LoG_EDH'):
                 result_path_edge_histogram, result_excels_edge_histogram = myEdgeHistogramCanny(path_cutimg, path_coner_SURF,
                                                                                                 path_edge_histogram_log,
                                                                                                 excels_edge_histogram)
-                print()
-
             print(result_path_edge_histogram, result_excels_edge_histogram)
             data['path_edge_histogram'] = get_server_ip_and_port(
                 get_server_file_path(result_path_edge_histogram))

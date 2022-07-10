@@ -28,4 +28,6 @@ def get_server_ip_and_port(server_file_path):
 if __name__ == '__main__':
     import get_server_file_path
     print(get_server_ip_and_port(get_server_file_path.get_server_file_path(
-        '/Users\\aldno\\Downloads/flaskDemo-master/algorithm/cutimg2/static/excels_save/color_gray_mean/excel_color_gray_mean.xls')))
+        '/Users\\aldno\\Downloads/flaskDemo-master/algorithm/cutimg2/static/excels_save/color_gray_mean\\excel_color_gray_mean.xls')))
+    print(get_server_ip_and_port(get_server_file_path.get_server_file_path(
+        'C:\\aldno\\Downloads\\flaskDemo-master\\algorithm\\cutimg2\\static\\excels_save\\color_gray_mean\\excel_color_gray_mean.xls')))

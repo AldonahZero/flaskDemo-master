@@ -44,6 +44,8 @@ class Upload(Resource):
             filename = str(uuid.uuid1()) + '.' + \
                 file.filename.rsplit('.', 1)[1]
             filename = 'image_input.png'
+            isExist(IMG_UPLOAD)
+            isExist(IMG_RESULT)
             save_path = os.path.join(IMG_UPLOAD, filename)
             file.save(save_path)
             f = open(save_path, 'rb')
@@ -69,6 +71,8 @@ class UploadFirst(Resource):
             filename = str(uuid.uuid1()) + '.' + \
                 file.filename.rsplit('.', 1)[1]
             filename = 'first.png'
+            isExist(IMG_UPLOAD)
+            isExist(IMG_RESULT)
             save_path = os.path.join(IMG_UPLOAD, filename)
             file.save(save_path)
             f = open(save_path, 'rb')
@@ -95,6 +99,8 @@ class UploadSecond(Resource):
             filename = str(uuid.uuid1()) + '.' + \
                 file.filename.rsplit('.', 1)[1]
             filename = 'second.png'
+            isExist(IMG_UPLOAD)
+            isExist(IMG_RESULT)
             save_path = os.path.join(IMG_UPLOAD, filename)
             file.save(save_path)
             f = open(save_path, 'rb')
@@ -110,6 +116,11 @@ def allowed_file(filename):
     """判断文件是否允许上传"""
     return '.' in filename and filename.rsplit(
         '.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def isExist(path):
+    """判断文件目录是否存在"""
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 
 @sar_ns.route('/filter/<file_path>')
